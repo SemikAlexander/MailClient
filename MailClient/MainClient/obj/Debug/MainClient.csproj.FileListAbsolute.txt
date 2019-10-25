@@ -1,0 +1,9 @@
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\MainClient.exe.config
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\MainClient.exe
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\MainClient.pdb
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.csprojAssemblyReference.cache
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.Authorization.resources
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.Properties.Resources.resources
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.csproj.GenerateResource.cache
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.exe
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.pdb
