@@ -7,3 +7,7 @@ C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainCl
 C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.csproj.GenerateResource.cache
 C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.exe
 C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.pdb
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\MailKit.xml
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\MimeKit.xml
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.csproj.CopyComplete
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.MainForm.resources
