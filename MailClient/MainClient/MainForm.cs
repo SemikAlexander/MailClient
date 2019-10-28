@@ -20,14 +20,17 @@ namespace MainClient
             password = UserPassword;
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-
+            if (menuPanel.Width == 180)
+                menuPanel.Width = 45;
+            else
+                menuPanel.Width = 180;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-
+            UserNameLabel.Text = email.Replace("@yandex.ua", "");
         }
     }
 }
