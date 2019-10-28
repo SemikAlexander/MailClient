@@ -28,9 +28,14 @@ namespace MainClient
                 menuPanel.Width = 180;
         }
 
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
-            UserNameLabel.Text = email.Replace("@yandex.ua", "");
+
         }
     }
 }
