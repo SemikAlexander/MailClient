@@ -33,6 +33,12 @@ namespace MainClient
 
         }
 
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                Application.Exit();
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
 
