@@ -30,13 +30,17 @@ namespace MainClient
 
         private void button6_Click(object sender, EventArgs e)
         {
-
+            Settings settings = new Settings();
+            settings.Show();
         }
 
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+            var closeMainForm = MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            if (closeMainForm == DialogResult.OK)
                 Application.Exit();
+            else
+                e.Cancel = true;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
