@@ -12,3 +12,14 @@ C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\MimeKi
 C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.csproj.CopyComplete
 C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.MainForm.resources
 C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.SettingsForm.resources
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\x86\sqlite3.dll
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\x64\sqlite3.dll
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\EntityFramework.dll
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\System.Data.SQLite.dll
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\System.Data.SQLite.EF6.dll
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\EntityFramework.xml
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\System.Data.SQLite.xml
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\System.Data.SQLite.dll.config

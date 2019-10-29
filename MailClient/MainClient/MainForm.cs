@@ -30,7 +30,7 @@ namespace MainClient
 
         private void button6_Click(object sender, EventArgs e)
         {
-            SettingsForm settings = new SettingsForm();
+            SettingsForm settings = new SettingsForm("Edit");
             settings.Show();
         }
 
@@ -45,7 +45,7 @@ namespace MainClient
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            this.Text = email.Replace("@yandex.ua", "");
+            this.Text = email.Replace("@yandex.ua", "");    /*Тут будет выборкка из базы данных. Пока Яндекс*/
         }
     }
 }

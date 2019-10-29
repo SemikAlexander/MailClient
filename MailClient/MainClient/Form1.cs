@@ -2,6 +2,7 @@
 using MimeKit;
 using MailKit.Net.Smtp;
 using System.Windows.Forms;
+using System.Net;
 
 namespace MainClient
 {
@@ -22,24 +23,7 @@ namespace MainClient
                     return;
                 }
                 else
-                {
-                    try
-                    {
-                        using (var client = new SmtpClient())
-                        {
-                            client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                            client.Connect("smtp.yandex.ru", 465, true);
-                            client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
-                            MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
-                            mainForm.Show();
-                            this.Hide();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-                }
+                    AuthorizationOnServer("smtp.yandex.ru", 465);
             }
             else
             {
@@ -58,6 +42,40 @@ namespace MainClient
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        private void Authorization_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var client = new WebClient())
+                using (client.OpenRead("http://google.com/generate_204"))
+                    this.Text = "Авторизация";
+            }
+            catch
+            {
+                this.Text = "Авторизация  (offline mode)";
+            }
+        }
+
+        public void AuthorizationOnServer(string smtpAdress, int smtpPort)
+        {
+            try
+            {
+                using (var client = new SmtpClient())
+                {
+                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    client.Connect(smtpAdress, smtpPort, true);
+                    client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
+                    MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
+                    mainForm.Show();
+                    this.Hide();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }

@@ -7,9 +7,11 @@ namespace MainClient
 {
     public partial class SettingsForm : Form
     {
-        public SettingsForm()
+        string typeSettingForm;
+        public SettingsForm(string type)
         {
             InitializeComponent();
+            typeSettingForm = type;
         }
         #region LogicsOfSettingsForm
         private void smtpPort_KeyPress(object sender, KeyPressEventArgs e)
@@ -121,14 +123,23 @@ namespace MainClient
 
         private void SettingsForm_Load(object sender, EventArgs e)
         {
-            imapAdress.Text = Settings.Default["IMAPAdress"].ToString();
-            pop3Adress.Text = Settings.Default["POP3Adress"].ToString();
-            smtpAdress.Text = Settings.Default["SMTPAdress"].ToString();
-            imapPort.Text = Settings.Default["IMAPPort"].ToString();
-            pop3Port.Text = Settings.Default["POP3Port"].ToString();
-            smtpPort.Text = Settings.Default["SMTPPort"].ToString();
-            pop3.Checked = Convert.ToBoolean(Settings.Default["POP3Checked"]);
-            imap.Checked = Convert.ToBoolean(Settings.Default["IMAPChecked"]);
+            switch (typeSettingForm)
+            {
+                case "Add":
+                    NameServerPanel.Visible = true;
+                    break;
+                case "Edit":
+                    NameServerPanel.Visible = false;
+                    imapAdress.Text = Settings.Default["IMAPAdress"].ToString();
+                    pop3Adress.Text = Settings.Default["POP3Adress"].ToString();
+                    smtpAdress.Text = Settings.Default["SMTPAdress"].ToString();
+                    imapPort.Text = Settings.Default["IMAPPort"].ToString();
+                    pop3Port.Text = Settings.Default["POP3Port"].ToString();
+                    smtpPort.Text = Settings.Default["SMTPPort"].ToString();
+                    pop3.Checked = Convert.ToBoolean(Settings.Default["POP3Checked"]);
+                    imap.Checked = Convert.ToBoolean(Settings.Default["IMAPChecked"]);
+                    break;
+            }
         }
     }
 }

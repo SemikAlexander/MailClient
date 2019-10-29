@@ -47,8 +47,12 @@
             this.pop3 = new System.Windows.Forms.RadioButton();
             this.button1 = new System.Windows.Forms.Button();
             this.RestoreLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.NameServerPanel = new System.Windows.Forms.Panel();
+            this.nameMailServer = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.connectionOptions.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.NameServerPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // connectionOptions
@@ -227,7 +231,7 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(63, 321);
+            this.button1.Location = new System.Drawing.Point(65, 372);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(192, 35);
             this.button1.TabIndex = 4;
@@ -239,7 +243,7 @@
             // 
             this.RestoreLinkLabel.AutoSize = true;
             this.RestoreLinkLabel.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.RestoreLinkLabel.Location = new System.Drawing.Point(91, 377);
+            this.RestoreLinkLabel.Location = new System.Drawing.Point(91, 410);
             this.RestoreLinkLabel.Name = "RestoreLinkLabel";
             this.RestoreLinkLabel.Size = new System.Drawing.Size(225, 17);
             this.RestoreLinkLabel.TabIndex = 5;
@@ -247,18 +251,44 @@
             this.RestoreLinkLabel.Text = "Восстановить начальные настройки";
             this.RestoreLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
+            // NameServerPanel
+            // 
+            this.NameServerPanel.Controls.Add(this.nameMailServer);
+            this.NameServerPanel.Controls.Add(this.label4);
+            this.NameServerPanel.Location = new System.Drawing.Point(12, 315);
+            this.NameServerPanel.Name = "NameServerPanel";
+            this.NameServerPanel.Size = new System.Drawing.Size(304, 51);
+            this.NameServerPanel.TabIndex = 6;
+            // 
+            // nameMailServer
+            // 
+            this.nameMailServer.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.nameMailServer.Location = new System.Drawing.Point(101, 14);
+            this.nameMailServer.Name = "nameMailServer";
+            this.nameMailServer.Size = new System.Drawing.Size(192, 23);
+            this.nameMailServer.TabIndex = 55;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label4.Location = new System.Drawing.Point(12, 14);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(80, 20);
+            this.label4.TabIndex = 54;
+            this.label4.Text = "Название";
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(328, 403);
+            this.ClientSize = new System.Drawing.Size(328, 436);
+            this.Controls.Add(this.NameServerPanel);
             this.Controls.Add(this.RestoreLinkLabel);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.connectionOptions);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(344, 442);
-            this.MinimumSize = new System.Drawing.Size(344, 442);
             this.Name = "SettingsForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Settings";
@@ -267,6 +297,8 @@
             this.connectionOptions.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.NameServerPanel.ResumeLayout(false);
+            this.NameServerPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -292,5 +324,8 @@
         private System.Windows.Forms.RadioButton pop3;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.LinkLabel RestoreLinkLabel;
+        private System.Windows.Forms.Panel NameServerPanel;
+        public System.Windows.Forms.TextBox nameMailServer;
+        private System.Windows.Forms.Label label4;
     }
 }

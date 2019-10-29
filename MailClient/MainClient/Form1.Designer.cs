@@ -98,6 +98,7 @@
             this.Name = "Authorization";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Авторизация";
+            this.Load += new System.EventHandler(this.Authorization_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
