@@ -11,4 +11,4 @@ C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\MailKi
 C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\bin\Debug\MimeKit.xml
 C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.csproj.CopyComplete
 C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.MainForm.resources
-C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.Settings.resources
+C:\Users\Alex\Documents\GitHub\MailClient\MailClient\MainClient\obj\Debug\MainClient.SettingsForm.resources

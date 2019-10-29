@@ -1,6 +1,6 @@
 ﻿namespace MainClient
 {
-    partial class Settings
+    partial class SettingsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.connectionOptions = new System.Windows.Forms.GroupBox();
             this.IMAPPortLabel = new System.Windows.Forms.Label();
             this.imapPort = new System.Windows.Forms.TextBox();
@@ -90,7 +90,6 @@
             this.imapPort.Name = "imapPort";
             this.imapPort.Size = new System.Drawing.Size(192, 23);
             this.imapPort.TabIndex = 52;
-            this.imapPort.Text = "993";
             this.imapPort.TextChanged += new System.EventHandler(this.imapPort_TextChanged);
             this.imapPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.imapPort_KeyPress);
             // 
@@ -121,7 +120,7 @@
             this.imapAdress.Name = "imapAdress";
             this.imapAdress.Size = new System.Drawing.Size(192, 23);
             this.imapAdress.TabIndex = 49;
-            this.imapAdress.Text = "imap.yandex.ru";
+            this.imapAdress.TextChanged += new System.EventHandler(this.imapAdress_TextChanged);
             // 
             // pop3Port
             // 
@@ -130,7 +129,6 @@
             this.pop3Port.Name = "pop3Port";
             this.pop3Port.Size = new System.Drawing.Size(192, 23);
             this.pop3Port.TabIndex = 48;
-            this.pop3Port.Text = "995";
             this.pop3Port.TextChanged += new System.EventHandler(this.pop3Port_TextChanged);
             this.pop3Port.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.pop3Port_KeyPress);
             // 
@@ -141,7 +139,7 @@
             this.pop3Adress.Name = "pop3Adress";
             this.pop3Adress.Size = new System.Drawing.Size(192, 23);
             this.pop3Adress.TabIndex = 47;
-            this.pop3Adress.Text = "pop.yandex.ru";
+            this.pop3Adress.TextChanged += new System.EventHandler(this.pop3Adress_TextChanged);
             // 
             // smtpPort
             // 
@@ -150,7 +148,6 @@
             this.smtpPort.Name = "smtpPort";
             this.smtpPort.Size = new System.Drawing.Size(192, 23);
             this.smtpPort.TabIndex = 46;
-            this.smtpPort.Text = "465";
             this.smtpPort.TextChanged += new System.EventHandler(this.smtpPort_TextChanged);
             this.smtpPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.smtpPort_KeyPress);
             // 
@@ -161,7 +158,7 @@
             this.smtpAdress.Name = "smtpAdress";
             this.smtpAdress.Size = new System.Drawing.Size(192, 23);
             this.smtpAdress.TabIndex = 45;
-            this.smtpAdress.Text = "smtp.yandex.ru";
+            this.smtpAdress.TextChanged += new System.EventHandler(this.smtpAdress_TextChanged);
             // 
             // label3
             // 
@@ -230,12 +227,13 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(52, 321);
+            this.button1.Location = new System.Drawing.Point(63, 321);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(192, 35);
             this.button1.TabIndex = 4;
             this.button1.Text = "Сохранить";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // RestoreLinkLabel
             // 
@@ -249,7 +247,7 @@
             this.RestoreLinkLabel.Text = "Восстановить начальные настройки";
             this.RestoreLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
-            // Settings
+            // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -259,8 +257,12 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.connectionOptions);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Settings";
+            this.MaximumSize = new System.Drawing.Size(344, 442);
+            this.MinimumSize = new System.Drawing.Size(344, 442);
+            this.Name = "SettingsForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Settings";
+            this.Load += new System.EventHandler(this.SettingsForm_Load);
             this.connectionOptions.ResumeLayout(false);
             this.connectionOptions.PerformLayout();
             this.groupBox2.ResumeLayout(false);
