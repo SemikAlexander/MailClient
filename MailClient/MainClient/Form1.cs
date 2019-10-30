@@ -89,7 +89,7 @@ namespace MainClient
             }
         }
 
-        public void GetConfigurationForConnection(string userMail)
+        public void GetConfigurationForConnection(string userMail)  /*get ports and adress for connection*/
         {
             string pathToDBFileFromInternet = Path.GetFullPath(@"MailClientDB.db");
             if (!File.Exists(pathToDBFileFromInternet))
@@ -104,7 +104,7 @@ namespace MainClient
                 int index = userMail.IndexOf('@');
                 string temp = userMail.Substring(index + 1);
                 index = temp.IndexOf(".");
-                string NameServer = temp.Substring(0, index);
+                string NameServer = temp.Substring(0, index);   /*get name server (yandex, gmail, mail)*/
                 using(SQLiteConnection connection = new SQLiteConnection($"Data Source={pathToDBFileFromInternet}"))
                 {
                     using(SQLiteCommand command = new SQLiteCommand(connection))
@@ -127,26 +127,6 @@ namespace MainClient
                         }
                     }
                 }
-                //using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
-                //{
-                //    connection.Open();
-                //    SQLiteCommand command = new SQLiteCommand
-                //    {
-                //        Connection = connection,
-                //        CommandText = $"SELECT IMAPAdress, POP3Adress, SMTPAdress, IMAPPort, POP3Port, SMTPPort FROM MailServers WHERE NameServer='{NameServer}'"
-                        
-                //    };
-                //    SQLiteDataReader sqlReader = command.ExecuteReader();
-                //    Settings.Default["IMAPAdress"] = (string)sqlReader["IMAPAdress"];
-                //    Settings.Default["POP3Adress"] = (string)sqlReader["POP3Adress"];
-                //    Settings.Default["SMTPAdress"] = (string)sqlReader["SMTPAdress"];
-                //    Settings.Default["IMAPPort"] = (int)sqlReader["IMAPPort"];
-                //    Settings.Default["POP3Port"] = (int)sqlReader["POP3Port"];
-                //    Settings.Default["SMTPPort"] = (int)sqlReader["SMTPPort"];
-                //    Settings.Default["POP3Checked"] = true;
-                //    Settings.Default["IMAPChecked"] = false;
-                //    connection.Close();
-                //}
             }
         }
     }
