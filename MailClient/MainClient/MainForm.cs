@@ -42,7 +42,7 @@ namespace MainClient
                 e.Cancel = true;
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)  /*Нужно добавить потоки!*/
         {
             int index = email.IndexOf("@");
             this.Text = email.Substring(0, index);
