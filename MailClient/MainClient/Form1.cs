@@ -11,16 +11,18 @@ namespace MainClient
 {
     public partial class Authorization : Form
     {
+        Check check;
         public Authorization()
         {
             InitializeComponent();
+            check = new Check();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             if(!string.IsNullOrWhiteSpace(mailTextBox.Text) & !string.IsNullOrWhiteSpace(passwordTextBox.Text))
             {
-                if (!IsValidEmail(mailTextBox.Text))
+                if (!check.IsValidEmail(mailTextBox.Text))
                 {
                     MessageBox.Show("Email неверный!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -33,8 +35,9 @@ namespace MainClient
                         using (var client = new SmtpClient())
                         {
                             client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                            client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true);
+                            client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true); //https://www.google.com/settings/security/lesssecureapps
                             client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
+                            client.Disconnect(true);
                             MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
                             mainForm.Show();
                             this.Hide();
@@ -55,38 +58,10 @@ namespace MainClient
 
         private void Authorization_Load(object sender, EventArgs e)
         {
-            if (IsInternetConnected())
+            if (check.IsInternetConnected())
                 this.Text = "Авторизация";
             else
-                this.Text = "Авторизация  (offline mode)";
-        }
-
-        public bool IsInternetConnected()
-        {
-            try
-            {
-                using (var client = new WebClient())
-                using (client.OpenRead("http://google.com/generate_204"))
-                    this.Text = "Авторизация";
-                return true;
-            }
-            catch
-            {
-                this.Text = "Авторизация  (offline mode)";
-                return false;
-            }
-        }    
-        bool IsValidEmail(string email)
-        {
-            try
-            {
-                var adress = new System.Net.Mail.MailAddress(email);
-                return adress.Address == email;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+                this.Text = "Авторизация (offline mode)";
         }
 
         public void GetConfigurationForConnection(string userMail)  /*get ports and adress for connection*/

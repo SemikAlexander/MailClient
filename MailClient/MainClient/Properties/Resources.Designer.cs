@@ -73,6 +73,16 @@ namespace MainClient.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateMessage_32 {
+            get {
+                object obj = ResourceManager.GetObject("CreateMessage_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DeleteMessage {
             get {
                 object obj = ResourceManager.GetObject("DeleteMessage", resourceCulture);
@@ -86,6 +96,16 @@ namespace MainClient.Properties {
         internal static System.Drawing.Bitmap DraftMessage {
             get {
                 object obj = ResourceManager.GetObject("DraftMessage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GetMessages {
+            get {
+                object obj = ResourceManager.GetObject("GetMessages", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

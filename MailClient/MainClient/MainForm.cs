@@ -3,6 +3,7 @@ using MailKit;
 using MimeKit;
 using MailKit.Net.Imap;
 using MailKit.Net.Pop3;
+using System.Threading;
 using System.Windows.Forms;
 using MainClient.Properties;
 
@@ -10,8 +11,8 @@ namespace MainClient
 {
     public partial class MainForm : Form
     {
-        int Letter = 0, LastIndex = 0, CountBack = 0;
-        string email, password;
+        int Letter = 0, LastIndex = 0, CountBack = 0, IMAPPort = Convert.ToInt32(Settings.Default["POP3Port"]);
+        string email, password, IMAPAdress= Settings.Default["IMAPAdress"].ToString();
         public MainForm(string UserEmail, string UserPassword)
         {
             InitializeComponent();
@@ -25,6 +26,26 @@ namespace MainClient
                 menuPanel.Width = 45;
             else
                 menuPanel.Width = 180;
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
+            {
+                GetMessageByPOP3();
+            }
+            if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
+            {
+                GetMessagesByIMAP();
+            }
+        }
+
+        private void writeMessage_Click(object sender, EventArgs e)
+        {
+            SendMessage sendMessage = new SendMessage(email, password, this);
+            sendMessage.Show();
+            this.WindowState = FormWindowState.Minimized;
+            
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -46,10 +67,6 @@ namespace MainClient
         {
             int index = email.IndexOf("@");
             this.Text = email.Substring(0, index);
-            if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
-                GetMessageByPOP3();
-            if(Convert.ToBoolean(Settings.Default["IMAPChecked"]))
-                GetMessagesByIMAP();
         }
 
         #region Get messages
@@ -60,7 +77,7 @@ namespace MainClient
                 using (var client = new ImapClient())
                 {
                     client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                    client.Connect(IMAPAdress, IMAPPort, true);
                     client.Authenticate(email, password);
                     var inbox = client.Inbox;
                     inbox.Open(FolderAccess.ReadOnly);
