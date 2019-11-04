@@ -20,6 +20,7 @@ namespace MainClient
 
         private void button1_Click(object sender, EventArgs e)
         {
+            WorkWithDatabase workWithDatabase = new WorkWithDatabase();
             if(!string.IsNullOrWhiteSpace(mailTextBox.Text) & !string.IsNullOrWhiteSpace(passwordTextBox.Text))
             {
                 if (!check.IsValidEmail(mailTextBox.Text))
@@ -38,9 +39,19 @@ namespace MainClient
                             client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true); //https://www.google.com/settings/security/lesssecureapps
                             client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
                             client.Disconnect(true);
-                            MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
-                            mainForm.Show();
-                            this.Hide();
+                            if (workWithDatabase.GetUser(mailTextBox.Text, passwordTextBox.Text))
+                            {
+                                MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
+                                mainForm.Show();
+                                this.Hide();
+                            }
+                            else
+                            {
+                                workWithDatabase.AddUser(mailTextBox.Text, passwordTextBox.Text);
+                                MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
+                                mainForm.Show();
+                                this.Hide();
+                            }
                         }
                     }
                     catch (Exception ex)

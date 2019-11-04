@@ -21,31 +21,6 @@ namespace MainClient
             UserPassword = password;
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog FBD = new FolderBrowserDialog();
-            if (FBD.ShowDialog() != DialogResult.OK)
-            {
-            }
-            foreach (var attachment in MimeMessage.Attachments)
-            {
-                var fileName = attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
-                using (var stream = File.Create(Path.Combine(FBD.SelectedPath, fileName)))
-                {
-                    if (attachment is MessagePart)
-                    {
-                        var part = (MessagePart)attachment;
-                        part.Message.WriteTo(stream);
-                    }
-                    else
-                    {
-                        var part = (MimePart)attachment;
-                        part.Content.DecodeTo(stream);
-                    }
-                }
-            }
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog FD = new OpenFileDialog();
@@ -88,11 +63,7 @@ namespace MainClient
                     client.Authenticate(UserEmail, UserPassword);
                     client.Send(message);
                     client.Disconnect(true);
-                    DialogResult dialogResult = MessageBox.Show("Письмо отправленно. Закрыть окно?", "Закрыть окно?", MessageBoxButtons.YesNo);
-                    if (dialogResult == DialogResult.Yes)
-                    {
-                        Close();
-                    }
+                    DialogResult dialogResult = MessageBox.Show("Письмо отправленно!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)

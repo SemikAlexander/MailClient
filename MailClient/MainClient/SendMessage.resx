@@ -118,32 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="FolderAttachment.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wgAADsIBFShKgAAAAO1JREFUWEftk1kOwjAMRHsJEHeEO9B/uB/HgYxaSyPLTuosfFR50qip3djTLMtk
-        YvBtVDNW0YiaqS10bgP3pNs2dBlmAM3x/kkSE8/9yQwzgKZoLiZe+1ij51VjFWITXiMvHsYrJH9u5a9J
-        nMupiPUh9pyL6PwjSec9FTn8YQJbg0MKYOKyDU26G+BzISZydDcgy87XM0c3A1hmXvYjzUHYQEl62XV+
-        TWIkXoSL5ISrx3DujYBCcs14hSQOWefCmxfGK4QY/lxuhjbhzQvjFZI95+uJQyoMN8DABDcHfzVgcT4D
-        tWrGKhrRZEIsyw8wYt5HteVZUQAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="Send.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wgAADsIBFShKgAAAAlxJREFUWEft1UvIjFEcx/FxzX2hFynJwm1BsnkTZYHIBikpybUQeleyErKTBUmh
-        iAUpKzaSFQshbJBEbmUhUiL36/d7Zv45pkkz7zzv2MyvPvWcM88z5zznOZdSO+20MAtwunzZuvTCEtzA
-        L5xBS9IHK3AHNhy2oEfTH+vxENHoC3yuXE9Hj2QgtuI5ouHH2Igx+Il3cGQKzVBsx0tEw/ewEn1hFsH6
-        S6lUUIZjF94gGr4JJ1xv5NkLf/f+pjMK/qHDGQ1fxnxEvGdz+TLlKrxvXip1M2NxEB/hn/lNL2AW8qyG
-        o7I4lUqlAfiE7xhiRaOZgGP4Ahv+gbOons120A55zyPEZ5gJ626lUgOZCncte+4ffMUJTEYeNxqHO/8k
-        GxBxglrn6NUVe3wODrEPOnyHMA7VmYgriIb1Gi7JyHlYvzyV6sgavIcP+fZzUR2X1zbEfHAJvqpc5zPd
-        0Yl694K64zDfhQ9+wDpE/DQuN3/TSXTCuWGHOhCZBO95lkoNZhD85tHQKexBTMYn8HQzR2Hd4VT6Eztu
-        fVMnoJ/EUYiO+Kb7MRjGN/bNrR9vRZbj8Jl8T+hWpiA6MMOKLLthvRO3Og/gb9NSqclEB/I42531tTo2
-        Aq6ktyjkAKrVgU2w7loq/Z04gC6mUgHJO9APaxEnYBeqEwfQzlQqINEBd7mnWVnukjsQx6+JA2hOKhWQ
-        vEHdxyrsgyvAuutwD4kD6BtitTSdaPg2liI/82fDfcHfXZJHKtduWIXFibawfFkzw+CpGR3VAbQ8zv6Y
-        nMus+B8ZCU/B0anUzj9TKv0GFji6+597JD0AAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="FileAttachment.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO

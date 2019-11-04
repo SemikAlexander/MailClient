@@ -34,7 +34,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.email_client = new System.Windows.Forms.TextBox();
-            this.FolderAttachment = new System.Windows.Forms.Button();
             this.Send = new System.Windows.Forms.Button();
             this.FileAttachment = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -83,21 +82,10 @@
             this.email_client.Size = new System.Drawing.Size(419, 26);
             this.email_client.TabIndex = 10;
             // 
-            // FolderAttachment
-            // 
-            this.FolderAttachment.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.FolderAttachment.Image = ((System.Drawing.Image)(resources.GetObject("FolderAttachment.Image")));
-            this.FolderAttachment.Location = new System.Drawing.Point(65, 302);
-            this.FolderAttachment.Name = "FolderAttachment";
-            this.FolderAttachment.Size = new System.Drawing.Size(47, 41);
-            this.FolderAttachment.TabIndex = 17;
-            this.FolderAttachment.UseVisualStyleBackColor = true;
-            this.FolderAttachment.Click += new System.EventHandler(this.button3_Click);
-            // 
             // Send
             // 
             this.Send.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Send.Image = ((System.Drawing.Image)(resources.GetObject("Send.Image")));
+            this.Send.Image = global::MainClient.Properties.Resources.SendMessage;
             this.Send.Location = new System.Drawing.Point(443, 302);
             this.Send.Name = "Send";
             this.Send.Size = new System.Drawing.Size(47, 41);
@@ -121,7 +109,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(502, 352);
-            this.Controls.Add(this.FolderAttachment);
             this.Controls.Add(this.Send);
             this.Controls.Add(this.FileAttachment);
             this.Controls.Add(this.TextLetter);
@@ -138,8 +125,6 @@
         }
 
         #endregion
-
-        public System.Windows.Forms.Button FolderAttachment;
         public System.Windows.Forms.Button Send;
         public System.Windows.Forms.Button FileAttachment;
         public System.Windows.Forms.TextBox TextLetter;

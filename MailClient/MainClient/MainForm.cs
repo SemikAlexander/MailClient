@@ -56,8 +56,8 @@ namespace MainClient
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var closeMainForm = MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
-            if (closeMainForm == DialogResult.OK)
+            DialogResult dialogResult = MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            if (dialogResult == DialogResult.OK)
                 Application.Exit();
             else
                 e.Cancel = true;

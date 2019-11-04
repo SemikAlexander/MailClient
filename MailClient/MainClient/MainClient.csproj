@@ -101,6 +101,7 @@
     <Compile Include="Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
+    <Compile Include="WorkWithDatabase.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -166,6 +167,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Images\CreateMessage 32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\SendMessage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
