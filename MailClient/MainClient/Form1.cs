@@ -20,6 +20,7 @@ namespace MainClient
 
         private void button1_Click(object sender, EventArgs e)
         {
+            Crypto crypto = new Crypto();
             WorkWithDatabase workWithDatabase = new WorkWithDatabase();
             if(!string.IsNullOrWhiteSpace(mailTextBox.Text) & !string.IsNullOrWhiteSpace(passwordTextBox.Text))
             {
@@ -39,7 +40,8 @@ namespace MainClient
                             client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true); //https://www.google.com/settings/security/lesssecureapps
                             client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
                             client.Disconnect(true);
-                            if (workWithDatabase.GetUser(mailTextBox.Text, passwordTextBox.Text))
+                            crypto.Hesh(mailTextBox.Text);
+                            if (workWithDatabase.GetUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text)))
                             {
                                 MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
                                 mainForm.Show();
@@ -47,7 +49,7 @@ namespace MainClient
                             }
                             else
                             {
-                                workWithDatabase.AddUser(mailTextBox.Text, passwordTextBox.Text);
+                                workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text));
                                 MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
                                 mainForm.Show();
                                 this.Hide();

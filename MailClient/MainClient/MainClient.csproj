@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Check.cs" />
+    <Compile Include="Crypto.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
