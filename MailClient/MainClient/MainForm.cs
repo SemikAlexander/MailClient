@@ -12,12 +12,14 @@ namespace MainClient
     public partial class MainForm : Form
     {
         int Letter = 0, LastIndex = 0, CountBack = 0, IMAPPort = Convert.ToInt32(Settings.Default["POP3Port"]);
-        string email, password, IMAPAdress= Settings.Default["IMAPAdress"].ToString();
-        public MainForm(string UserEmail, string UserPassword)
+        string email, password, IMAPAdress = Settings.Default["IMAPAdress"].ToString();
+        int ID;
+        public MainForm(string UserEmail, string UserPassword, int IDUser)
         {
             InitializeComponent();
             email = UserEmail;
             password = UserPassword;
+            ID = IDUser;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -42,10 +44,15 @@ namespace MainClient
 
         private void writeMessage_Click(object sender, EventArgs e)
         {
-            SendMessage sendMessage = new SendMessage(email, password, this);
+            SendMessage sendMessage = new SendMessage(email, password, ID, this);
             sendMessage.Show();
             this.WindowState = FormWindowState.Minimized;
             
+        }
+
+        private void OutgoingMessages_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void button6_Click(object sender, EventArgs e)

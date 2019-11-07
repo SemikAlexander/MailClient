@@ -12,6 +12,7 @@ namespace MainClient
     public partial class Authorization : Form
     {
         Check check;
+        int IDUser;
         public Authorization()
         {
             InitializeComponent();
@@ -40,17 +41,16 @@ namespace MainClient
                             client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true); //https://www.google.com/settings/security/lesssecureapps
                             client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
                             client.Disconnect(true);
-                            crypto.Hesh(mailTextBox.Text);
-                            if (workWithDatabase.GetUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text)))
+                            if (workWithDatabase.GetUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), out IDUser))
                             {
-                                MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
+                                MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
                                 mainForm.Show();
                                 this.Hide();
                             }
                             else
                             {
-                                workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text));
-                                MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text);
+                                workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), out IDUser);
+                                MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
                                 mainForm.Show();
                                 this.Hide();
                             }

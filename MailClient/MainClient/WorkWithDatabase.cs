@@ -9,24 +9,24 @@ namespace MainClient
 {
     class WorkWithDatabase
     {
-        public bool GetUser(string UserEmail, string UserPassword)
+        public bool GetUser(string UserEmail, string UserPassword, out int IDUser)
         {
-            int res = 0;
+            IDUser = -1;
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
             {
                 using (SQLiteCommand command = new SQLiteCommand(connection))
                 {
                     connection.Open();
-                    command.CommandText = $"SELECT COUNT(*) AS res_count FROM Users WHERE Login = '{UserEmail}' AND Password = '{UserPassword}'";
+                    command.CommandText = $"SELECT ID AS idUser FROM Users WHERE Login = '{UserEmail}' AND Password = '{UserPassword}'";
                     command.ExecuteNonQuery();
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            res = Convert.ToInt32(reader["res_count"]);
+                            IDUser = Convert.ToInt32(reader["idUser"]);
                         }
                         connection.Close();
-                        return res > 0 ? true : false;
+                        return IDUser != -1 ? true : false;
                     }
                 }
             }
@@ -55,20 +55,33 @@ namespace MainClient
             }
         }
 
-        public bool AddUser(string UserEmail, string UserPassword)
+        public void AddUser(string UserEmail, string UserPassword, out int IDUser)
         {
-            int countUser = GetCountUser();
+            IDUser = GetCountUser() + 1;
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
             {
                 using (SQLiteCommand command = new SQLiteCommand(connection))
                 {
                     connection.Open();
-                    command.CommandText = $"INSERT INTO Users (ID, Login, Password) VALUES ({countUser + 1}, '{UserEmail}', '{UserPassword}');";
+                    command.CommandText = $"INSERT INTO Users (ID, Login, Password) VALUES ({IDUser}, '{UserEmail}', '{UserPassword}');";
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
             }
-            return true;
+        }
+
+        public void AddMessageAsSend(string RecipientAdress, string Subject, string Text, int IDUser)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"INSERT INTO UserMessages (RecipientAdress, SubjectLetter, TextLetter, IDSender, TypeMessage) VALUES ('{RecipientAdress}','{Subject}','{Text}',{IDUser},'SND');";
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
         }
     }
 }

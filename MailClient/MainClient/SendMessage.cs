@@ -13,12 +13,16 @@ namespace MainClient
         public MimeMessage MimeMessage;
         MainForm mainForm;
         string UserEmail, UserPassword;
-        public SendMessage(string email, string password, MainForm mainForm1)
+        int ID;
+        WorkWithDatabase workWithDatabase;
+        public SendMessage(string email, string password, int IDUser, MainForm mainForm1)
         {
             InitializeComponent();
             mainForm = mainForm1;
             UserEmail = email;
             UserPassword = password;
+            ID = IDUser;
+            workWithDatabase = new WorkWithDatabase();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -63,7 +67,9 @@ namespace MainClient
                     client.Authenticate(UserEmail, UserPassword);
                     client.Send(message);
                     client.Disconnect(true);
+                    workWithDatabase.AddMessageAsSend(email_client.Text, theme.Text, TextLetter.Text, ID);
                     DialogResult dialogResult = MessageBox.Show("Письмо отправленно!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    email_client.Text = theme.Text = TextLetter.Text = "";
                 }
             }
             catch (Exception ex)
