@@ -6,6 +6,7 @@ using MailKit.Net.Pop3;
 using System.Threading;
 using System.Windows.Forms;
 using MainClient.Properties;
+using System.Collections.Generic;
 
 namespace MainClient
 {
@@ -14,12 +15,15 @@ namespace MainClient
         int Letter = 0, LastIndex = 0, CountBack = 0, IMAPPort = Convert.ToInt32(Settings.Default["POP3Port"]);
         string email, password, IMAPAdress = Settings.Default["IMAPAdress"].ToString();
         int ID;
+        WorkWithDatabase workWithDatabase;
+        List<WorkWithDatabase.Message> messages = new List<WorkWithDatabase.Message>();
         public MainForm(string UserEmail, string UserPassword, int IDUser)
         {
             InitializeComponent();
             email = UserEmail;
             password = UserPassword;
             ID = IDUser;
+            workWithDatabase = new WorkWithDatabase();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -52,7 +56,10 @@ namespace MainClient
 
         private void OutgoingMessages_Click(object sender, EventArgs e)
         {
-
+            workWithDatabase.GetSendMessage(ID, out messages);
+            UserMessagesTable.Rows.Clear();
+            foreach (var arraySendMessages in messages)
+                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -70,7 +77,7 @@ namespace MainClient
                 e.Cancel = true;
         }
 
-        private void MainForm_Load(object sender, EventArgs e)  /*Нужно добавить потоки!*/
+        private void MainForm_Load(object sender, EventArgs e)
         {
             int index = email.IndexOf("@");
             this.Text = email.Substring(0, index);

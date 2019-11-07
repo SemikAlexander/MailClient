@@ -9,6 +9,11 @@ namespace MainClient
 {
     class WorkWithDatabase
     {
+        public struct Message
+        {
+            public string RecipientAdress, Subject, Text;
+        }
+        Message message;
         public bool GetUser(string UserEmail, string UserPassword, out int IDUser)
         {
             IDUser = -1;
@@ -30,8 +35,7 @@ namespace MainClient
                     }
                 }
             }
-        }
-        
+        }      
         public int GetCountUser()
         {
             int res = 0;
@@ -54,7 +58,6 @@ namespace MainClient
                 }
             }
         }
-
         public void AddUser(string UserEmail, string UserPassword, out int IDUser)
         {
             IDUser = GetCountUser() + 1;
@@ -69,7 +72,6 @@ namespace MainClient
                 }
             }
         }
-
         public void AddMessageAsSend(string RecipientAdress, string Subject, string Text, int IDUser)
         {
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
@@ -80,6 +82,30 @@ namespace MainClient
                     command.CommandText = $"INSERT INTO UserMessages (RecipientAdress, SubjectLetter, TextLetter, IDSender, TypeMessage) VALUES ('{RecipientAdress}','{Subject}','{Text}',{IDUser},'SND');";
                     command.ExecuteNonQuery();
                     connection.Close();
+                }
+            }
+        }
+        public void GetSendMessage(int IDUser, out List<Message> messages)
+        {
+            messages = new List<Message>();
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT * FROM UserMessages WHERE IDSender = {IDUser} AND TypeMessage = \"SND\"";
+                    command.ExecuteNonQuery();
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            message.RecipientAdress = Convert.ToString(reader["RecipientAdress"]);
+                            message.Subject = Convert.ToString(reader["SubjectLetter"]);
+                            message.Text = Convert.ToString(reader["TextLetter"]);
+                            messages.Add(message);
+                        }
+                        connection.Close();
+                    }
                 }
             }
         }
