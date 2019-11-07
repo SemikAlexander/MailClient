@@ -10,7 +10,6 @@ namespace MainClient
     public partial class SendMessage : Form
     {
         string AttachmentFile = "";
-        public MimeMessage MimeMessage;
         MainForm mainForm;
         string UserEmail, UserPassword;
         int ID;

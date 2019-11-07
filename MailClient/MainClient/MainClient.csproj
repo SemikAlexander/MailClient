@@ -90,6 +90,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReadMessage.Designer.cs">
+      <DependentUpon>ReadMessage.cs</DependentUpon>
+    </Compile>
     <Compile Include="SendMessage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -119,6 +125,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="ReadMessage.resx">
+      <DependentUpon>ReadMessage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SendMessage.resx">
       <DependentUpon>SendMessage.cs</DependentUpon>
     </EmbeddedResource>

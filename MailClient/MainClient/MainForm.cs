@@ -103,6 +103,61 @@ namespace MainClient
             }
         }
 
+        private void UserMessagesTable_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            ReadMessage readMessage = new ReadMessage();
+            try
+            {
+                toolStripStatusLabel1.Text = "Идет загрузка...";
+                if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
+                {
+                    using (var client = new Pop3Client())
+                    {
+                        client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                        client.Connect(Settings.Default["POP3Adress"].ToString(), Convert.ToInt32(Settings.Default["POP3Port"]), true);
+                        client.Authenticate(email, password);
+                        if (LastIndex < 0) LastIndex = 0;
+                        if (client.Count == 0 | LastIndex + UserMessagesTable.CurrentCell.RowIndex > client.Count)
+                        {
+                            toolStripStatusLabel1.Text = "Письма нет.";
+                            return;
+                        }
+                        var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
+                        readMessage.email_client.Text = message.From.ToString();
+                        readMessage.theme.Text = message.Subject;
+                        readMessage.TextLetter.Text = (message.TextBody.Trim().Length == 0) ? message.HtmlBody : message.TextBody;
+                        readMessage.MimeMessage = message;
+                        client.Disconnect(true);
+                        readMessage.ShowDialog();
+                    }
+                }
+                if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
+                {
+                    using (var client = new ImapClient())
+                    {
+                        client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                        client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                        client.Authenticate(email, password);
+                        var inbox = client.Inbox;
+                        inbox.Open(FolderAccess.ReadOnly);
+                        if (LastIndex < 0) LastIndex = 0;
+                        var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
+                        readMessage.email_client.Text = message.From.ToString();
+                        readMessage.theme.Text = message.Subject;
+                        readMessage.TextLetter.Text = (message.TextBody == null || message.TextBody.Trim().Length == 0) ? message.HtmlBody : message.TextBody;
+                        readMessage.MimeMessage = message;
+                        toolStripStatusLabel1.Text = "Готово!";
+                        client.Disconnect(true);
+                        readMessage.ShowDialog();
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                toolStripStatusLabel1.Text = $"Ошибка: {ex.Message}";
+            }
+        }
+
         private void button6_Click(object sender, EventArgs e)
         {
             SettingsForm settings = new SettingsForm("Edit");

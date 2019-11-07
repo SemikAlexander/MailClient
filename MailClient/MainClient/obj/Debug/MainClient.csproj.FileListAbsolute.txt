@@ -50,3 +50,4 @@ C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\D
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\Debug\MainClient.csproj.CopyComplete
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\Debug\MainClient.exe
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\Debug\MainClient.pdb
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\Debug\MainClient.ReadMessage.resources
