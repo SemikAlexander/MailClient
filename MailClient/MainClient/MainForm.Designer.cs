@@ -28,22 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuPanel = new System.Windows.Forms.Panel();
-            this.InfoButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.DeleteMessage = new System.Windows.Forms.Button();
-            this.DraftMessages = new System.Windows.Forms.Button();
-            this.OutgoingMessages = new System.Windows.Forms.Button();
-            this.InboxMessages = new System.Windows.Forms.Button();
             this.functionalPanel = new System.Windows.Forms.Panel();
-            this.writeMessage = new System.Windows.Forms.Button();
-            this.SettingsButton = new System.Windows.Forms.Button();
-            this.MenuBarButton = new System.Windows.Forms.Button();
             this.contentPanel = new System.Windows.Forms.Panel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -51,6 +43,14 @@
             this.TitleMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ThemeMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ContentMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.writeMessage = new System.Windows.Forms.Button();
+            this.SettingsButton = new System.Windows.Forms.Button();
+            this.MenuBarButton = new System.Windows.Forms.Button();
+            this.InfoButton = new System.Windows.Forms.Button();
+            this.DeleteMessage = new System.Windows.Forms.Button();
+            this.DraftMessages = new System.Windows.Forms.Button();
+            this.OutgoingMessages = new System.Windows.Forms.Button();
+            this.InboxMessages = new System.Windows.Forms.Button();
             this.menuPanel.SuspendLayout();
             this.functionalPanel.SuspendLayout();
             this.contentPanel.SuspendLayout();
@@ -74,6 +74,145 @@
             this.menuPanel.Size = new System.Drawing.Size(180, 519);
             this.menuPanel.TabIndex = 0;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Century Gothic", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Location = new System.Drawing.Point(49, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(79, 25);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "МЕНЮ";
+            // 
+            // functionalPanel
+            // 
+            this.functionalPanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.functionalPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.functionalPanel.Controls.Add(this.writeMessage);
+            this.functionalPanel.Controls.Add(this.SettingsButton);
+            this.functionalPanel.Controls.Add(this.MenuBarButton);
+            this.functionalPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.functionalPanel.Location = new System.Drawing.Point(180, 0);
+            this.functionalPanel.Name = "functionalPanel";
+            this.functionalPanel.Size = new System.Drawing.Size(805, 40);
+            this.functionalPanel.TabIndex = 1;
+            // 
+            // contentPanel
+            // 
+            this.contentPanel.Controls.Add(this.toolStrip1);
+            this.contentPanel.Controls.Add(this.UserMessagesTable);
+            this.contentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.contentPanel.Location = new System.Drawing.Point(180, 40);
+            this.contentPanel.Name = "contentPanel";
+            this.contentPanel.Size = new System.Drawing.Size(805, 479);
+            this.contentPanel.TabIndex = 2;
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 454);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(805, 25);
+            this.toolStrip1.TabIndex = 1;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 22);
+            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // UserMessagesTable
+            // 
+            this.UserMessagesTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.UserMessagesTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.UserMessagesTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.UserMessagesTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.TitleMessage,
+            this.ThemeMessage,
+            this.ContentMessage});
+            this.UserMessagesTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.UserMessagesTable.Location = new System.Drawing.Point(0, 0);
+            this.UserMessagesTable.Name = "UserMessagesTable";
+            this.UserMessagesTable.ReadOnly = true;
+            this.UserMessagesTable.Size = new System.Drawing.Size(805, 479);
+            this.UserMessagesTable.TabIndex = 0;
+            this.UserMessagesTable.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.UserMessagesTable_CellContentDoubleClick);
+            // 
+            // TitleMessage
+            // 
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.TitleMessage.DefaultCellStyle = dataGridViewCellStyle2;
+            this.TitleMessage.HeaderText = "Титул";
+            this.TitleMessage.Name = "TitleMessage";
+            this.TitleMessage.ReadOnly = true;
+            this.TitleMessage.Width = 180;
+            // 
+            // ThemeMessage
+            // 
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ThemeMessage.DefaultCellStyle = dataGridViewCellStyle3;
+            this.ThemeMessage.HeaderText = "Тема";
+            this.ThemeMessage.Name = "ThemeMessage";
+            this.ThemeMessage.ReadOnly = true;
+            this.ThemeMessage.Width = 180;
+            // 
+            // ContentMessage
+            // 
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ContentMessage.DefaultCellStyle = dataGridViewCellStyle4;
+            this.ContentMessage.HeaderText = "Содержимое";
+            this.ContentMessage.Name = "ContentMessage";
+            this.ContentMessage.ReadOnly = true;
+            this.ContentMessage.Width = 400;
+            // 
+            // writeMessage
+            // 
+            this.writeMessage.Dock = System.Windows.Forms.DockStyle.Right;
+            this.writeMessage.FlatAppearance.BorderSize = 0;
+            this.writeMessage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.writeMessage.Image = global::MainClient.Properties.Resources.CreateMessage_32;
+            this.writeMessage.Location = new System.Drawing.Point(723, 0);
+            this.writeMessage.Name = "writeMessage";
+            this.writeMessage.Size = new System.Drawing.Size(40, 38);
+            this.writeMessage.TabIndex = 3;
+            this.writeMessage.UseVisualStyleBackColor = true;
+            this.writeMessage.Click += new System.EventHandler(this.writeMessage_Click);
+            // 
+            // SettingsButton
+            // 
+            this.SettingsButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.SettingsButton.FlatAppearance.BorderSize = 0;
+            this.SettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SettingsButton.Image = global::MainClient.Properties.Resources.Settings;
+            this.SettingsButton.Location = new System.Drawing.Point(763, 0);
+            this.SettingsButton.Name = "SettingsButton";
+            this.SettingsButton.Size = new System.Drawing.Size(40, 38);
+            this.SettingsButton.TabIndex = 1;
+            this.SettingsButton.UseVisualStyleBackColor = true;
+            this.SettingsButton.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // MenuBarButton
+            // 
+            this.MenuBarButton.FlatAppearance.BorderSize = 0;
+            this.MenuBarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.MenuBarButton.Image = global::MainClient.Properties.Resources.Menu;
+            this.MenuBarButton.Location = new System.Drawing.Point(-1, -1);
+            this.MenuBarButton.Name = "MenuBarButton";
+            this.MenuBarButton.Size = new System.Drawing.Size(40, 40);
+            this.MenuBarButton.TabIndex = 0;
+            this.MenuBarButton.UseVisualStyleBackColor = true;
+            this.MenuBarButton.Click += new System.EventHandler(this.button1_Click);
+            // 
             // InfoButton
             // 
             this.InfoButton.FlatAppearance.BorderSize = 0;
@@ -87,16 +226,6 @@
             this.InfoButton.TabIndex = 6;
             this.InfoButton.Text = "       Справка";
             this.InfoButton.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Century Gothic", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(49, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(79, 25);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "МЕНЮ";
             // 
             // DeleteMessage
             // 
@@ -158,131 +287,6 @@
             this.InboxMessages.Text = "          Входящие";
             this.InboxMessages.UseVisualStyleBackColor = true;
             this.InboxMessages.Click += new System.EventHandler(this.InboxMessages_Click);
-            // 
-            // functionalPanel
-            // 
-            this.functionalPanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.functionalPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.functionalPanel.Controls.Add(this.writeMessage);
-            this.functionalPanel.Controls.Add(this.SettingsButton);
-            this.functionalPanel.Controls.Add(this.MenuBarButton);
-            this.functionalPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.functionalPanel.Location = new System.Drawing.Point(180, 0);
-            this.functionalPanel.Name = "functionalPanel";
-            this.functionalPanel.Size = new System.Drawing.Size(805, 40);
-            this.functionalPanel.TabIndex = 1;
-            // 
-            // writeMessage
-            // 
-            this.writeMessage.Dock = System.Windows.Forms.DockStyle.Right;
-            this.writeMessage.FlatAppearance.BorderSize = 0;
-            this.writeMessage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.writeMessage.Image = global::MainClient.Properties.Resources.CreateMessage_32;
-            this.writeMessage.Location = new System.Drawing.Point(723, 0);
-            this.writeMessage.Name = "writeMessage";
-            this.writeMessage.Size = new System.Drawing.Size(40, 38);
-            this.writeMessage.TabIndex = 3;
-            this.writeMessage.UseVisualStyleBackColor = true;
-            this.writeMessage.Click += new System.EventHandler(this.writeMessage_Click);
-            // 
-            // SettingsButton
-            // 
-            this.SettingsButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.SettingsButton.FlatAppearance.BorderSize = 0;
-            this.SettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SettingsButton.Image = global::MainClient.Properties.Resources.Settings;
-            this.SettingsButton.Location = new System.Drawing.Point(763, 0);
-            this.SettingsButton.Name = "SettingsButton";
-            this.SettingsButton.Size = new System.Drawing.Size(40, 38);
-            this.SettingsButton.TabIndex = 1;
-            this.SettingsButton.UseVisualStyleBackColor = true;
-            this.SettingsButton.Click += new System.EventHandler(this.button6_Click);
-            // 
-            // MenuBarButton
-            // 
-            this.MenuBarButton.FlatAppearance.BorderSize = 0;
-            this.MenuBarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.MenuBarButton.Image = global::MainClient.Properties.Resources.Menu;
-            this.MenuBarButton.Location = new System.Drawing.Point(-1, -1);
-            this.MenuBarButton.Name = "MenuBarButton";
-            this.MenuBarButton.Size = new System.Drawing.Size(40, 40);
-            this.MenuBarButton.TabIndex = 0;
-            this.MenuBarButton.UseVisualStyleBackColor = true;
-            this.MenuBarButton.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // contentPanel
-            // 
-            this.contentPanel.Controls.Add(this.toolStrip1);
-            this.contentPanel.Controls.Add(this.UserMessagesTable);
-            this.contentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.contentPanel.Location = new System.Drawing.Point(180, 40);
-            this.contentPanel.Name = "contentPanel";
-            this.contentPanel.Size = new System.Drawing.Size(805, 479);
-            this.contentPanel.TabIndex = 2;
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 454);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(805, 25);
-            this.toolStrip1.TabIndex = 1;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 22);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
-            // UserMessagesTable
-            // 
-            this.UserMessagesTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.UserMessagesTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.UserMessagesTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.UserMessagesTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.TitleMessage,
-            this.ThemeMessage,
-            this.ContentMessage});
-            this.UserMessagesTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.UserMessagesTable.Location = new System.Drawing.Point(0, 0);
-            this.UserMessagesTable.Name = "UserMessagesTable";
-            this.UserMessagesTable.Size = new System.Drawing.Size(805, 479);
-            this.UserMessagesTable.TabIndex = 0;
-            this.UserMessagesTable.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.UserMessagesTable_CellContentDoubleClick);
-            // 
-            // TitleMessage
-            // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TitleMessage.DefaultCellStyle = dataGridViewCellStyle2;
-            this.TitleMessage.HeaderText = "Титул";
-            this.TitleMessage.Name = "TitleMessage";
-            this.TitleMessage.Width = 180;
-            // 
-            // ThemeMessage
-            // 
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ThemeMessage.DefaultCellStyle = dataGridViewCellStyle3;
-            this.ThemeMessage.HeaderText = "Тема";
-            this.ThemeMessage.Name = "ThemeMessage";
-            this.ThemeMessage.Width = 180;
-            // 
-            // ContentMessage
-            // 
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ContentMessage.DefaultCellStyle = dataGridViewCellStyle4;
-            this.ContentMessage.HeaderText = "Содержимое";
-            this.ContentMessage.Name = "ContentMessage";
-            this.ContentMessage.Width = 400;
             // 
             // MainForm
             // 
