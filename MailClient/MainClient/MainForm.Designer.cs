@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuPanel = new System.Windows.Forms.Panel();
             this.InfoButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -42,7 +42,6 @@
             this.InboxMessages = new System.Windows.Forms.Button();
             this.functionalPanel = new System.Windows.Forms.Panel();
             this.writeMessage = new System.Windows.Forms.Button();
-            this.getMessages = new System.Windows.Forms.Button();
             this.SettingsButton = new System.Windows.Forms.Button();
             this.MenuBarButton = new System.Windows.Forms.Button();
             this.contentPanel = new System.Windows.Forms.Panel();
@@ -112,6 +111,7 @@
             this.DeleteMessage.TabIndex = 4;
             this.DeleteMessage.Text = "        Удалённые";
             this.DeleteMessage.UseVisualStyleBackColor = true;
+            this.DeleteMessage.Click += new System.EventHandler(this.DeleteMessage_Click);
             // 
             // DraftMessages
             // 
@@ -126,6 +126,7 @@
             this.DraftMessages.TabIndex = 3;
             this.DraftMessages.Text = "       Черновик";
             this.DraftMessages.UseVisualStyleBackColor = true;
+            this.DraftMessages.Click += new System.EventHandler(this.DraftMessages_Click);
             // 
             // OutgoingMessages
             // 
@@ -156,13 +157,13 @@
             this.InboxMessages.TabIndex = 1;
             this.InboxMessages.Text = "          Входящие";
             this.InboxMessages.UseVisualStyleBackColor = true;
+            this.InboxMessages.Click += new System.EventHandler(this.InboxMessages_Click);
             // 
             // functionalPanel
             // 
             this.functionalPanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.functionalPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.functionalPanel.Controls.Add(this.writeMessage);
-            this.functionalPanel.Controls.Add(this.getMessages);
             this.functionalPanel.Controls.Add(this.SettingsButton);
             this.functionalPanel.Controls.Add(this.MenuBarButton);
             this.functionalPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -177,25 +178,12 @@
             this.writeMessage.FlatAppearance.BorderSize = 0;
             this.writeMessage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.writeMessage.Image = global::MainClient.Properties.Resources.CreateMessage_32;
-            this.writeMessage.Location = new System.Drawing.Point(683, 0);
+            this.writeMessage.Location = new System.Drawing.Point(723, 0);
             this.writeMessage.Name = "writeMessage";
             this.writeMessage.Size = new System.Drawing.Size(40, 38);
             this.writeMessage.TabIndex = 3;
             this.writeMessage.UseVisualStyleBackColor = true;
             this.writeMessage.Click += new System.EventHandler(this.writeMessage_Click);
-            // 
-            // getMessages
-            // 
-            this.getMessages.Dock = System.Windows.Forms.DockStyle.Right;
-            this.getMessages.FlatAppearance.BorderSize = 0;
-            this.getMessages.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.getMessages.Image = global::MainClient.Properties.Resources.GetMessages;
-            this.getMessages.Location = new System.Drawing.Point(723, 0);
-            this.getMessages.Name = "getMessages";
-            this.getMessages.Size = new System.Drawing.Size(40, 38);
-            this.getMessages.TabIndex = 2;
-            this.getMessages.UseVisualStyleBackColor = true;
-            this.getMessages.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // SettingsButton
             // 
@@ -252,14 +240,14 @@
             // UserMessagesTable
             // 
             this.UserMessagesTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.UserMessagesTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.UserMessagesTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.UserMessagesTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.UserMessagesTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TitleMessage,
@@ -273,24 +261,24 @@
             // 
             // TitleMessage
             // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TitleMessage.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.TitleMessage.DefaultCellStyle = dataGridViewCellStyle6;
             this.TitleMessage.HeaderText = "Титул";
             this.TitleMessage.Name = "TitleMessage";
             this.TitleMessage.Width = 180;
             // 
             // ThemeMessage
             // 
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ThemeMessage.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ThemeMessage.DefaultCellStyle = dataGridViewCellStyle7;
             this.ThemeMessage.HeaderText = "Тема";
             this.ThemeMessage.Name = "ThemeMessage";
             this.ThemeMessage.Width = 180;
             // 
             // ContentMessage
             // 
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ContentMessage.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ContentMessage.DefaultCellStyle = dataGridViewCellStyle8;
             this.ContentMessage.HeaderText = "Содержимое";
             this.ContentMessage.Name = "ContentMessage";
             this.ContentMessage.Width = 400;
@@ -340,7 +328,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn TitleMessage;
         private System.Windows.Forms.DataGridViewTextBoxColumn ThemeMessage;
         private System.Windows.Forms.DataGridViewTextBoxColumn ContentMessage;
-        private System.Windows.Forms.Button getMessages;
         private System.Windows.Forms.Button writeMessage;
     }
 }

@@ -56,10 +56,51 @@ namespace MainClient
 
         private void OutgoingMessages_Click(object sender, EventArgs e)
         {
-            workWithDatabase.GetSendMessage(ID, out messages);
+            toolStripStatusLabel1.Text = "";
+            workWithDatabase.GetMessage(ID, "SND", out messages);
             UserMessagesTable.Rows.Clear();
-            foreach (var arraySendMessages in messages)
-                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+            if (messages.Count > 0)
+                foreach (var arraySendMessages in messages)
+                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+            else
+                toolStripStatusLabel1.Text = "Эта папка пуста.";
+        }
+
+        private void DraftMessages_Click(object sender, EventArgs e)
+        {
+            toolStripStatusLabel1.Text = "";
+            workWithDatabase.GetMessage(ID, "DFT", out messages);
+            UserMessagesTable.Rows.Clear();
+            if (messages.Count > 0)
+                foreach (var arraySendMessages in messages)
+                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+            else
+                toolStripStatusLabel1.Text = "Эта папка пуста.";
+        }
+
+        private void DeleteMessage_Click(object sender, EventArgs e)
+        {
+            toolStripStatusLabel1.Text = "";
+            workWithDatabase.GetMessage(ID, "DEL", out messages);
+            UserMessagesTable.Rows.Clear();
+            if (messages.Count > 0)
+                foreach (var arraySendMessages in messages)
+                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+            else
+                toolStripStatusLabel1.Text = "Эта папка пуста.";
+        }
+
+        private void InboxMessages_Click(object sender, EventArgs e)
+        {
+            toolStripStatusLabel1.Text = "Идёт загрузка...";
+            if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
+            {
+                GetMessageByPOP3();
+            }
+            if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
+            {
+                GetMessagesByIMAP();
+            }
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -70,17 +111,22 @@ namespace MainClient
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DialogResult dialogResult = MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
-            if (dialogResult == DialogResult.OK)
-                Application.Exit();
-            else
-                e.Cancel = true;
+            switch (MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
+            {
+                case DialogResult.OK:
+                    Application.Exit();
+                    break;
+                default:
+                    e.Cancel = true;
+                    break;
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             int index = email.IndexOf("@");
-            this.Text = email.Substring(0, index);
+            Text = email.Substring(0, index);
+            toolStripStatusLabel1.Text = "";
         }
 
         #region Get messages

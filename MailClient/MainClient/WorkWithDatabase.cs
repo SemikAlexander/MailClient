@@ -72,20 +72,20 @@ namespace MainClient
                 }
             }
         }
-        public void AddMessageAsSend(string RecipientAdress, string Subject, string Text, int IDUser)
+        public void AddMessageInDB(string RecipientAdress, string Subject, string Text, string typeMessage, int IDUser)
         {
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
             {
                 using (SQLiteCommand command = new SQLiteCommand(connection))
                 {
                     connection.Open();
-                    command.CommandText = $"INSERT INTO UserMessages (RecipientAdress, SubjectLetter, TextLetter, IDSender, TypeMessage) VALUES ('{RecipientAdress}','{Subject}','{Text}',{IDUser},'SND');";
+                    command.CommandText = $"INSERT INTO UserMessages (RecipientAdress, SubjectLetter, TextLetter, IDSender, TypeMessage) VALUES ('{RecipientAdress}','{Subject}','{Text}',{IDUser},'{typeMessage}');";
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
             }
         }
-        public void GetSendMessage(int IDUser, out List<Message> messages)
+        public void GetMessage(int IDUser, string typeMessage, out List<Message> messages)
         {
             messages = new List<Message>();
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
@@ -93,7 +93,7 @@ namespace MainClient
                 using (SQLiteCommand command = new SQLiteCommand(connection))
                 {
                     connection.Open();
-                    command.CommandText = $"SELECT * FROM UserMessages WHERE IDSender = {IDUser} AND TypeMessage = \"SND\"";
+                    command.CommandText = $"SELECT * FROM UserMessages WHERE IDSender = {IDUser} AND TypeMessage = \"{typeMessage}\"";
                     command.ExecuteNonQuery();
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {

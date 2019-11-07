@@ -34,6 +34,23 @@ namespace MainClient
             }
         }
 
+        private void SendMessage_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(TextLetter.Text.Length!=0 || email_client.Text.Length!=0 || theme.Text.Length != 0)
+            {
+                switch (MessageBox.Show("Сохранить сообщение в черновики?", "Сохранить", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
+                {
+                    case DialogResult.OK:
+                        workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "DFT", ID);
+                        Hide();
+                        break;
+                    default:
+                        Close();
+                        break;
+                }
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             Check check = new Check();
@@ -67,8 +84,8 @@ namespace MainClient
                     client.Authenticate(UserEmail, UserPassword);
                     client.Send(message);
                     client.Disconnect(true);
-                    workWithDatabase.AddMessageAsSend(email_client.Text, theme.Text, TextLetter.Text, ID);
-                    DialogResult dialogResult = MessageBox.Show("Письмо отправленно!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SND", ID);
+                    MessageBox.Show("Письмо отправленно!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     email_client.Text = theme.Text = TextLetter.Text = "";
                 }
             }

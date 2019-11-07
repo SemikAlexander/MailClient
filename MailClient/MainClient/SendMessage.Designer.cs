@@ -40,25 +40,26 @@
             // 
             // TextLetter
             // 
-            this.TextLetter.Location = new System.Drawing.Point(12, 76);
+            this.TextLetter.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.TextLetter.Location = new System.Drawing.Point(12, 68);
             this.TextLetter.Multiline = true;
             this.TextLetter.Name = "TextLetter";
-            this.TextLetter.Size = new System.Drawing.Size(478, 220);
+            this.TextLetter.Size = new System.Drawing.Size(478, 228);
             this.TextLetter.TabIndex = 14;
             // 
             // theme
             // 
-            this.theme.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.theme.Location = new System.Drawing.Point(71, 44);
+            this.theme.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.theme.Location = new System.Drawing.Point(63, 40);
             this.theme.Name = "theme";
-            this.theme.Size = new System.Drawing.Size(419, 26);
+            this.theme.Size = new System.Drawing.Size(425, 22);
             this.theme.TabIndex = 13;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(8, 47);
+            this.label2.Location = new System.Drawing.Point(8, 40);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(51, 20);
             this.label2.TabIndex = 12;
@@ -68,7 +69,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(6, 15);
+            this.label1.Location = new System.Drawing.Point(6, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 20);
             this.label1.TabIndex = 11;
@@ -76,10 +77,10 @@
             // 
             // email_client
             // 
-            this.email_client.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.email_client.Location = new System.Drawing.Point(71, 12);
+            this.email_client.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.email_client.Location = new System.Drawing.Point(65, 12);
             this.email_client.Name = "email_client";
-            this.email_client.Size = new System.Drawing.Size(419, 26);
+            this.email_client.Size = new System.Drawing.Size(425, 22);
             this.email_client.TabIndex = 10;
             // 
             // Send
@@ -119,6 +120,7 @@
             this.Name = "SendMessage";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SendMessage";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SendMessage_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
