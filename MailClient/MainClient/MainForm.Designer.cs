@@ -51,6 +51,7 @@
             this.TitleMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ThemeMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ContentMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IDMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuPanel.SuspendLayout();
             this.functionalPanel.SuspendLayout();
             this.contentPanel.SuspendLayout();
@@ -252,7 +253,8 @@
             this.UserMessagesTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TitleMessage,
             this.ThemeMessage,
-            this.ContentMessage});
+            this.ContentMessage,
+            this.IDMessage});
             this.UserMessagesTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.UserMessagesTable.Location = new System.Drawing.Point(0, 0);
             this.UserMessagesTable.Name = "UserMessagesTable";
@@ -288,6 +290,13 @@
             this.ContentMessage.Name = "ContentMessage";
             this.ContentMessage.ReadOnly = true;
             this.ContentMessage.Width = 400;
+            // 
+            // IDMessage
+            // 
+            this.IDMessage.HeaderText = "ID";
+            this.IDMessage.Name = "IDMessage";
+            this.IDMessage.ReadOnly = true;
+            this.IDMessage.Visible = false;
             // 
             // MainForm
             // 
@@ -331,9 +340,10 @@
         private System.Windows.Forms.DataGridView UserMessagesTable;
         private System.Windows.Forms.ToolStrip toolStrip1;
         public System.Windows.Forms.ToolStripLabel toolStripStatusLabel1;
+        private System.Windows.Forms.Button writeMessage;
         private System.Windows.Forms.DataGridViewTextBoxColumn TitleMessage;
         private System.Windows.Forms.DataGridViewTextBoxColumn ThemeMessage;
         private System.Windows.Forms.DataGridViewTextBoxColumn ContentMessage;
-        private System.Windows.Forms.Button writeMessage;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IDMessage;
     }
 }

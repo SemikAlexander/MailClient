@@ -16,7 +16,7 @@ namespace MainClient
     {
         int Letter = 0, LastIndex = 0, CountBack = 0, IMAPPort = Convert.ToInt32(Settings.Default["POP3Port"]);
         string email, password, IMAPAdress = Settings.Default["IMAPAdress"].ToString();
-        int ID;
+        int ID, button = -1;
         WorkWithDatabase workWithDatabase;
         List<WorkWithDatabase.Message> messages = new List<WorkWithDatabase.Message>();
         public MainForm(string UserEmail, string UserPassword, int IDUser)
@@ -59,6 +59,7 @@ namespace MainClient
         private void OutgoingMessages_Click(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = "";
+            button = -1;
             workWithDatabase.GetMessage(ID, "SND", out messages);
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
@@ -71,6 +72,7 @@ namespace MainClient
         private void DraftMessages_Click(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = "";
+            button = -1;
             workWithDatabase.GetMessage(ID, "DFT", out messages);
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
@@ -83,6 +85,7 @@ namespace MainClient
         private void DeleteMessage_Click(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = "";
+            button = -1;
             workWithDatabase.GetMessage(ID, "DEL", out messages);
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
@@ -95,6 +98,7 @@ namespace MainClient
         private void InboxMessages_Click(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = "Идёт загрузка...";
+            button = 0;
             if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
             {
                 GetMessageByPOP3();
@@ -171,19 +175,27 @@ namespace MainClient
                     switch (MessageBox.Show("Удалить сообщение?", "Удаление", MessageBoxButtons.YesNo, MessageBoxIcon.Information))
                     {
                         case DialogResult.Yes:
-                            workWithDatabase.EditMessageInDB(UserMessagesTable.Rows[currentMouseOverRow].Cells[0].Value.ToString(),
+                            switch (button)
+                            {
+                                case 0:
+
+                                    break;
+                                case -1:
+                                    workWithDatabase.EditMessageInDB(UserMessagesTable.Rows[currentMouseOverRow].Cells[0].Value.ToString(),
                         UserMessagesTable.Rows[currentMouseOverRow].Cells[1].Value.ToString(),
                         UserMessagesTable.Rows[currentMouseOverRow].Cells[2].Value.ToString(),
                         "DEL",
                         ID);
-                            toolStripStatusLabel1.Text = "";
-                            workWithDatabase.GetMessage(ID, "SND", out messages);
-                            UserMessagesTable.Rows.Clear();
-                            if (messages.Count > 0)
-                                foreach (var arraySendMessages in messages)
-                                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                            else
-                                toolStripStatusLabel1.Text = "Эта папка пуста.";
+                                    toolStripStatusLabel1.Text = "";
+                                    workWithDatabase.GetMessage(ID, "SND", out messages);
+                                    UserMessagesTable.Rows.Clear();
+                                    if (messages.Count > 0)
+                                        foreach (var arraySendMessages in messages)
+                                            UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                                    else
+                                        toolStripStatusLabel1.Text = "Эта папка пуста.";
+                                    break;
+                            }
                             break;
                     }
                     
@@ -295,9 +307,9 @@ namespace MainClient
                         {
                             var message = client.GetMessage(i);
                             if (message.Subject != "")
-                                UserMessagesTable.Rows.Add(message.From, message.Subject, message.TextBody);
+                                UserMessagesTable.Rows.Add(message.From, message.Subject, message.TextBody, message.MessageId);
                             else
-                                UserMessagesTable.Rows.Add(message.From, "", message.TextBody);
+                                UserMessagesTable.Rows.Add(message.From, "", message.TextBody, message.MessageId);
                         }
                         Letter = count + Letter;
                     }
@@ -307,9 +319,9 @@ namespace MainClient
                         {
                             var message = client.GetMessage(i);
                             if (message.Subject != "")
-                                UserMessagesTable.Rows.Add(message.From, message.Subject, message.TextBody);
+                                UserMessagesTable.Rows.Add(message.From, message.Subject, message.TextBody, message.MessageId);
                             else
-                                UserMessagesTable.Rows.Add(message.From, "", message.TextBody);
+                                UserMessagesTable.Rows.Add(message.From, "", message.TextBody, message.MessageId);
                         }
                         Letter = client.Count - Letter;
                     }
