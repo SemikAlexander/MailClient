@@ -260,6 +260,7 @@
             this.UserMessagesTable.Size = new System.Drawing.Size(805, 479);
             this.UserMessagesTable.TabIndex = 0;
             this.UserMessagesTable.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.UserMessagesTable_CellContentDoubleClick);
+            this.UserMessagesTable.MouseClick += new System.Windows.Forms.MouseEventHandler(this.UserMessagesTable_MouseClick);
             // 
             // TitleMessage
             // 

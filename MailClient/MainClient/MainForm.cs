@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using MainClient.Properties;
 using System.Collections.Generic;
 using MailKit.Security;
+using System.Drawing;
 
 namespace MainClient
 {
@@ -159,6 +160,37 @@ namespace MainClient
             }
         }
 
+        private void UserMessagesTable_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                int currentMouseOverRow = UserMessagesTable.HitTest(e.X, e.Y).RowIndex;
+
+                if (currentMouseOverRow >= 0)
+                {
+                    switch (MessageBox.Show("Удалить сообщение?", "Удаление", MessageBoxButtons.YesNo, MessageBoxIcon.Information))
+                    {
+                        case DialogResult.Yes:
+                            workWithDatabase.EditMessageInDB(UserMessagesTable.Rows[currentMouseOverRow].Cells[0].Value.ToString(),
+                        UserMessagesTable.Rows[currentMouseOverRow].Cells[1].Value.ToString(),
+                        UserMessagesTable.Rows[currentMouseOverRow].Cells[2].Value.ToString(),
+                        "DEL",
+                        ID);
+                            toolStripStatusLabel1.Text = "";
+                            workWithDatabase.GetMessage(ID, "SND", out messages);
+                            UserMessagesTable.Rows.Clear();
+                            if (messages.Count > 0)
+                                foreach (var arraySendMessages in messages)
+                                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                            else
+                                toolStripStatusLabel1.Text = "Эта папка пуста.";
+                            break;
+                    }
+                    
+                }
+            }
+        }
+
         private void button6_Click(object sender, EventArgs e)
         {
             SettingsForm settings = new SettingsForm("Edit");
@@ -172,7 +204,7 @@ namespace MainClient
                 case DialogResult.OK:
                     Application.Exit();
                     break;
-                default:
+                case DialogResult.Cancel:
                     e.Cancel = true;
                     break;
             }

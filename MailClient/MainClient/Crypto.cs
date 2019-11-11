@@ -11,9 +11,9 @@ namespace MainClient
     {
         public string Hesh(string Input)
         {
-            using (SHA1Managed sha1 = new SHA1Managed())
+            using (SHA256Managed sha2 = new SHA256Managed())
             {
-                var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(Input));
+                var hash = sha2.ComputeHash(Encoding.UTF8.GetBytes(Input));
                 return string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
             }
         }
