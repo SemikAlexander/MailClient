@@ -54,6 +54,7 @@
             this.mailTextBox.Name = "mailTextBox";
             this.mailTextBox.Size = new System.Drawing.Size(307, 23);
             this.mailTextBox.TabIndex = 1;
+            this.mailTextBox.Text = "semikalexander@yandex.ua";
             // 
             // passwordTextBox
             // 
@@ -63,6 +64,7 @@
             this.passwordTextBox.PasswordChar = '*';
             this.passwordTextBox.Size = new System.Drawing.Size(307, 23);
             this.passwordTextBox.TabIndex = 2;
+            this.passwordTextBox.Text = "Alex_Semik_9";
             // 
             // label1
             // 

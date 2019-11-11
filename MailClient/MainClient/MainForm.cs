@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using MainClient.Properties;
 using System.Collections.Generic;
+using MailKit.Security;
 
 namespace MainClient
 {
@@ -125,7 +126,7 @@ namespace MainClient
                         var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                         readMessage.email_client.Text = message.From.ToString();
                         readMessage.theme.Text = message.Subject;
-                        readMessage.TextLetter.Text = (message.TextBody.Trim().Length == 0) ? message.HtmlBody : message.TextBody;
+                        readMessage.TextLetter.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
                         readMessage.MimeMessage = message;
                         client.Disconnect(true);
                         readMessage.ShowDialog();
@@ -144,7 +145,7 @@ namespace MainClient
                         var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                         readMessage.email_client.Text = message.From.ToString();
                         readMessage.theme.Text = message.Subject;
-                        readMessage.TextLetter.Text = (message.TextBody == null || message.TextBody.Trim().Length == 0) ? message.HtmlBody : message.TextBody;
+                        readMessage.TextLetter.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
                         readMessage.MimeMessage = message;
                         toolStripStatusLabel1.Text = "Готово!";
                         client.Disconnect(true);
@@ -192,7 +193,7 @@ namespace MainClient
                 using (var client = new ImapClient())
                 {
                     client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    client.Connect(IMAPAdress, IMAPPort, true);
+                    client.Connect(IMAPAdress, IMAPPort, SecureSocketOptions.SslOnConnect);
                     client.Authenticate(email, password);
                     var inbox = client.Inbox;
                     inbox.Open(FolderAccess.ReadOnly);

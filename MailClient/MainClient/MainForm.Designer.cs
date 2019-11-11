@@ -28,14 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuPanel = new System.Windows.Forms.Panel();
+            this.InfoButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.DeleteMessage = new System.Windows.Forms.Button();
+            this.DraftMessages = new System.Windows.Forms.Button();
+            this.OutgoingMessages = new System.Windows.Forms.Button();
+            this.InboxMessages = new System.Windows.Forms.Button();
             this.functionalPanel = new System.Windows.Forms.Panel();
+            this.writeMessage = new System.Windows.Forms.Button();
+            this.SettingsButton = new System.Windows.Forms.Button();
+            this.MenuBarButton = new System.Windows.Forms.Button();
             this.contentPanel = new System.Windows.Forms.Panel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -43,14 +51,6 @@
             this.TitleMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ThemeMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ContentMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.writeMessage = new System.Windows.Forms.Button();
-            this.SettingsButton = new System.Windows.Forms.Button();
-            this.MenuBarButton = new System.Windows.Forms.Button();
-            this.InfoButton = new System.Windows.Forms.Button();
-            this.DeleteMessage = new System.Windows.Forms.Button();
-            this.DraftMessages = new System.Windows.Forms.Button();
-            this.OutgoingMessages = new System.Windows.Forms.Button();
-            this.InboxMessages = new System.Windows.Forms.Button();
             this.menuPanel.SuspendLayout();
             this.functionalPanel.SuspendLayout();
             this.contentPanel.SuspendLayout();
@@ -60,7 +60,7 @@
             // 
             // menuPanel
             // 
-            this.menuPanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.menuPanel.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.menuPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.menuPanel.Controls.Add(this.InfoButton);
             this.menuPanel.Controls.Add(this.label1);
@@ -74,6 +74,20 @@
             this.menuPanel.Size = new System.Drawing.Size(180, 519);
             this.menuPanel.TabIndex = 0;
             // 
+            // InfoButton
+            // 
+            this.InfoButton.FlatAppearance.BorderSize = 0;
+            this.InfoButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.InfoButton.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.InfoButton.Image = global::MainClient.Properties.Resources.Info;
+            this.InfoButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.InfoButton.Location = new System.Drawing.Point(3, 469);
+            this.InfoButton.Name = "InfoButton";
+            this.InfoButton.Size = new System.Drawing.Size(170, 45);
+            this.InfoButton.TabIndex = 6;
+            this.InfoButton.Text = "       Справка";
+            this.InfoButton.UseVisualStyleBackColor = true;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -84,9 +98,70 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "МЕНЮ";
             // 
+            // DeleteMessage
+            // 
+            this.DeleteMessage.FlatAppearance.BorderSize = 0;
+            this.DeleteMessage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DeleteMessage.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DeleteMessage.Image = global::MainClient.Properties.Resources.DeleteMessage;
+            this.DeleteMessage.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.DeleteMessage.Location = new System.Drawing.Point(-1, 211);
+            this.DeleteMessage.Name = "DeleteMessage";
+            this.DeleteMessage.Size = new System.Drawing.Size(180, 45);
+            this.DeleteMessage.TabIndex = 4;
+            this.DeleteMessage.Text = "        Удалённые";
+            this.DeleteMessage.UseVisualStyleBackColor = true;
+            this.DeleteMessage.Click += new System.EventHandler(this.DeleteMessage_Click);
+            // 
+            // DraftMessages
+            // 
+            this.DraftMessages.FlatAppearance.BorderSize = 0;
+            this.DraftMessages.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DraftMessages.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DraftMessages.Image = global::MainClient.Properties.Resources.DraftMessage;
+            this.DraftMessages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.DraftMessages.Location = new System.Drawing.Point(-1, 160);
+            this.DraftMessages.Name = "DraftMessages";
+            this.DraftMessages.Size = new System.Drawing.Size(180, 45);
+            this.DraftMessages.TabIndex = 3;
+            this.DraftMessages.Text = "       Черновик";
+            this.DraftMessages.UseVisualStyleBackColor = true;
+            this.DraftMessages.Click += new System.EventHandler(this.DraftMessages_Click);
+            // 
+            // OutgoingMessages
+            // 
+            this.OutgoingMessages.FlatAppearance.BorderSize = 0;
+            this.OutgoingMessages.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.OutgoingMessages.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.OutgoingMessages.Image = global::MainClient.Properties.Resources.OutgoingMessage;
+            this.OutgoingMessages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.OutgoingMessages.Location = new System.Drawing.Point(-1, 109);
+            this.OutgoingMessages.Name = "OutgoingMessages";
+            this.OutgoingMessages.Size = new System.Drawing.Size(180, 45);
+            this.OutgoingMessages.TabIndex = 2;
+            this.OutgoingMessages.Text = "Отправленные";
+            this.OutgoingMessages.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.OutgoingMessages.UseVisualStyleBackColor = true;
+            this.OutgoingMessages.Click += new System.EventHandler(this.OutgoingMessages_Click);
+            // 
+            // InboxMessages
+            // 
+            this.InboxMessages.FlatAppearance.BorderSize = 0;
+            this.InboxMessages.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.InboxMessages.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.InboxMessages.Image = ((System.Drawing.Image)(resources.GetObject("InboxMessages.Image")));
+            this.InboxMessages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.InboxMessages.Location = new System.Drawing.Point(-1, 58);
+            this.InboxMessages.Name = "InboxMessages";
+            this.InboxMessages.Size = new System.Drawing.Size(180, 45);
+            this.InboxMessages.TabIndex = 1;
+            this.InboxMessages.Text = "          Входящие";
+            this.InboxMessages.UseVisualStyleBackColor = true;
+            this.InboxMessages.Click += new System.EventHandler(this.InboxMessages_Click);
+            // 
             // functionalPanel
             // 
-            this.functionalPanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.functionalPanel.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.functionalPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.functionalPanel.Controls.Add(this.writeMessage);
             this.functionalPanel.Controls.Add(this.SettingsButton);
@@ -96,6 +171,44 @@
             this.functionalPanel.Name = "functionalPanel";
             this.functionalPanel.Size = new System.Drawing.Size(805, 40);
             this.functionalPanel.TabIndex = 1;
+            // 
+            // writeMessage
+            // 
+            this.writeMessage.Dock = System.Windows.Forms.DockStyle.Right;
+            this.writeMessage.FlatAppearance.BorderSize = 0;
+            this.writeMessage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.writeMessage.Image = global::MainClient.Properties.Resources.CreateMessage_32;
+            this.writeMessage.Location = new System.Drawing.Point(723, 0);
+            this.writeMessage.Name = "writeMessage";
+            this.writeMessage.Size = new System.Drawing.Size(40, 38);
+            this.writeMessage.TabIndex = 3;
+            this.writeMessage.UseVisualStyleBackColor = true;
+            this.writeMessage.Click += new System.EventHandler(this.writeMessage_Click);
+            // 
+            // SettingsButton
+            // 
+            this.SettingsButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.SettingsButton.FlatAppearance.BorderSize = 0;
+            this.SettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SettingsButton.Image = global::MainClient.Properties.Resources.Settings;
+            this.SettingsButton.Location = new System.Drawing.Point(763, 0);
+            this.SettingsButton.Name = "SettingsButton";
+            this.SettingsButton.Size = new System.Drawing.Size(40, 38);
+            this.SettingsButton.TabIndex = 1;
+            this.SettingsButton.UseVisualStyleBackColor = true;
+            this.SettingsButton.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // MenuBarButton
+            // 
+            this.MenuBarButton.FlatAppearance.BorderSize = 0;
+            this.MenuBarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.MenuBarButton.Image = global::MainClient.Properties.Resources.Menu;
+            this.MenuBarButton.Location = new System.Drawing.Point(-1, -1);
+            this.MenuBarButton.Name = "MenuBarButton";
+            this.MenuBarButton.Size = new System.Drawing.Size(40, 40);
+            this.MenuBarButton.TabIndex = 0;
+            this.MenuBarButton.UseVisualStyleBackColor = true;
+            this.MenuBarButton.Click += new System.EventHandler(this.button1_Click);
             // 
             // contentPanel
             // 
@@ -174,119 +287,6 @@
             this.ContentMessage.Name = "ContentMessage";
             this.ContentMessage.ReadOnly = true;
             this.ContentMessage.Width = 400;
-            // 
-            // writeMessage
-            // 
-            this.writeMessage.Dock = System.Windows.Forms.DockStyle.Right;
-            this.writeMessage.FlatAppearance.BorderSize = 0;
-            this.writeMessage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.writeMessage.Image = global::MainClient.Properties.Resources.CreateMessage_32;
-            this.writeMessage.Location = new System.Drawing.Point(723, 0);
-            this.writeMessage.Name = "writeMessage";
-            this.writeMessage.Size = new System.Drawing.Size(40, 38);
-            this.writeMessage.TabIndex = 3;
-            this.writeMessage.UseVisualStyleBackColor = true;
-            this.writeMessage.Click += new System.EventHandler(this.writeMessage_Click);
-            // 
-            // SettingsButton
-            // 
-            this.SettingsButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.SettingsButton.FlatAppearance.BorderSize = 0;
-            this.SettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SettingsButton.Image = global::MainClient.Properties.Resources.Settings;
-            this.SettingsButton.Location = new System.Drawing.Point(763, 0);
-            this.SettingsButton.Name = "SettingsButton";
-            this.SettingsButton.Size = new System.Drawing.Size(40, 38);
-            this.SettingsButton.TabIndex = 1;
-            this.SettingsButton.UseVisualStyleBackColor = true;
-            this.SettingsButton.Click += new System.EventHandler(this.button6_Click);
-            // 
-            // MenuBarButton
-            // 
-            this.MenuBarButton.FlatAppearance.BorderSize = 0;
-            this.MenuBarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.MenuBarButton.Image = global::MainClient.Properties.Resources.Menu;
-            this.MenuBarButton.Location = new System.Drawing.Point(-1, -1);
-            this.MenuBarButton.Name = "MenuBarButton";
-            this.MenuBarButton.Size = new System.Drawing.Size(40, 40);
-            this.MenuBarButton.TabIndex = 0;
-            this.MenuBarButton.UseVisualStyleBackColor = true;
-            this.MenuBarButton.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // InfoButton
-            // 
-            this.InfoButton.FlatAppearance.BorderSize = 0;
-            this.InfoButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.InfoButton.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.InfoButton.Image = global::MainClient.Properties.Resources.Info;
-            this.InfoButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.InfoButton.Location = new System.Drawing.Point(3, 469);
-            this.InfoButton.Name = "InfoButton";
-            this.InfoButton.Size = new System.Drawing.Size(170, 45);
-            this.InfoButton.TabIndex = 6;
-            this.InfoButton.Text = "       Справка";
-            this.InfoButton.UseVisualStyleBackColor = true;
-            // 
-            // DeleteMessage
-            // 
-            this.DeleteMessage.FlatAppearance.BorderSize = 0;
-            this.DeleteMessage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.DeleteMessage.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DeleteMessage.Image = global::MainClient.Properties.Resources.DeleteMessage;
-            this.DeleteMessage.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.DeleteMessage.Location = new System.Drawing.Point(3, 211);
-            this.DeleteMessage.Name = "DeleteMessage";
-            this.DeleteMessage.Size = new System.Drawing.Size(170, 45);
-            this.DeleteMessage.TabIndex = 4;
-            this.DeleteMessage.Text = "        Удалённые";
-            this.DeleteMessage.UseVisualStyleBackColor = true;
-            this.DeleteMessage.Click += new System.EventHandler(this.DeleteMessage_Click);
-            // 
-            // DraftMessages
-            // 
-            this.DraftMessages.FlatAppearance.BorderSize = 0;
-            this.DraftMessages.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.DraftMessages.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DraftMessages.Image = global::MainClient.Properties.Resources.DraftMessage;
-            this.DraftMessages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.DraftMessages.Location = new System.Drawing.Point(3, 160);
-            this.DraftMessages.Name = "DraftMessages";
-            this.DraftMessages.Size = new System.Drawing.Size(170, 45);
-            this.DraftMessages.TabIndex = 3;
-            this.DraftMessages.Text = "       Черновик";
-            this.DraftMessages.UseVisualStyleBackColor = true;
-            this.DraftMessages.Click += new System.EventHandler(this.DraftMessages_Click);
-            // 
-            // OutgoingMessages
-            // 
-            this.OutgoingMessages.FlatAppearance.BorderSize = 0;
-            this.OutgoingMessages.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.OutgoingMessages.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.OutgoingMessages.Image = global::MainClient.Properties.Resources.OutgoingMessage;
-            this.OutgoingMessages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.OutgoingMessages.Location = new System.Drawing.Point(3, 109);
-            this.OutgoingMessages.Name = "OutgoingMessages";
-            this.OutgoingMessages.Size = new System.Drawing.Size(170, 45);
-            this.OutgoingMessages.TabIndex = 2;
-            this.OutgoingMessages.Text = "Отправленные";
-            this.OutgoingMessages.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.OutgoingMessages.UseVisualStyleBackColor = true;
-            this.OutgoingMessages.Click += new System.EventHandler(this.OutgoingMessages_Click);
-            // 
-            // InboxMessages
-            // 
-            this.InboxMessages.FlatAppearance.BorderSize = 0;
-            this.InboxMessages.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.InboxMessages.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.InboxMessages.Image = ((System.Drawing.Image)(resources.GetObject("InboxMessages.Image")));
-            this.InboxMessages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.InboxMessages.Location = new System.Drawing.Point(3, 58);
-            this.InboxMessages.Name = "InboxMessages";
-            this.InboxMessages.Size = new System.Drawing.Size(170, 45);
-            this.InboxMessages.TabIndex = 1;
-            this.InboxMessages.Text = "          Входящие";
-            this.InboxMessages.UseVisualStyleBackColor = true;
-            this.InboxMessages.Click += new System.EventHandler(this.InboxMessages_Click);
             // 
             // MainForm
             // 

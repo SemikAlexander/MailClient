@@ -1,0 +1,8 @@
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClientTest\MailClientTest\bin\Debug\MailClientTest.exe.config
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClientTest\MailClientTest\bin\Debug\MailClientTest.exe
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClientTest\MailClientTest\bin\Debug\MailClientTest.pdb
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClientTest\MailClientTest\bin\Debug\Mail.xml
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClientTest\MailClientTest\obj\Debug\MailClientTest.csprojAssemblyReference.cache
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClientTest\MailClientTest\obj\Debug\MailClientTest.csproj.CopyComplete
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClientTest\MailClientTest\obj\Debug\MailClientTest.exe
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClientTest\MailClientTest\obj\Debug\MailClientTest.pdb
