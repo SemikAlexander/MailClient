@@ -117,17 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="InboxMessages.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAQxJREFUSEvt
-        1MFKAlEUxvFJkJZhT+ETSEhBuFLEV/AVojauVYSifABfJnDnK7hSKiKCWkcL9f/BPZfBueNlYBZBfvCD
-        M/ecuXdwBpN/mSpGWGObY4UhNFs4E4Q2DRnDp4s3hAbFYjPXaLm6ictA/QofXWgxj+Udum7gwtXa8CpQ
-        a9ZHCxLLI2w25gE+thh7MaeY4hPpzdLUe4Jmfay5hH7b0pN+gg1mqKG02OYD/Lj6A32cIJQe7Kv6xb2r
-        JZN0o445bO0ZHZw7qrVmfc3qHsXWMtlv6Kn19Ide5jduUIHFepnkNc5whwW+HNW3UG8/hQ8omuMB0eTu
-        E/uzK+IFmejbLuMQbd7GMX8iSbIDxfGzLubUm+AAAAAASUVORK5CYII=
-</value>
-  </data>
+  <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -143,6 +135,20 @@
   <metadata name="IDMessage.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>122, 17</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="InboxMessages.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAQxJREFUSEvt
+        1MFKAlEUxvFJkJZhT+ETSEhBuFLEV/AVojauVYSifABfJnDnK7hSKiKCWkcL9f/BPZfBueNlYBZBfvCD
+        M/ecuXdwBpN/mSpGWGObY4UhNFs4E4Q2DRnDp4s3hAbFYjPXaLm6ictA/QofXWgxj+Udum7gwtXa8CpQ
+        a9ZHCxLLI2w25gE+thh7MaeY4hPpzdLUe4Jmfay5hH7b0pN+gg1mqKG02OYD/Lj6A32cIJQe7Kv6xb2r
+        JZN0o445bO0ZHZw7qrVmfc3qHsXWMtlv6Kn19Ide5jduUIHFepnkNc5whwW+HNW3UG8/hQ8omuMB0eTu
+        E/uzK+IFmejbLuMQbd7GMX8iSbIDxfGzLubUm+AAAAAASUVORK5CYII=
+</value>
+  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>54</value>
   </metadata>

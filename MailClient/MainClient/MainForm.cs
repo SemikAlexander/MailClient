@@ -15,8 +15,8 @@ namespace MainClient
     public partial class MainForm : Form
     {
         int Letter = 0, LastIndex = 0, CountBack = 0, IMAPPort = Convert.ToInt32(Settings.Default["POP3Port"]);
-        string email, password, IMAPAdress = Settings.Default["IMAPAdress"].ToString();
-        int ID, button = -1;
+        string email, password, IMAPAdress = Settings.Default["IMAPAdress"].ToString(), button = "";
+        int ID;
         WorkWithDatabase workWithDatabase;
         List<WorkWithDatabase.Message> messages = new List<WorkWithDatabase.Message>();
         public MainForm(string UserEmail, string UserPassword, int IDUser)
@@ -30,6 +30,7 @@ namespace MainClient
 
         private void button1_Click(object sender, EventArgs e)
         {
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             if (menuPanel.Width == 180)
                 menuPanel.Width = 45;
             else
@@ -50,6 +51,7 @@ namespace MainClient
 
         private void writeMessage_Click(object sender, EventArgs e)
         {
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             SendMessage sendMessage = new SendMessage(email, password, ID, this, false);
             sendMessage.Show();
             
@@ -58,7 +60,8 @@ namespace MainClient
         private void OutgoingMessages_Click(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = "";
-            button = -1;
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+            button = OutgoingMessages.Text.Trim(' ');
             workWithDatabase.GetMessage(ID, "SND", out messages);
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
@@ -71,7 +74,8 @@ namespace MainClient
         private void DraftMessages_Click(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = "";
-            button = -1;
+            button = DraftMessages.Text.Trim(' ');
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             workWithDatabase.GetMessage(ID, "DFT", out messages);
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
@@ -84,7 +88,8 @@ namespace MainClient
         private void DeleteMessage_Click(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = "";
-            button = -1;
+            button = DeleteMessage.Text.Trim(' ');
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             workWithDatabase.GetMessage(ID, "DEL", out messages);
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
@@ -97,7 +102,8 @@ namespace MainClient
         private void InboxMessages_Click(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = "Идёт загрузка...";
-            button = 0;
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+            button = InboxMessages.Text.Trim(' ');
             if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
             {
                 GetMessageByPOP3();
@@ -163,47 +169,86 @@ namespace MainClient
             }
         }
 
+        private void InfoButton_Click(object sender, EventArgs e)
+        {
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+        }
+
+        private void DeleteMessageButton_Click(object sender, EventArgs e)
+        {
+            switch (button)
+            {
+                case "Входящие":
+                    
+                    break;
+                case "Отправленные":
+                    workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
+                        "DEL",
+                        ID);
+                    workWithDatabase.GetMessage(ID, "SND", out messages);
+                    break;
+                case "Черновик":
+                    workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
+                        "DEL",
+                        ID);
+                    workWithDatabase.GetMessage(ID, "DFT", out messages);
+                    break;
+                case "Удалённые":
+                    workWithDatabase.DeleteMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
+                        ID);
+                    workWithDatabase.GetMessage(ID, "DEL", out messages);
+                    break;
+            }
+        }
+
+        private void EditMessageButton_Click(object sender, EventArgs e)
+        {
+            if (button != "Входящие")
+            {
+                SendMessage sendMessage = new SendMessage(email, password, ID, this, true);
+                sendMessage.email_client.Text = UserMessagesTable.CurrentRow.Cells[0].Value.ToString();
+                sendMessage.theme.Text = UserMessagesTable.CurrentRow.Cells[1].Value.ToString();
+                sendMessage.TextLetter.Text = UserMessagesTable.CurrentRow.Cells[2].Value.ToString();
+                sendMessage.ShowDialog();
+            }
+        }
+
         private void UserMessagesTable_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Left)
             {
                 int currentMouseOverRow = UserMessagesTable.HitTest(e.X, e.Y).RowIndex;
 
                 if (currentMouseOverRow >= 0)
                 {
-                    switch (MessageBox.Show("Удалить сообщение?", "Удаление", MessageBoxButtons.YesNo, MessageBoxIcon.Information))
+                    switch (button)
                     {
-                        case DialogResult.Yes:
-                            switch (button)
-                            {
-                                case 0:
-
-                                    break;
-                                case -1:
-                                    workWithDatabase.EditMessageInDB(UserMessagesTable.Rows[currentMouseOverRow].Cells[0].Value.ToString(),
-                        UserMessagesTable.Rows[currentMouseOverRow].Cells[1].Value.ToString(),
-                        UserMessagesTable.Rows[currentMouseOverRow].Cells[2].Value.ToString(),
-                        "DEL",
-                        ID);
-                                    toolStripStatusLabel1.Text = "";
-                                    workWithDatabase.GetMessage(ID, "SND", out messages);
-                                    UserMessagesTable.Rows.Clear();
-                                    if (messages.Count > 0)
-                                        foreach (var arraySendMessages in messages)
-                                            UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                                    else
-                                        toolStripStatusLabel1.Text = "Эта папка пуста.";
-                                    break;
-                            }
+                        case "Входящие":
+                            DeleteMessageButton.Visible = true;
+                            break;
+                        case "Отправленные":
+                            DeleteMessageButton.Visible = true;
+                            break;
+                        case "Черновик":
+                            DeleteMessageButton.Visible = EditMessageButton.Visible = true;
+                            break;
+                        case "Удалённые":
+                            DeleteMessageButton.Visible = EditMessageButton.Visible = true;
                             break;
                     }
-                    
                 }
             }
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             SettingsForm settings = new SettingsForm("Edit");
             settings.Show();
         }

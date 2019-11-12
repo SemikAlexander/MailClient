@@ -181,6 +181,12 @@
   <ItemGroup>
     <None Include="bin\Images\SendMessage.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\DeleteCurrentMessage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\CreateNewMessage 32.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

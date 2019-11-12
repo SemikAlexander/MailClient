@@ -98,6 +98,19 @@ namespace MainClient
                 }
             }
         }
+        public void DeleteMessageInDB(string RecipientAdress, string Subject, string Text, int IDUser)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"DELETE FROM UserMessages WHERE RecipientAdress = '{RecipientAdress}' AND SubjectLetter='{Subject}' AND TextLetter='{Text}' AND IDSender = {IDUser} AND TypeMessage = 'DEL';";
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
         public void GetMessage(int IDUser, string typeMessage, out List<Message> messages)
         {
             messages = new List<Message>();

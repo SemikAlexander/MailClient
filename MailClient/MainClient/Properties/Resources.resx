@@ -121,14 +121,20 @@
   <data name="CreateMessage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Images\CreateMessage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CreateMessage_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\bin\Images\CreateMessage 32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="CreateNewMessage_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\bin\Images\CreateNewMessage 32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeleteCurrentMessage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\bin\Images\DeleteCurrentMessage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DeleteMessage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Images\DeleteMessage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DraftMessage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Images\DraftMessage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditMessage_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\bin\Images\CreateMessage 32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GetMessages" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Images\GetMessages.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
