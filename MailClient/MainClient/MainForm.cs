@@ -14,8 +14,8 @@ namespace MainClient
 {
     public partial class MainForm : Form
     {
-        int Letter = 0, LastIndex = 0, CountBack = 0, IMAPPort = Convert.ToInt32(Settings.Default["POP3Port"]);
-        string email, password, IMAPAdress = Settings.Default["IMAPAdress"].ToString(), button = "";
+        int Letter = 0, LastIndex = 0, CountBack = 0;
+        string email, password, button = "";
         int ID;
         WorkWithDatabase workWithDatabase;
         List<WorkWithDatabase.Message> messages = new List<WorkWithDatabase.Message>();
@@ -188,6 +188,12 @@ namespace MainClient
                         "DEL",
                         ID);
                     workWithDatabase.GetMessage(ID, "SND", out messages);
+                    UserMessagesTable.Rows.Clear();
+                    if (messages.Count > 0)
+                        foreach (var arraySendMessages in messages)
+                            UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                    else
+                        toolStripStatusLabel1.Text = "Эта папка пуста.";
                     break;
                 case "Черновик":
                     workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
@@ -196,6 +202,12 @@ namespace MainClient
                         "DEL",
                         ID);
                     workWithDatabase.GetMessage(ID, "DFT", out messages);
+                    UserMessagesTable.Rows.Clear();
+                    if (messages.Count > 0)
+                        foreach (var arraySendMessages in messages)
+                            UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                    else
+                        toolStripStatusLabel1.Text = "Эта папка пуста.";
                     break;
                 case "Удалённые":
                     workWithDatabase.DeleteMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
@@ -203,6 +215,12 @@ namespace MainClient
                         UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
                         ID);
                     workWithDatabase.GetMessage(ID, "DEL", out messages);
+                    UserMessagesTable.Rows.Clear();
+                    if (messages.Count > 0)
+                        foreach (var arraySendMessages in messages)
+                            UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                    else
+                        toolStripStatusLabel1.Text = "Эта папка пуста.";
                     break;
             }
         }
@@ -253,6 +271,22 @@ namespace MainClient
             settings.Show();
         }
 
+        private void RestoreMessageButton_Click(object sender, EventArgs e)
+        {
+            workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
+                        "DFT",
+                        ID);
+            workWithDatabase.GetMessage(ID, "DFT", out messages);
+            UserMessagesTable.Rows.Clear();
+            if (messages.Count > 0)
+                foreach (var arraySendMessages in messages)
+                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+            else
+                toolStripStatusLabel1.Text = "Эта папка пуста.";
+        }
+
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             switch (MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
@@ -281,7 +315,7 @@ namespace MainClient
                 using (var client = new ImapClient())
                 {
                     client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    client.Connect(IMAPAdress, IMAPPort, SecureSocketOptions.SslOnConnect);
+                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
                     client.Authenticate(email, password);
                     var inbox = client.Inbox;
                     inbox.Open(FolderAccess.ReadOnly);

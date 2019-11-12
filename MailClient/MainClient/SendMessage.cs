@@ -48,7 +48,8 @@ namespace MainClient
                             workWithDatabase.EditMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "DFT", ID);
                         Hide();
                         break;
-                    default:
+                    case DialogResult.Cancel:
+                        email_client.Text = theme.Text = TextLetter.Text = "";
                         Close();
                         break;
                 }

@@ -44,7 +44,7 @@
             this.TextLetter.Location = new System.Drawing.Point(12, 68);
             this.TextLetter.Multiline = true;
             this.TextLetter.Name = "TextLetter";
-            this.TextLetter.Size = new System.Drawing.Size(478, 228);
+            this.TextLetter.Size = new System.Drawing.Size(539, 228);
             this.TextLetter.TabIndex = 14;
             // 
             // theme
@@ -52,7 +52,7 @@
             this.theme.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.theme.Location = new System.Drawing.Point(63, 40);
             this.theme.Name = "theme";
-            this.theme.Size = new System.Drawing.Size(425, 22);
+            this.theme.Size = new System.Drawing.Size(488, 22);
             this.theme.TabIndex = 13;
             // 
             // label2
@@ -80,16 +80,16 @@
             this.email_client.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.email_client.Location = new System.Drawing.Point(65, 12);
             this.email_client.Name = "email_client";
-            this.email_client.Size = new System.Drawing.Size(425, 22);
+            this.email_client.Size = new System.Drawing.Size(486, 22);
             this.email_client.TabIndex = 10;
             // 
             // Send
             // 
             this.Send.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Send.Image = global::MainClient.Properties.Resources.SendMessage;
-            this.Send.Location = new System.Drawing.Point(443, 302);
+            this.Send.Location = new System.Drawing.Point(504, 302);
             this.Send.Name = "Send";
-            this.Send.Size = new System.Drawing.Size(47, 41);
+            this.Send.Size = new System.Drawing.Size(47, 43);
             this.Send.TabIndex = 16;
             this.Send.UseVisualStyleBackColor = true;
             this.Send.Click += new System.EventHandler(this.button2_Click);
@@ -100,7 +100,7 @@
             this.FileAttachment.Image = ((System.Drawing.Image)(resources.GetObject("FileAttachment.Image")));
             this.FileAttachment.Location = new System.Drawing.Point(12, 302);
             this.FileAttachment.Name = "FileAttachment";
-            this.FileAttachment.Size = new System.Drawing.Size(47, 41);
+            this.FileAttachment.Size = new System.Drawing.Size(47, 43);
             this.FileAttachment.TabIndex = 15;
             this.FileAttachment.UseVisualStyleBackColor = true;
             this.FileAttachment.Click += new System.EventHandler(this.button1_Click);
@@ -110,7 +110,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(502, 352);
+            this.ClientSize = new System.Drawing.Size(563, 357);
             this.Controls.Add(this.Send);
             this.Controls.Add(this.FileAttachment);
             this.Controls.Add(this.TextLetter);
