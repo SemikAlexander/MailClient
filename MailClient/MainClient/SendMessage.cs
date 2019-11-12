@@ -14,13 +14,15 @@ namespace MainClient
         string UserEmail, UserPassword;
         int ID;
         WorkWithDatabase workWithDatabase;
-        public SendMessage(string email, string password, int IDUser, MainForm mainForm1)
+        bool MessageFromDraft;
+        public SendMessage(string email, string password, int IDUser, MainForm mainForm1, bool IsMessageFromDraft)
         {
             InitializeComponent();
             mainForm = mainForm1;
             UserEmail = email;
             UserPassword = password;
             ID = IDUser;
+            MessageFromDraft = IsMessageFromDraft;
             workWithDatabase = new WorkWithDatabase();
         }
 
@@ -35,7 +37,7 @@ namespace MainClient
 
         private void SendMessage_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(TextLetter.Text.Length!=0 || email_client.Text.Length!=0 || theme.Text.Length != 0)
+            if (TextLetter.Text.Length != 0 || email_client.Text.Length != 0 || theme.Text.Length != 0)
             {
                 switch (MessageBox.Show("Сохранить сообщение в черновики?", "Сохранить", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
                 {
@@ -58,10 +60,23 @@ namespace MainClient
                 MessageBox.Show("Email неверный!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (TextLetter.Text.Trim().Length == 0)
+            if (string.IsNullOrWhiteSpace(TextLetter.Text))
             {
                 MessageBox.Show("Cодержимое письма пусто!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
+            }
+            if (!check.IsInternetConnected())
+            {
+                switch (MessageBox.Show("Подключение с интернет отсутствует! Сохранить сообщение в черновики?", "Сохранить", MessageBoxButtons.OK, MessageBoxIcon.Warning))
+                {
+                    case DialogResult.OK:
+                        workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "DFT", ID);
+                        email_client.Text = theme.Text = TextLetter.Text = "";
+                        return;
+                    default:
+                        Close();
+                        break;
+                }
             }
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(UserEmail));
@@ -83,7 +98,10 @@ namespace MainClient
                     client.Authenticate(UserEmail, UserPassword);
                     client.Send(message);
                     client.Disconnect(true);
-                    workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SND", ID);
+                    if (!MessageFromDraft)
+                        workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SND", ID);
+                    else
+                        workWithDatabase.EditMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SND", ID);
                     MessageBox.Show("Письмо отправленно!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     email_client.Text = theme.Text = TextLetter.Text = "";
                 }

@@ -50,9 +50,8 @@ namespace MainClient
 
         private void writeMessage_Click(object sender, EventArgs e)
         {
-            SendMessage sendMessage = new SendMessage(email, password, ID, this);
+            SendMessage sendMessage = new SendMessage(email, password, ID, this, false);
             sendMessage.Show();
-            this.WindowState = FormWindowState.Minimized;
             
         }
 

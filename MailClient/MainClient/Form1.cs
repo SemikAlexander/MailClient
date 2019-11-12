@@ -37,22 +37,39 @@ namespace MainClient
                     {
                         using (var client = new SmtpClient())
                         {
-                            client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                            client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true); //https://www.google.com/settings/security/lesssecureapps
-                            client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
-                            client.Disconnect(true);
-                            if (workWithDatabase.GetUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), out IDUser))
+                            if (Text == "Авторизация")
                             {
-                                MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
-                                mainForm.Show();
-                                this.Hide();
+                                client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                                client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true); //https://www.google.com/settings/security/lesssecureapps
+                                client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
+                                client.Disconnect(true);
+                                if (workWithDatabase.GetUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), out IDUser))
+                                {
+                                    MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
+                                    mainForm.Show();
+                                    this.Hide();
+                                }
+                                else
+                                {
+                                    workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), out IDUser);
+                                    MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
+                                    mainForm.Show();
+                                    this.Hide();
+                                }
                             }
                             else
                             {
-                                workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), out IDUser);
-                                MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
-                                mainForm.Show();
-                                this.Hide();
+                                if (workWithDatabase.GetUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), out IDUser))
+                                {
+                                    MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
+                                    mainForm.Show();
+                                    this.Hide();
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Вы не были авторизированны в программе. Подключитесь к интернету и повторите попытку!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    return;
+                                }
                             }
                         }
                     }
@@ -72,9 +89,9 @@ namespace MainClient
         private void Authorization_Load(object sender, EventArgs e)
         {
             if (check.IsInternetConnected())
-                this.Text = "Авторизация";
+                Text = "Авторизация";
             else
-                this.Text = "Авторизация (offline mode)";
+                Text = "Авторизация (offline mode)";
         }
 
         public void GetConfigurationForConnection(string userMail)  /*get ports and adress for connection*/
