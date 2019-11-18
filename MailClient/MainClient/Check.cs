@@ -35,5 +35,18 @@ namespace MainClient
                 return false;
             }
         }
+
+        public bool IsMailServerKnown(string NameServer)
+        {
+            int index = -1;
+            List<string> MailServers;
+            WorkWithDatabase workWithDatabase = new WorkWithDatabase();
+            workWithDatabase.GetMailServers(out MailServers);
+            index = MailServers.IndexOf(NameServer);
+            if (index == -1)
+                return false;
+            else
+                return true;
+        }
     }
 }

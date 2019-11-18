@@ -25,10 +25,23 @@ namespace MainClient
             WorkWithDatabase workWithDatabase = new WorkWithDatabase();
             if(!string.IsNullOrWhiteSpace(mailTextBox.Text) & !string.IsNullOrWhiteSpace(passwordTextBox.Text))
             {
+                string[] name = mailTextBox.Text.Split('@');
+                string nameServer = name[1];
+                nameServer = nameServer.Substring(0, nameServer.IndexOf('.'));
                 if (!check.IsValidEmail(mailTextBox.Text))
                 {
                     MessageBox.Show("Email неверный!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
+                }
+                else if (!check.IsMailServerKnown(nameServer))
+                {
+                    switch (MessageBox.Show("Данный почтового сервис неизвестен. Хотите добавить настройки для него?", "Неизвестный сревис", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
+                    {
+                        case DialogResult.OK:
+                            SettingsForm settingsForm = new SettingsForm("Add");
+                            settingsForm.Show();
+                            break;
+                    }
                 }
                 else
                 {

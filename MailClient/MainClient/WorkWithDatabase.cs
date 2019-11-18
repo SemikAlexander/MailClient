@@ -135,5 +135,50 @@ namespace MainClient
                 }
             }
         }
+        public void GetMailServers(out List<string> NameServers)
+        {
+            NameServers = new List<string>();
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT NameServer FROM MailServers";
+                    command.ExecuteNonQuery();
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            NameServers.Add(Convert.ToString(reader["NameServer"]));
+                        }
+                        connection.Close();
+                    }
+                }
+            }
+        }
+        public void AddMailServer(string imapAdress, string pop3Adress, string smtpAdress, int imapPort, int pop3Port, int smtpPort)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    int NumMailServers = 0;
+                    connection.Open();
+                    command.CommandText = $"SELECT COUNT(NameServer) AS res FROM MailServers";
+                    command.ExecuteNonQuery();
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            NumMailServers = Convert.ToInt32(reader["res"]);
+                        }
+                    }
+                    command.CommandText = $"INSERT INTO MailServers (ID, IMAPAdress, POP3Adress, SMTPAdress, IMAPPort, POP3Port, SMTPPort) " +
+                        $"VALUES ('{NumMailServers}','{imapAdress}','{pop3Adress}','{smtpAdress}','{imapPort}','{pop3Port}','{smtpPort}');";
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
     }
 }

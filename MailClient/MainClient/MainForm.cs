@@ -258,7 +258,7 @@ namespace MainClient
             }
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void SettingsButton_Click(object sender, EventArgs e)
         {
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             SettingsForm settings = new SettingsForm("Edit");
@@ -293,6 +293,7 @@ namespace MainClient
                     break;
             }
         }
+
         #region Thread
         private void backgroundWorker1_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
@@ -360,6 +361,7 @@ namespace MainClient
                 toolStripStatusLabel1.Text = ex.Message;
             }
         }
+
         public void GetMessageByPOP3(int count = 20)
         {
             try
@@ -416,6 +418,7 @@ namespace MainClient
             }
         }
         #endregion
+
         public bool IsMessageRead(string IDMessage)
         {
             foreach(var id in uniqueIds)

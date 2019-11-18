@@ -110,6 +110,10 @@ namespace MainClient
                     }
                 }
             }
+            if (typeSettingForm == "Add")
+            {
+
+            }
             Settings.Default["IMAPAdress"] = imapAdress.Text;
             Settings.Default["POP3Adress"] = pop3Adress.Text;
             Settings.Default["SMTPAdress"] = smtpAdress.Text;

@@ -249,7 +249,7 @@
             this.SettingsButton.Size = new System.Drawing.Size(40, 38);
             this.SettingsButton.TabIndex = 1;
             this.SettingsButton.UseVisualStyleBackColor = true;
-            this.SettingsButton.Click += new System.EventHandler(this.button6_Click);
+            this.SettingsButton.Click += new System.EventHandler(this.SettingsButton_Click);
             // 
             // MenuBarButton
             // 
