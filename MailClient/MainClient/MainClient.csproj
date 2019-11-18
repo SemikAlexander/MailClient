@@ -187,6 +187,18 @@
   <ItemGroup>
     <None Include="bin\Images\CreateNewMessage 32.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\RestoreMessage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\AlginTextCenter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\AlginTextLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\AlginTextRight.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

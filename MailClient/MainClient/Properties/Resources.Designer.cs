@@ -63,6 +63,36 @@ namespace MainClient.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AlginTextCenter {
+            get {
+                object obj = ResourceManager.GetObject("AlginTextCenter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlginTextLeft {
+            get {
+                object obj = ResourceManager.GetObject("AlginTextLeft", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlginTextRight {
+            get {
+                object obj = ResourceManager.GetObject("AlginTextRight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateMessage {
             get {
                 object obj = ResourceManager.GetObject("CreateMessage", resourceCulture);
@@ -166,6 +196,16 @@ namespace MainClient.Properties {
         internal static System.Drawing.Bitmap OutgoingMessage {
             get {
                 object obj = ResourceManager.GetObject("OutgoingMessage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RestoreMessage {
+            get {
+                object obj = ResourceManager.GetObject("RestoreMessage", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

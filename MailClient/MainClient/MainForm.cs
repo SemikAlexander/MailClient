@@ -3,12 +3,11 @@ using MailKit;
 using MimeKit;
 using MailKit.Net.Imap;
 using MailKit.Net.Pop3;
-using System.Threading;
 using System.Windows.Forms;
 using MainClient.Properties;
 using System.Collections.Generic;
+using System.ComponentModel;
 using MailKit.Security;
-using System.Drawing;
 
 namespace MainClient
 {
@@ -17,8 +16,16 @@ namespace MainClient
         int Letter = 0, LastIndex = 0, CountBack = 0;
         string email, password, button = "";
         int ID;
+
+        struct InboxForThread
+        {
+            public string RecipientAdress, Subject, Text, UnicID;
+        }
         WorkWithDatabase workWithDatabase;
         List<WorkWithDatabase.Message> messages = new List<WorkWithDatabase.Message>();
+        InboxForThread structInboxMessage;
+        List<InboxForThread> inboxes = new List<InboxForThread>();
+        List<string> uniqueIds = new List<string>();
         public MainForm(string UserEmail, string UserPassword, int IDUser)
         {
             InitializeComponent();
@@ -26,6 +33,8 @@ namespace MainClient
             password = UserPassword;
             ID = IDUser;
             workWithDatabase = new WorkWithDatabase();
+            backgroundWorker1.WorkerReportsProgress = true;
+            backgroundWorker1.WorkerSupportsCancellation = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -37,24 +46,11 @@ namespace MainClient
                 menuPanel.Width = 180;
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
-            {
-                GetMessageByPOP3();
-            }
-            if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
-            {
-                GetMessagesByIMAP();
-            }
-        }
-
         private void writeMessage_Click(object sender, EventArgs e)
         {
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             SendMessage sendMessage = new SendMessage(email, password, ID, this, false);
             sendMessage.Show();
-            
         }
 
         private void OutgoingMessages_Click(object sender, EventArgs e)
@@ -104,13 +100,11 @@ namespace MainClient
             toolStripStatusLabel1.Text = "Идёт загрузка...";
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             button = InboxMessages.Text.Trim(' ');
-            if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
+            inboxes.Clear();
+            backgroundWorker1.DoWork += (c, ex) => backgroundWorker1_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
+            if (!backgroundWorker1.IsBusy)
             {
-                GetMessageByPOP3();
-            }
-            if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
-            {
-                GetMessagesByIMAP();
+                backgroundWorker1.RunWorkerAsync();
             }
         }
 
@@ -299,7 +293,29 @@ namespace MainClient
                     break;
             }
         }
+        #region Thread
+        private void backgroundWorker1_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            toolStripStatusLabel1.Text = $"Идёт загрузка...{(e.ProgressPercentage.ToString() + "%")}";
+        }
 
+        private void backgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            toolStripStatusLabel1.Text = "Готово!";
+            foreach (var info in inboxes)
+                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+        }
+
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e, bool TypeProtocol)
+        {
+            BackgroundWorker worker = (BackgroundWorker)sender;
+            if (TypeProtocol)
+                GetMessageByPOP3();
+            else
+                GetMessagesByIMAP(worker);
+        }
+        #endregion
+        
         private void MainForm_Load(object sender, EventArgs e)
         {
             int index = email.IndexOf("@");
@@ -308,7 +324,7 @@ namespace MainClient
         }
 
         #region Get messages
-        public void GetMessagesByIMAP(int count = 20)
+        public void GetMessagesByIMAP(BackgroundWorker worker)
         {
             try
             {
@@ -319,38 +335,23 @@ namespace MainClient
                     client.Authenticate(email, password);
                     var inbox = client.Inbox;
                     inbox.Open(FolderAccess.ReadOnly);
-                    UserMessagesTable.Rows.Clear();
-                    if (inbox.Count == 0 | Letter > inbox.Count)
+                    var items = inbox.Fetch(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags);
+                    double numMessagesForPersent = (double)items.Count / 100;
+                    int countProcesses = 0;
+                    foreach (var item in items)
                     {
-                        toolStrip1.Text = "Писем нет.";
-                        return;
+                        var message = inbox.GetMessage(item.UniqueId);
+                        structInboxMessage.RecipientAdress = Convert.ToString(message.From);
+                        structInboxMessage.Subject = message.Subject;
+                        structInboxMessage.Text = message.TextBody;
+                        structInboxMessage.UnicID = Convert.ToString(item.UniqueId);
+                        inboxes.Add(structInboxMessage);
+                        if (item.Flags.Value.HasFlag(MessageFlags.Seen))
+                            uniqueIds.Add(Convert.ToString(item.UniqueId));
+                        countProcesses++;
+                        if (countProcesses >= numMessagesForPersent)
+                            worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
                     }
-                    if (Letter + count <= inbox.Count)
-                    {
-                        for (int i = Letter; i < count + Letter; i++)
-                        {
-                            var message = inbox.GetMessage(i);
-                            if (message.Subject != "")
-                                UserMessagesTable.Rows.Add(message.From, message.Subject, message.TextBody);
-                            else
-                                UserMessagesTable.Rows.Add(message.From, "", message.TextBody);
-                        }
-                        Letter = count + Letter;
-                    }
-                    else
-                    {
-                        for (int i = Letter; i < inbox.Count - Letter; i++)
-                        {
-                            var message = inbox.GetMessage(i);
-
-                            if (message.Subject != "")
-                                UserMessagesTable.Rows.Add(message.From, message.Subject, message.TextBody);
-                            else
-                                UserMessagesTable.Rows.Add(message.From, "", message.TextBody);
-                        }
-                        Letter = inbox.Count - Letter;
-                    }
-                    toolStripStatusLabel1.Text = "Готово!";
                     client.Disconnect(true);
                 }
             }
@@ -415,5 +416,14 @@ namespace MainClient
             }
         }
         #endregion
+        public bool IsMessageRead(string IDMessage)
+        {
+            foreach(var id in uniqueIds)
+            {
+                if (id == IDMessage)
+                    return true;
+            }
+            return false;
+        }
     }
 }

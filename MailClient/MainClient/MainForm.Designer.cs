@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuPanel = new System.Windows.Forms.Panel();
             this.InfoButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -42,6 +42,7 @@
             this.OutgoingMessages = new System.Windows.Forms.Button();
             this.InboxMessages = new System.Windows.Forms.Button();
             this.functionalPanel = new System.Windows.Forms.Panel();
+            this.RestoreMessageButton = new System.Windows.Forms.Button();
             this.EditMessageButton = new System.Windows.Forms.Button();
             this.DeleteMessageButton = new System.Windows.Forms.Button();
             this.writeMessage = new System.Windows.Forms.Button();
@@ -56,7 +57,7 @@
             this.ContentMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IDMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.RestoreMessageButton = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.menuPanel.SuspendLayout();
             this.functionalPanel.SuspendLayout();
             this.contentPanel.SuspendLayout();
@@ -182,6 +183,20 @@
             this.functionalPanel.Size = new System.Drawing.Size(805, 40);
             this.functionalPanel.TabIndex = 1;
             // 
+            // RestoreMessageButton
+            // 
+            this.RestoreMessageButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.RestoreMessageButton.FlatAppearance.BorderSize = 0;
+            this.RestoreMessageButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.RestoreMessageButton.Image = global::MainClient.Properties.Resources.RestoreMessage;
+            this.RestoreMessageButton.Location = new System.Drawing.Point(603, 0);
+            this.RestoreMessageButton.Name = "RestoreMessageButton";
+            this.RestoreMessageButton.Size = new System.Drawing.Size(40, 38);
+            this.RestoreMessageButton.TabIndex = 6;
+            this.RestoreMessageButton.UseVisualStyleBackColor = true;
+            this.RestoreMessageButton.Visible = false;
+            this.RestoreMessageButton.Click += new System.EventHandler(this.RestoreMessageButton_Click);
+            // 
             // EditMessageButton
             // 
             this.EditMessageButton.Dock = System.Windows.Forms.DockStyle.Right;
@@ -278,14 +293,14 @@
             // UserMessagesTable
             // 
             this.UserMessagesTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.UserMessagesTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle13.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.UserMessagesTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
             this.UserMessagesTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.UserMessagesTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TitleMessage,
@@ -303,8 +318,8 @@
             // 
             // TitleMessage
             // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TitleMessage.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.TitleMessage.DefaultCellStyle = dataGridViewCellStyle14;
             this.TitleMessage.HeaderText = "Титул";
             this.TitleMessage.Name = "TitleMessage";
             this.TitleMessage.ReadOnly = true;
@@ -312,8 +327,8 @@
             // 
             // ThemeMessage
             // 
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ThemeMessage.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle15.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ThemeMessage.DefaultCellStyle = dataGridViewCellStyle15;
             this.ThemeMessage.HeaderText = "Тема";
             this.ThemeMessage.Name = "ThemeMessage";
             this.ThemeMessage.ReadOnly = true;
@@ -321,8 +336,8 @@
             // 
             // ContentMessage
             // 
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ContentMessage.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle16.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ContentMessage.DefaultCellStyle = dataGridViewCellStyle16;
             this.ContentMessage.HeaderText = "Содержимое";
             this.ContentMessage.Name = "ContentMessage";
             this.ContentMessage.ReadOnly = true;
@@ -340,19 +355,10 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // RestoreMessageButton
+            // backgroundWorker1
             // 
-            this.RestoreMessageButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.RestoreMessageButton.FlatAppearance.BorderSize = 0;
-            this.RestoreMessageButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.RestoreMessageButton.Image = global::MainClient.Properties.Resources.EditMessage_32;
-            this.RestoreMessageButton.Location = new System.Drawing.Point(603, 0);
-            this.RestoreMessageButton.Name = "RestoreMessageButton";
-            this.RestoreMessageButton.Size = new System.Drawing.Size(40, 38);
-            this.RestoreMessageButton.TabIndex = 6;
-            this.RestoreMessageButton.UseVisualStyleBackColor = true;
-            this.RestoreMessageButton.Visible = false;
-            this.RestoreMessageButton.Click += new System.EventHandler(this.RestoreMessageButton_Click);
+            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
             // MainForm
             // 
@@ -405,5 +411,6 @@
         private System.Windows.Forms.Button EditMessageButton;
         private System.Windows.Forms.Button DeleteMessageButton;
         private System.Windows.Forms.Button RestoreMessageButton;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
