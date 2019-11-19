@@ -36,6 +36,8 @@ namespace MainClient
             workWithDatabase = new WorkWithDatabase();
             backgroundWorker1.WorkerReportsProgress = true;
             backgroundWorker1.WorkerSupportsCancellation = true;
+            backgroundWorker2.WorkerReportsProgress = true;
+            backgroundWorker2.WorkerSupportsCancellation = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -80,51 +82,7 @@ namespace MainClient
             //        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
             //else
             //    toolStripStatusLabel1.Text = "Эта папка пуста.";
-            try
-            {
-                arrayMessagesFromMailServer.Clear();
-                using (var client = new ImapClient())
-                {
-                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                    client.Authenticate(email, password);
-                    var draftFolder = client.GetFolder(SpecialFolder.Drafts);
-                    if (draftFolder != null)
-                    {
-                        draftFolder.Open(FolderAccess.ReadOnly);
-                        if (draftFolder.Count == 0)
-                        {
-                            toolStripStatusLabel1.Text = "Эта папка пуста.";
-                        }
-                        else
-                        {
-                            for(int i = 0; i < draftFolder.Count; i++)
-                            {
-                                var draftMessages = draftFolder.GetMessage(i);
-                                messageFromMailServer.RecipientAdress = Convert.ToString(draftMessages.From);
-                                messageFromMailServer.Subject = draftMessages.Subject;
-                                messageFromMailServer.Text = draftMessages.TextBody;
-                                messageFromMailServer.UnicID = draftMessages.MessageId;
-                                arrayMessagesFromMailServer.Add(messageFromMailServer);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var toplevel = client.GetFolder(client.PersonalNamespaces[0]);
-                        var DraftFolder = toplevel.Create(SpecialFolder.Drafts.ToString(), true);
-
-                        DraftFolder.Open(FolderAccess.ReadOnly);
-                        //DraftFolder.Append(message, MessageFlags.Draft);
-                        DraftFolder.Expunge();
-                    }
-                    client.Disconnect(true);
-                }
-            }
-            catch (Exception ex)
-            {
-                toolStripStatusLabel1.Text = ex.Message;
-            }
+            
         }
 
         private void DeleteMessage_Click(object sender, EventArgs e)
@@ -341,6 +299,7 @@ namespace MainClient
         }
 
         #region Thread
+        #region For inbox messages
         private void backgroundWorker1_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
             toolStripStatusLabel1.Text = $"Идёт загрузка...{(e.ProgressPercentage.ToString() + "%")}";
@@ -361,6 +320,26 @@ namespace MainClient
             else
                 GetMessagesByIMAP(worker);
         }
+        #endregion
+        #region For draft messages
+        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = (BackgroundWorker)sender;
+            GetDraftMessages(worker);
+        }
+
+        private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            toolStripStatusLabel1.Text = $"Идёт загрузка...{(e.ProgressPercentage.ToString() + "%")}";
+        }
+
+        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            toolStripStatusLabel1.Text = "Готово!";
+            foreach (var info in arrayMessagesFromMailServer)
+                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+        }
+        #endregion
         #endregion
 
         private void UserMessagesTable_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
@@ -394,6 +373,7 @@ namespace MainClient
             Text = email.Substring(0, index);
             toolStripStatusLabel1.Text = "";
         }
+
 
         #region Get messages
         public void GetMessagesByIMAP(BackgroundWorker worker)
@@ -432,7 +412,6 @@ namespace MainClient
                 toolStripStatusLabel1.Text = ex.Message;
             }
         }
-
         public void GetMessageByPOP3(int count = 20)
         {
             try
@@ -486,6 +465,54 @@ namespace MainClient
             {
                 toolStripStatusLabel1.Text = "Ошибка: " + ex.Message;
                 MessageBox.Show(ex.Message);
+            }
+        }
+        public void GetDraftMessages(BackgroundWorker worker)
+        {
+            try
+            {
+                arrayMessagesFromMailServer.Clear();
+                using (var client = new ImapClient())
+                {
+                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                    client.Authenticate(email, password);
+                    var draftFolder = client.GetFolder(SpecialFolder.Drafts);
+                    if (draftFolder != null)
+                    {
+                        draftFolder.Open(FolderAccess.ReadOnly);
+                        if (draftFolder.Count == 0)
+                        {
+                            toolStripStatusLabel1.Text = "Эта папка пуста.";
+                        }
+                        else
+                        {
+                            double numMessagesForPersent = (double)draftFolder.Count / 100;
+                            int countProcesses = 0;
+                            for (int i = 0; i < draftFolder.Count; i++)
+                            {
+                                var draftMessages = draftFolder.GetMessage(i);
+                                messageFromMailServer.RecipientAdress = Convert.ToString(draftMessages.From);
+                                messageFromMailServer.Subject = draftMessages.Subject;
+                                messageFromMailServer.Text = draftMessages.TextBody;
+                                messageFromMailServer.UnicID = draftMessages.MessageId;
+                                arrayMessagesFromMailServer.Add(messageFromMailServer);
+                                countProcesses++;
+                                if (countProcesses >= numMessagesForPersent)
+                                    worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        toolStripStatusLabel1.Text = "Папки \"Черновик\" нет на этом почтовом сервере.";
+                    }
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
             }
         }
         #endregion
