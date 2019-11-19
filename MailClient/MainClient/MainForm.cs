@@ -8,6 +8,7 @@ using MainClient.Properties;
 using System.Collections.Generic;
 using System.ComponentModel;
 using MailKit.Security;
+using System.Drawing;
 
 namespace MainClient
 {
@@ -17,14 +18,14 @@ namespace MainClient
         string email, password, button = "";
         int ID;
 
-        struct InboxForThread
+        struct StructMessage
         {
             public string RecipientAdress, Subject, Text, UnicID;
         }
         WorkWithDatabase workWithDatabase;
         List<WorkWithDatabase.Message> messages = new List<WorkWithDatabase.Message>();
-        InboxForThread structInboxMessage;
-        List<InboxForThread> inboxes = new List<InboxForThread>();
+        StructMessage messageFromMailServer;
+        List<StructMessage> arrayMessagesFromMailServer = new List<StructMessage>();
         List<string> uniqueIds = new List<string>();
         public MainForm(string UserEmail, string UserPassword, int IDUser)
         {
@@ -69,16 +70,61 @@ namespace MainClient
 
         private void DraftMessages_Click(object sender, EventArgs e)
         {
-            toolStripStatusLabel1.Text = "";
-            button = DraftMessages.Text.Trim(' ');
-            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
-            workWithDatabase.GetMessage(ID, "DFT", out messages);
-            UserMessagesTable.Rows.Clear();
-            if (messages.Count > 0)
-                foreach (var arraySendMessages in messages)
-                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-            else
-                toolStripStatusLabel1.Text = "Эта папка пуста.";
+            //toolStripStatusLabel1.Text = "";
+            //button = DraftMessages.Text.Trim(' ');
+            //DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+            //workWithDatabase.GetMessage(ID, "DFT", out messages);
+            //UserMessagesTable.Rows.Clear();
+            //if (messages.Count > 0)
+            //    foreach (var arraySendMessages in messages)
+            //        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+            //else
+            //    toolStripStatusLabel1.Text = "Эта папка пуста.";
+            try
+            {
+                arrayMessagesFromMailServer.Clear();
+                using (var client = new ImapClient())
+                {
+                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                    client.Authenticate(email, password);
+                    var draftFolder = client.GetFolder(SpecialFolder.Drafts);
+                    if (draftFolder != null)
+                    {
+                        draftFolder.Open(FolderAccess.ReadOnly);
+                        if (draftFolder.Count == 0)
+                        {
+                            toolStripStatusLabel1.Text = "Эта папка пуста.";
+                        }
+                        else
+                        {
+                            for(int i = 0; i < draftFolder.Count; i++)
+                            {
+                                var draftMessages = draftFolder.GetMessage(i);
+                                messageFromMailServer.RecipientAdress = Convert.ToString(draftMessages.From);
+                                messageFromMailServer.Subject = draftMessages.Subject;
+                                messageFromMailServer.Text = draftMessages.TextBody;
+                                messageFromMailServer.UnicID = draftMessages.MessageId;
+                                arrayMessagesFromMailServer.Add(messageFromMailServer);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var toplevel = client.GetFolder(client.PersonalNamespaces[0]);
+                        var DraftFolder = toplevel.Create(SpecialFolder.Drafts.ToString(), true);
+
+                        DraftFolder.Open(FolderAccess.ReadOnly);
+                        //DraftFolder.Append(message, MessageFlags.Draft);
+                        DraftFolder.Expunge();
+                    }
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
         }
 
         private void DeleteMessage_Click(object sender, EventArgs e)
@@ -100,7 +146,7 @@ namespace MainClient
             toolStripStatusLabel1.Text = "Идёт загрузка...";
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             button = InboxMessages.Text.Trim(' ');
-            inboxes.Clear();
+            arrayMessagesFromMailServer.Clear();
             backgroundWorker1.DoWork += (c, ex) => backgroundWorker1_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
             if (!backgroundWorker1.IsBusy)
             {
@@ -303,7 +349,7 @@ namespace MainClient
         private void backgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             toolStripStatusLabel1.Text = "Готово!";
-            foreach (var info in inboxes)
+            foreach (var info in arrayMessagesFromMailServer)
                 UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
         }
 
@@ -316,7 +362,32 @@ namespace MainClient
                 GetMessagesByIMAP(worker);
         }
         #endregion
-        
+
+        private void UserMessagesTable_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            if (button == "Входящие")
+            {
+                foreach (DataGridViewRow row in UserMessagesTable.Rows)
+                {
+                    foreach (var id in uniqueIds)
+                    {
+                        try
+                        {
+                            if (row.Cells[3].Value.ToString() == id)
+                            {
+                                row.DefaultCellStyle.ForeColor = Color.DimGray;
+                                break;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             int index = email.IndexOf("@");
@@ -342,11 +413,11 @@ namespace MainClient
                     foreach (var item in items)
                     {
                         var message = inbox.GetMessage(item.UniqueId);
-                        structInboxMessage.RecipientAdress = Convert.ToString(message.From);
-                        structInboxMessage.Subject = message.Subject;
-                        structInboxMessage.Text = message.TextBody;
-                        structInboxMessage.UnicID = Convert.ToString(item.UniqueId);
-                        inboxes.Add(structInboxMessage);
+                        messageFromMailServer.RecipientAdress = Convert.ToString(message.From);
+                        messageFromMailServer.Subject = message.Subject;
+                        messageFromMailServer.Text = message.TextBody;
+                        messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
+                        arrayMessagesFromMailServer.Add(messageFromMailServer);
                         if (item.Flags.Value.HasFlag(MessageFlags.Seen))
                             uniqueIds.Add(Convert.ToString(item.UniqueId));
                         countProcesses++;

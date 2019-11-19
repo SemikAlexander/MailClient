@@ -112,7 +112,8 @@ namespace MainClient
             }
             if (typeSettingForm == "Add")
             {
-
+                WorkWithDatabase workWithDatabase = new WorkWithDatabase();
+                workWithDatabase.AddMailServer(imapAdress.Text, pop3Adress.Text, smtpAdress.Text, Convert.ToInt32(imapPort.Text), Convert.ToInt32(pop3Port.Text), Convert.ToInt32(smtpPort.Text));
             }
             Settings.Default["IMAPAdress"] = imapAdress.Text;
             Settings.Default["POP3Adress"] = pop3Adress.Text;
