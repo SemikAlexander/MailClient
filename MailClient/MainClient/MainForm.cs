@@ -62,6 +62,7 @@ namespace MainClient
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             button = OutgoingMessages.Text.Trim(' ');
             arrayMessagesFromMailServer.Clear();
+            UserMessagesTable.Rows.Clear();
             if (check.IsInternetConnected())
             {
                 sentMessageWorker.DoWork += (c, ex) => sentMessageWorker_DoWork(c, ex);
@@ -87,6 +88,7 @@ namespace MainClient
             button = DraftMessages.Text.Trim(' ');
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             arrayMessagesFromMailServer.Clear();
+            UserMessagesTable.Rows.Clear();
             if (check.IsInternetConnected())
             {
                 draftMessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex);
@@ -114,6 +116,7 @@ namespace MainClient
             button = DeleteMessage.Text.Trim(' ');
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             arrayMessagesFromMailServer.Clear();
+            UserMessagesTable.Rows.Clear();
             if (check.IsInternetConnected())
             {
                 trashMessageWorker.DoWork += (c, ex) => trashMessageWorker_DoWork(c, ex);
@@ -141,6 +144,7 @@ namespace MainClient
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             button = InboxMessages.Text.Trim(' ');
             arrayMessagesFromMailServer.Clear();
+            UserMessagesTable.Rows.Clear();
             if (check.IsInternetConnected())
             {
                 inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
@@ -225,37 +229,20 @@ namespace MainClient
             #endregion
             else
             {
-                switch (button)
-                {
-                    case "Входящие":
-                        workWithDatabase.GetMessage(ID, "INB", out messages);
-                        UserMessagesTable.Rows.Clear();
-                        if (messages.Count > 0)
-                            foreach (var arraySendMessages in messages)
-                                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                        break;
-                    case "Отправленные":
-                        workWithDatabase.GetMessage(ID, "SNT", out messages);
-                        UserMessagesTable.Rows.Clear();
-                        if (messages.Count > 0)
-                            foreach (var arraySendMessages in messages)
-                                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                        break;
-                    case "Черновик":
-                        workWithDatabase.GetMessage(ID, "DFT", out messages);
-                        UserMessagesTable.Rows.Clear();
-                        if (messages.Count > 0)
-                            foreach (var arraySendMessages in messages)
-                                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                        break;
-                    case "Удалённые":
-                        workWithDatabase.GetMessage(ID, "DEL", out messages);
-                        UserMessagesTable.Rows.Clear();
-                        if (messages.Count > 0)
-                            foreach (var arraySendMessages in messages)
-                                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                        break;
-                }
+                if (UserMessagesTable.CurrentRow.Cells[0].Value == null)
+                    readMessage.email_client.Text = "";
+                else
+                    readMessage.email_client.Text = UserMessagesTable.CurrentRow.Cells[0].Value.ToString();
+                if (UserMessagesTable.CurrentRow.Cells[1].Value == null)
+                    readMessage.theme.Text = "";
+                else
+                    readMessage.theme.Text = UserMessagesTable.CurrentRow.Cells[1].Value.ToString();
+                if (UserMessagesTable.CurrentRow.Cells[2].Value == null)
+                    readMessage.TextLetter.Text = "";
+                else
+                    readMessage.TextLetter.Text = UserMessagesTable.CurrentRow.Cells[2].Value.ToString();
+                readMessage.ShowDialog();
+                toolStripStatusLabel1.Text = "Готово!";
             }
         }
 
