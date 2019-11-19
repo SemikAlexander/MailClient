@@ -17,7 +17,7 @@ namespace MainClient
         int Letter = 0, LastIndex = 0, CountBack = 0;
         string email, password, button = "";
         int ID;
-
+        Check check = new Check();
         struct StructMessage
         {
             public string RecipientAdress, Subject, Text, UnicID;
@@ -34,10 +34,10 @@ namespace MainClient
             password = UserPassword;
             ID = IDUser;
             workWithDatabase = new WorkWithDatabase();
-            backgroundWorker1.WorkerReportsProgress = true;
-            backgroundWorker1.WorkerSupportsCancellation = true;
-            backgroundWorker2.WorkerReportsProgress = true;
-            backgroundWorker2.WorkerSupportsCancellation = true;
+            inboxMessageWorker.WorkerReportsProgress = true;
+            inboxMessageWorker.WorkerSupportsCancellation = true;
+            draftMessageWorker.WorkerReportsProgress = true;
+            draftMessageWorker.WorkerSupportsCancellation = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -61,28 +61,49 @@ namespace MainClient
             toolStripStatusLabel1.Text = "";
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             button = OutgoingMessages.Text.Trim(' ');
-            workWithDatabase.GetMessage(ID, "SND", out messages);
-            UserMessagesTable.Rows.Clear();
-            if (messages.Count > 0)
-                foreach (var arraySendMessages in messages)
-                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+            if (check.IsInternetConnected())
+            {
+                sentMessageWorker.DoWork += (c, ex) => sentMessageWorker_DoWork(c, ex);
+                if (!draftMessageWorker.IsBusy)
+                {
+                    draftMessageWorker.RunWorkerAsync();
+                }
+            }
             else
-                toolStripStatusLabel1.Text = "Эта папка пуста.";
+            {
+                workWithDatabase.GetMessage(ID, "SNT", out messages);
+                UserMessagesTable.Rows.Clear();
+                if (messages.Count > 0)
+                    foreach (var arraySendMessages in messages)
+                        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                else
+                    toolStripStatusLabel1.Text = "Эта папка пуста.";
+            }
         }
 
         private void DraftMessages_Click(object sender, EventArgs e)
         {
-            //toolStripStatusLabel1.Text = "";
-            //button = DraftMessages.Text.Trim(' ');
-            //DeleteMessageButton.Visible = EditMessageButton.Visible = false;
-            //workWithDatabase.GetMessage(ID, "DFT", out messages);
-            //UserMessagesTable.Rows.Clear();
-            //if (messages.Count > 0)
-            //    foreach (var arraySendMessages in messages)
-            //        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-            //else
-            //    toolStripStatusLabel1.Text = "Эта папка пуста.";
-            
+            button = DraftMessages.Text.Trim(' ');
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+            if (check.IsInternetConnected())
+            {
+                draftMessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex);
+                if (!draftMessageWorker.IsBusy)
+                {
+                    draftMessageWorker.RunWorkerAsync();
+                }
+            }
+            else
+            {
+                toolStripStatusLabel1.Text = "";
+                workWithDatabase.GetMessage(ID, "DFT", out messages);
+                UserMessagesTable.Rows.Clear();
+                if (messages.Count > 0)
+                    foreach (var arraySendMessages in messages)
+                        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                else
+                    toolStripStatusLabel1.Text = "Эта папка пуста.";
+            }
         }
 
         private void DeleteMessage_Click(object sender, EventArgs e)
@@ -105,65 +126,121 @@ namespace MainClient
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             button = InboxMessages.Text.Trim(' ');
             arrayMessagesFromMailServer.Clear();
-            backgroundWorker1.DoWork += (c, ex) => backgroundWorker1_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
-            if (!backgroundWorker1.IsBusy)
+            if (check.IsInternetConnected())
             {
-                backgroundWorker1.RunWorkerAsync();
+                inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
+                if (!inboxMessageWorker.IsBusy)
+                {
+                    inboxMessageWorker.RunWorkerAsync();
+                }
+            }
+            else
+            {
+                toolStripStatusLabel1.Text = "";
+                workWithDatabase.GetMessage(ID, "INB", out messages);
+                UserMessagesTable.Rows.Clear();
+                if (messages.Count > 0)
+                    foreach (var arraySendMessages in messages)
+                        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                else
+                    toolStripStatusLabel1.Text = "Эта папка пуста.";
             }
         }
 
         private void UserMessagesTable_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             ReadMessage readMessage = new ReadMessage();
-            try
+            #region Get inbox message from net
+            if (button == "Входящие")
             {
-                toolStripStatusLabel1.Text = "Идет загрузка...";
-                if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
+                if (check.IsInternetConnected())
                 {
-                    using (var client = new Pop3Client())
+                    try
                     {
-                        client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                        client.Connect(Settings.Default["POP3Adress"].ToString(), Convert.ToInt32(Settings.Default["POP3Port"]), true);
-                        client.Authenticate(email, password);
-                        if (LastIndex < 0) LastIndex = 0;
-                        if (client.Count == 0 | LastIndex + UserMessagesTable.CurrentCell.RowIndex > client.Count)
+                        toolStripStatusLabel1.Text = "Идет загрузка...";
+                        if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
                         {
-                            toolStripStatusLabel1.Text = "Письма нет.";
-                            return;
+                            using (var client = new Pop3Client())
+                            {
+                                client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                                client.Connect(Settings.Default["POP3Adress"].ToString(), Convert.ToInt32(Settings.Default["POP3Port"]), true);
+                                client.Authenticate(email, password);
+                                if (LastIndex < 0) LastIndex = 0;
+                                if (client.Count == 0 | LastIndex + UserMessagesTable.CurrentCell.RowIndex > client.Count)
+                                {
+                                    toolStripStatusLabel1.Text = "Письма нет.";
+                                    return;
+                                }
+                                var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
+                                readMessage.email_client.Text = message.From.ToString();
+                                readMessage.theme.Text = message.Subject;
+                                readMessage.TextLetter.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                                readMessage.MimeMessage = message;
+                                client.Disconnect(true);
+                                readMessage.ShowDialog();
+                            }
                         }
-                        var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
-                        readMessage.email_client.Text = message.From.ToString();
-                        readMessage.theme.Text = message.Subject;
-                        readMessage.TextLetter.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
-                        readMessage.MimeMessage = message;
-                        client.Disconnect(true);
-                        readMessage.ShowDialog();
+                        if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
+                        {
+                            using (var client = new ImapClient())
+                            {
+                                client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                                client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                                client.Authenticate(email, password);
+                                var inbox = client.Inbox;
+                                inbox.Open(FolderAccess.ReadOnly);
+                                if (LastIndex < 0) LastIndex = 0;
+                                var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
+                                readMessage.email_client.Text = message.From.ToString();
+                                readMessage.theme.Text = message.Subject;
+                                readMessage.TextLetter.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                                readMessage.MimeMessage = message;
+                                toolStripStatusLabel1.Text = "Готово!";
+                                client.Disconnect(true);
+                                readMessage.ShowDialog();
+                            }
+                        }
                     }
-                }
-                if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
-                {
-                    using (var client = new ImapClient())
+                    catch (Exception ex)
                     {
-                        client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                        client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                        client.Authenticate(email, password);
-                        var inbox = client.Inbox;
-                        inbox.Open(FolderAccess.ReadOnly);
-                        if (LastIndex < 0) LastIndex = 0;
-                        var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
-                        readMessage.email_client.Text = message.From.ToString();
-                        readMessage.theme.Text = message.Subject;
-                        readMessage.TextLetter.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
-                        readMessage.MimeMessage = message;
-                        toolStripStatusLabel1.Text = "Готово!";
-                        client.Disconnect(true);
-                        readMessage.ShowDialog();
+                        toolStripStatusLabel1.Text = $"Ошибка: {ex.Message}";
                     }
                 }
             }
-            catch(Exception ex)
+            #endregion
+            else
             {
-                toolStripStatusLabel1.Text = $"Ошибка: {ex.Message}";
+                switch (button)
+                {
+                    case "Входящие":
+                        workWithDatabase.GetMessage(ID, "INB", out messages);
+                        UserMessagesTable.Rows.Clear();
+                        if (messages.Count > 0)
+                            foreach (var arraySendMessages in messages)
+                                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                        break;
+                    case "Отправленные":
+                        workWithDatabase.GetMessage(ID, "SNT", out messages);
+                        UserMessagesTable.Rows.Clear();
+                        if (messages.Count > 0)
+                            foreach (var arraySendMessages in messages)
+                                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                        break;
+                    case "Черновик":
+                        workWithDatabase.GetMessage(ID, "DFT", out messages);
+                        UserMessagesTable.Rows.Clear();
+                        if (messages.Count > 0)
+                            foreach (var arraySendMessages in messages)
+                                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                        break;
+                    case "Удалённые":
+                        workWithDatabase.GetMessage(ID, "DEL", out messages);
+                        UserMessagesTable.Rows.Clear();
+                        if (messages.Count > 0)
+                            foreach (var arraySendMessages in messages)
+                                UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                        break;
+                }
             }
         }
 
@@ -185,7 +262,7 @@ namespace MainClient
                         UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
                         "DEL",
                         ID);
-                    workWithDatabase.GetMessage(ID, "SND", out messages);
+                    workWithDatabase.GetMessage(ID, "SNT", out messages);
                     UserMessagesTable.Rows.Clear();
                     if (messages.Count > 0)
                         foreach (var arraySendMessages in messages)
@@ -300,19 +377,19 @@ namespace MainClient
 
         #region Thread
         #region For inbox messages
-        private void backgroundWorker1_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        private void inboxMessageWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
             toolStripStatusLabel1.Text = $"Идёт загрузка...{(e.ProgressPercentage.ToString() + "%")}";
         }
 
-        private void backgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        private void inboxMessageWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             toolStripStatusLabel1.Text = "Готово!";
             foreach (var info in arrayMessagesFromMailServer)
                 UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
         }
 
-        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e, bool TypeProtocol)
+        private void inboxMessageWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e, bool TypeProtocol)
         {
             BackgroundWorker worker = (BackgroundWorker)sender;
             if (TypeProtocol)
@@ -322,18 +399,37 @@ namespace MainClient
         }
         #endregion
         #region For draft messages
-        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        private void draftMessageWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = (BackgroundWorker)sender;
             GetDraftMessages(worker);
         }
 
-        private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void draftMessageWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             toolStripStatusLabel1.Text = $"Идёт загрузка...{(e.ProgressPercentage.ToString() + "%")}";
         }
 
-        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void draftMessageWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            toolStripStatusLabel1.Text = "Готово!";
+            foreach (var info in arrayMessagesFromMailServer)
+                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+        }
+        #endregion
+        #region For sent message
+        private void sentMessageWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = (BackgroundWorker)sender;
+            GetSentMessages(worker);
+        }
+
+        private void sentMessageWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            toolStripStatusLabel1.Text = $"Идёт загрузка...{(e.ProgressPercentage.ToString() + "%")}";
+        }
+
+        private void sentMessageWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             toolStripStatusLabel1.Text = "Готово!";
             foreach (var info in arrayMessagesFromMailServer)
@@ -374,10 +470,10 @@ namespace MainClient
             toolStripStatusLabel1.Text = "";
         }
 
-
         #region Get messages
         public void GetMessagesByIMAP(BackgroundWorker worker)
         {
+            workWithDatabase.DeleteAllMessageByTypeInDB("INB", ID);
             try
             {
                 using (var client = new ImapClient())
@@ -400,6 +496,12 @@ namespace MainClient
                         arrayMessagesFromMailServer.Add(messageFromMailServer);
                         if (item.Flags.Value.HasFlag(MessageFlags.Seen))
                             uniqueIds.Add(Convert.ToString(item.UniqueId));
+                        if (message.Subject == null)
+                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), "", message.TextBody.Replace("'", ""), "INB", Convert.ToString(item.UniqueId), ID);
+                        else if (message.TextBody == null)
+                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), message.Subject.Replace("'", ""), "", "INB", Convert.ToString(item.UniqueId), ID);
+                        else
+                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), message.Subject.Replace("'", ""), message.TextBody.Replace("'", ""), "INB", Convert.ToString(item.UniqueId), ID);
                         countProcesses++;
                         if (countProcesses >= numMessagesForPersent)
                             worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
@@ -469,6 +571,7 @@ namespace MainClient
         }
         public void GetDraftMessages(BackgroundWorker worker)
         {
+            workWithDatabase.DeleteAllMessageByTypeInDB("DFT", ID);
             try
             {
                 arrayMessagesFromMailServer.Clear();
@@ -497,6 +600,12 @@ namespace MainClient
                                 messageFromMailServer.Text = draftMessages.TextBody;
                                 messageFromMailServer.UnicID = draftMessages.MessageId;
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
+                                if (draftMessages.Subject == null)
+                                    workWithDatabase.AddMessageInDB(Convert.ToString(draftMessages.From).Replace("'", ""), "", draftMessages.TextBody.Replace("'", ""), "DFT", ID);
+                                else if (draftMessages.TextBody == null)
+                                    workWithDatabase.AddMessageInDB(Convert.ToString(draftMessages.From).Replace("'", ""), draftMessages.Subject.Replace("'", ""), "", "DFT", ID);
+                                else
+                                    workWithDatabase.AddMessageInDB(Convert.ToString(draftMessages.From).Replace("'", ""), draftMessages.Subject.Replace("'", ""), draftMessages.TextBody.Replace("'", ""), "DFT", ID);
                                 countProcesses++;
                                 if (countProcesses >= numMessagesForPersent)
                                     worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
@@ -506,6 +615,61 @@ namespace MainClient
                     else
                     {
                         toolStripStatusLabel1.Text = "Папки \"Черновик\" нет на этом почтовом сервере.";
+                    }
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+        }
+        public void GetSentMessages(BackgroundWorker worker)
+        {
+            workWithDatabase.DeleteAllMessageByTypeInDB("SNT", ID);
+            try
+            {
+                arrayMessagesFromMailServer.Clear();
+                using (var client = new ImapClient())
+                {
+                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                    client.Authenticate(email, password);
+                    var sentFolder = client.GetFolder(SpecialFolder.Sent);
+                    if (sentFolder != null)
+                    {
+                        sentFolder.Open(FolderAccess.ReadOnly);
+                        if (sentFolder.Count == 0)
+                        {
+                            toolStripStatusLabel1.Text = "Эта папка пуста.";
+                        }
+                        else
+                        {
+                            double numMessagesForPersent = (double)sentFolder.Count / 100;
+                            int countProcesses = 0;
+                            for (int i = 0; i < sentFolder.Count; i++)
+                            {
+                                var sentMessages = sentFolder.GetMessage(i);
+                                messageFromMailServer.RecipientAdress = Convert.ToString(sentMessages.From);
+                                messageFromMailServer.Subject = sentMessages.Subject;
+                                messageFromMailServer.Text = sentMessages.TextBody;
+                                messageFromMailServer.UnicID = sentMessages.MessageId;
+                                arrayMessagesFromMailServer.Add(messageFromMailServer);
+                                if (sentMessages.Subject == null)
+                                    workWithDatabase.AddMessageInDB(Convert.ToString(sentMessages.From).Replace("'", ""), "", sentMessages.TextBody.Replace("'", ""), "SNT", ID);
+                                else if (sentMessages.TextBody == null)
+                                    workWithDatabase.AddMessageInDB(Convert.ToString(sentMessages.From).Replace("'", ""), sentMessages.Subject.Replace("'", ""), "", "SNT", ID);
+                                else
+                                    workWithDatabase.AddMessageInDB(Convert.ToString(sentMessages.From).Replace("'", ""), sentMessages.Subject.Replace("'", ""), sentMessages.TextBody.Replace("'", ""), "SNT", ID);
+                                countProcesses++;
+                                if (countProcesses >= numMessagesForPersent)
+                                    worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        toolStripStatusLabel1.Text = "Папки \"Отправленные\" нет на этом почтовом сервере.";
                     }
                     client.Disconnect(true);
                 }

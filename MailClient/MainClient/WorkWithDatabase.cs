@@ -85,6 +85,19 @@ namespace MainClient
                 }
             }
         }
+        public void AddMessageInDB(string RecipientAdress, string Subject, string Text, string typeMessage, string IDMessage, int IDUser)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"INSERT INTO UserMessages (RecipientAdress, SubjectLetter, TextLetter, IDSender, TypeMessage, MessageID) VALUES ('{RecipientAdress}','{Subject}','{Text}',{IDUser},'{typeMessage}','{IDMessage}');";
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
         public void EditMessageInDB(string RecipientAdress, string Subject, string Text, string typeMessage, int IDUser)
         {
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
@@ -106,6 +119,19 @@ namespace MainClient
                 {
                     connection.Open();
                     command.CommandText = $"DELETE FROM UserMessages WHERE RecipientAdress = '{RecipientAdress}' AND SubjectLetter='{Subject}' AND TextLetter='{Text}' AND IDSender = {IDUser} AND TypeMessage = 'DEL';";
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
+        public void DeleteAllMessageByTypeInDB(string TypeMessage, int IDUser)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"DELETE FROM UserMessages WHERE IDSender = {IDUser} AND TypeMessage = '{TypeMessage}';";
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
