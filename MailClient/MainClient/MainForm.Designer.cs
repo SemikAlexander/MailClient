@@ -60,6 +60,7 @@
             this.inboxMessageWorker = new System.ComponentModel.BackgroundWorker();
             this.draftMessageWorker = new System.ComponentModel.BackgroundWorker();
             this.sentMessageWorker = new System.ComponentModel.BackgroundWorker();
+            this.trashMessageWorker = new System.ComponentModel.BackgroundWorker();
             this.menuPanel.SuspendLayout();
             this.functionalPanel.SuspendLayout();
             this.contentPanel.SuspendLayout();
@@ -373,6 +374,11 @@
             this.sentMessageWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.sentMessageWorker_ProgressChanged);
             this.sentMessageWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.sentMessageWorker_RunWorkerCompleted);
             // 
+            // trashMessageWorker
+            // 
+            this.trashMessageWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.trashMessageWorker_ProgressChanged_1);
+            this.trashMessageWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.trashMessageWorker_RunWorkerCompleted_1);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -427,5 +433,6 @@
         private System.ComponentModel.BackgroundWorker inboxMessageWorker;
         private System.ComponentModel.BackgroundWorker draftMessageWorker;
         private System.ComponentModel.BackgroundWorker sentMessageWorker;
+        private System.ComponentModel.BackgroundWorker trashMessageWorker;
     }
 }

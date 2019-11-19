@@ -61,12 +61,13 @@ namespace MainClient
             toolStripStatusLabel1.Text = "";
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             button = OutgoingMessages.Text.Trim(' ');
+            arrayMessagesFromMailServer.Clear();
             if (check.IsInternetConnected())
             {
                 sentMessageWorker.DoWork += (c, ex) => sentMessageWorker_DoWork(c, ex);
-                if (!draftMessageWorker.IsBusy)
+                if (!sentMessageWorker.IsBusy)
                 {
-                    draftMessageWorker.RunWorkerAsync();
+                    sentMessageWorker.RunWorkerAsync();
                 }
             }
             else
@@ -85,6 +86,7 @@ namespace MainClient
         {
             button = DraftMessages.Text.Trim(' ');
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+            arrayMessagesFromMailServer.Clear();
             if (check.IsInternetConnected())
             {
                 draftMessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex);
@@ -111,13 +113,26 @@ namespace MainClient
             toolStripStatusLabel1.Text = "";
             button = DeleteMessage.Text.Trim(' ');
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
-            workWithDatabase.GetMessage(ID, "DEL", out messages);
-            UserMessagesTable.Rows.Clear();
-            if (messages.Count > 0)
-                foreach (var arraySendMessages in messages)
-                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+            arrayMessagesFromMailServer.Clear();
+            if (check.IsInternetConnected())
+            {
+                trashMessageWorker.DoWork += (c, ex) => trashMessageWorker_DoWork(c, ex);
+                if (!trashMessageWorker.IsBusy)
+                {
+                    trashMessageWorker.RunWorkerAsync();
+                }
+            }
             else
-                toolStripStatusLabel1.Text = "Эта папка пуста.";
+            {
+                workWithDatabase.GetMessage(ID, "DEL", out messages);
+                UserMessagesTable.Rows.Clear();
+                if (messages.Count > 0)
+                    foreach (var arraySendMessages in messages)
+                        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                else
+                    toolStripStatusLabel1.Text = "Эта папка пуста.";
+            }
+            
         }
 
         private void InboxMessages_Click(object sender, EventArgs e)
@@ -436,6 +451,25 @@ namespace MainClient
                 UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
         }
         #endregion
+        #region For trash message
+        private void trashMessageWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = (BackgroundWorker)sender;
+            GetTrashMessages(worker);
+        }
+
+        private void trashMessageWorker_ProgressChanged_1(object sender, ProgressChangedEventArgs e)
+        {
+            toolStripStatusLabel1.Text = $"Идёт загрузка...{(e.ProgressPercentage.ToString() + "%")}";
+        }
+
+        private void trashMessageWorker_RunWorkerCompleted_1(object sender, RunWorkerCompletedEventArgs e)
+        {
+            toolStripStatusLabel1.Text = "Готово!";
+            foreach (var info in arrayMessagesFromMailServer)
+                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+        }
+        #endregion
         #endregion
 
         private void UserMessagesTable_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
@@ -569,6 +603,7 @@ namespace MainClient
                 MessageBox.Show(ex.Message);
             }
         }
+
         public void GetDraftMessages(BackgroundWorker worker)
         {
             workWithDatabase.DeleteAllMessageByTypeInDB("DFT", ID);
@@ -670,6 +705,61 @@ namespace MainClient
                     else
                     {
                         toolStripStatusLabel1.Text = "Папки \"Отправленные\" нет на этом почтовом сервере.";
+                    }
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+        }
+        public void GetTrashMessages(BackgroundWorker worker)
+        {
+            workWithDatabase.DeleteAllMessageByTypeInDB("DEL", ID);
+            try
+            {
+                arrayMessagesFromMailServer.Clear();
+                using (var client = new ImapClient())
+                {
+                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                    client.Authenticate(email, password);
+                    var trashFolder = client.GetFolder(SpecialFolder.Trash);
+                    if (trashFolder != null)
+                    {
+                        trashFolder.Open(FolderAccess.ReadOnly);
+                        if (trashFolder.Count == 0)
+                        {
+                            toolStripStatusLabel1.Text = "Эта папка пуста.";
+                        }
+                        else
+                        {
+                            double numMessagesForPersent = (double)trashFolder.Count / 100;
+                            int countProcesses = 0;
+                            for (int i = 0; i < trashFolder.Count; i++)
+                            {
+                                var trashMessages = trashFolder.GetMessage(i);
+                                messageFromMailServer.RecipientAdress = Convert.ToString(trashMessages.From);
+                                messageFromMailServer.Subject = trashMessages.Subject;
+                                messageFromMailServer.Text = trashMessages.TextBody;
+                                messageFromMailServer.UnicID = trashMessages.MessageId;
+                                arrayMessagesFromMailServer.Add(messageFromMailServer);
+                                if (trashMessages.Subject == null)
+                                    workWithDatabase.AddMessageInDB(Convert.ToString(trashMessages.From).Replace("'", ""), "", trashMessages.TextBody.Replace("'", ""), "DEL", ID);
+                                else if (trashMessages.TextBody == null)
+                                    workWithDatabase.AddMessageInDB(Convert.ToString(trashMessages.From).Replace("'", ""), trashMessages.Subject.Replace("'", ""), "", "DEL", ID);
+                                else
+                                    workWithDatabase.AddMessageInDB(Convert.ToString(trashMessages.From).Replace("'", ""), trashMessages.Subject.Replace("'", ""), trashMessages.TextBody.Replace("'", ""), "DEL", ID);
+                                countProcesses++;
+                                if (countProcesses >= numMessagesForPersent)
+                                    worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        toolStripStatusLabel1.Text = "Папки \"Корзина\" нет на этом почтовом сервере.";
                     }
                     client.Disconnect(true);
                 }
