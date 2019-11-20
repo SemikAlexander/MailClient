@@ -1,9 +1,11 @@
 ﻿using System;
 using MimeKit;
 using MailKit.Net.Smtp;
+using MailKit.Net.Imap;
 using System.Windows.Forms;
 using MainClient.Properties;
 using System.IO;
+using MailKit;
 
 namespace MainClient
 {
@@ -103,9 +105,27 @@ namespace MainClient
                     client.Send(message);
                     client.Disconnect(true);
                     if (!MessageFromDraft)
-                        workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SND", ID);
+                    {
+                        workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SNT", ID);
+                        using (var client1 = new ImapClient())
+                        {
+                            client1.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                            client1.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                            client1.Authenticate(UserEmail, UserPassword);
+                            var draftFolder = client1.GetFolder(SpecialFolder.Sent);
+                            if (draftFolder != null)
+                            {
+                                draftFolder.Open(FolderAccess.ReadWrite);
+                                draftFolder.Append(message, MessageFlags.None);
+                                draftFolder.Expunge();
+                            }
+                            client1.Disconnect(true);
+                        }
+                    }
                     else
-                        workWithDatabase.EditMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SND", ID);
+                    {
+                        workWithDatabase.EditMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SNT", ID);
+                    }
                     MessageBox.Show("Письмо отправленно!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     email_client.Text = theme.Text = TextLetter.Text = "";
                 }
