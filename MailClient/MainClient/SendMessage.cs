@@ -44,8 +44,47 @@ namespace MainClient
                 switch (MessageBox.Show("Сохранить сообщение в черновики?", "Сохранить", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
                 {
                     case DialogResult.OK:
+                        var message = new MimeMessage();
+                        message.From.Add(new MailboxAddress(UserEmail));
+                        message.To.Add(new MailboxAddress(email_client.Text));
+                        message.Subject = theme.Text;
+                        var builder = new BodyBuilder();
+                        builder.TextBody = TextLetter.Text;
+                        if (AttachmentFile != "")
+                        {
+                            builder.Attachments.Add(AttachmentFile);
+                        }
+                        message.Body = builder.ToMessageBody();
                         if (!MessageFromDraft)
+                        {
                             workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "DFT", ID);
+                            try
+                            {
+                                using (var client1 = new ImapClient())
+                                {
+                                    client1.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                                    client1.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                                    client1.Authenticate(UserEmail, UserPassword);
+
+                                    var draftFolder = client1.GetFolder(SpecialFolder.Drafts);
+                                    if (draftFolder != null)
+                                    {
+                                        draftFolder.Open(FolderAccess.ReadWrite);
+                                        draftFolder.Append(message, MessageFlags.None);
+                                        draftFolder.Expunge();
+                                    }
+                                    client1.Disconnect(true);
+                                }
+                                MessageBox.Show("Письмо сохранено в черновики!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                email_client.Text = theme.Text = TextLetter.Text = "";
+
+                            }
+                            catch (Exception ex)
+                            {
+                                mainForm.toolStripStatusLabel1.Text = "Ошибка: " + ex.Message;
+                                MessageBox.Show(ex.Message);
+                            }
+                        }
                         else
                             workWithDatabase.EditMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "DFT", ID);
                         Hide();
