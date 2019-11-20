@@ -70,7 +70,7 @@ namespace MainClient
                                     if (draftFolder != null)
                                     {
                                         draftFolder.Open(FolderAccess.ReadWrite);
-                                        draftFolder.Append(message, MessageFlags.None);
+                                        draftFolder.Append(message, MessageFlags.Draft);
                                         draftFolder.Expunge();
                                     }
                                     client1.Disconnect(true);
