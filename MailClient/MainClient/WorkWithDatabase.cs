@@ -11,7 +11,7 @@ namespace MainClient
     {
         public struct Message
         {
-            public string RecipientAdress, Subject, Text, Seen;
+            public string RecipientAdress, Subject, Text, MessId, Seen;
         }
         Message message;
         public bool GetUser(string UserEmail, string UserPassword, out int IDUser)
@@ -106,6 +106,19 @@ namespace MainClient
                 {
                     connection.Open();
                     command.CommandText = $"UPDATE UserMessages SET TypeMessage=\"{typeMessage}\" WHERE RecipientAdress = '{RecipientAdress}' AND SubjectLetter='{Subject}' AND TextLetter='{Text}' AND IDSender = {IDUser};";
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
+        public void MarkMessageAsReadInDB(string RecipientAdress, string Subject, string Text, string typeMessage, int IDUser)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"UPDATE UserMessages SET Seen=\"+\" WHERE RecipientAdress = '{RecipientAdress}' AND SubjectLetter='{Subject}' AND TextLetter='{Text}' AND IDSender = {IDUser} AND TypeMessage = '{typeMessage}';";
                     command.ExecuteNonQuery();
                     connection.Close();
                 }

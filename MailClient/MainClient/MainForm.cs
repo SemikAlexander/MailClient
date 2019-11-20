@@ -183,6 +183,11 @@ namespace MainClient
                                 toolStripStatusLabel1.Text = "Готово!";
                                 client.Disconnect(true);
                                 MarkMessageAsRead(UserMessagesTable.CurrentRow.Index);
+                                workWithDatabase.MarkMessageAsReadInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                                    UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'",""),
+                                    UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
+                                    "INB",
+                                    ID);
                                 DataGridOutputMessages("INB");
                                 readMessage.ShowDialog();
                             }
@@ -425,25 +430,17 @@ namespace MainClient
                     {
                         try
                         {
-                            if (row.Cells[3].Value.ToString() == id)
+                            if (row.Cells[4].Value == null)
                             {
-                                row.DefaultCellStyle.ForeColor = Color.DimGray;
-                                break;
+                                continue;
                             }
+                            row.DefaultCellStyle.ForeColor = row.Cells[4].Value.ToString() == "+" ? Color.DimGray : Color.Black;                           
                         }
                         catch (Exception)
                         {
                             return;
                         }
                     }
-                    //foreach(var info in arrayMessagesFromMailServer)
-                    //{
-                    //    if (info.SeenMessage == "+")
-                    //        UserMessagesTable.DefaultCellStyle.ForeColor = Color.DimGray;
-                    //    else
-                    //        UserMessagesTable.DefaultCellStyle.ForeColor = Color.Black;
-                    //    UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID, info.SeenMessage);
-                    //}
                 }
             }
         }
@@ -742,7 +739,7 @@ namespace MainClient
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
                 foreach (var arraySendMessages in messages)
-                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text, arraySendMessages.MessId, arraySendMessages.Seen);
             else
                 toolStripStatusLabel1.Text = "Эта папка пуста.";
         }
