@@ -20,7 +20,7 @@ namespace MainClient
         Check check = new Check();
         struct StructMessage
         {
-            public string RecipientAdress, Subject, Text, UnicID;
+            public string RecipientAdress, Subject, Text, UnicID, SeenMessage;
         }
         WorkWithDatabase workWithDatabase;
         List<WorkWithDatabase.Message> messages = new List<WorkWithDatabase.Message>();
@@ -182,6 +182,8 @@ namespace MainClient
                                 readMessage.MimeMessage = message;
                                 toolStripStatusLabel1.Text = "Готово!";
                                 client.Disconnect(true);
+                                MarkMessageAsRead(UserMessagesTable.CurrentRow.Index);
+                                DataGridOutputMessages("INB");
                                 readMessage.ShowDialog();
                             }
                         }
@@ -342,7 +344,7 @@ namespace MainClient
         {
             toolStripStatusLabel1.Text = "Готово!";
             foreach (var info in arrayMessagesFromMailServer)
-                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID, info.SeenMessage);
         }
 
         private void inboxMessageWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e, bool TypeProtocol)
@@ -434,6 +436,14 @@ namespace MainClient
                             return;
                         }
                     }
+                    //foreach(var info in arrayMessagesFromMailServer)
+                    //{
+                    //    if (info.SeenMessage == "+")
+                    //        UserMessagesTable.DefaultCellStyle.ForeColor = Color.DimGray;
+                    //    else
+                    //        UserMessagesTable.DefaultCellStyle.ForeColor = Color.Black;
+                    //    UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID, info.SeenMessage);
+                    //}
                 }
             }
         }
@@ -468,15 +478,20 @@ namespace MainClient
                         messageFromMailServer.Subject = message.Subject;
                         messageFromMailServer.Text = (message.TextBody == null || message.TextBody.Trim().Length == 0) ? message.HtmlBody : message.TextBody;
                         messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
-                        arrayMessagesFromMailServer.Add(messageFromMailServer);
                         if (item.Flags.Value.HasFlag(MessageFlags.Seen))
+                        {
+                            messageFromMailServer.SeenMessage = "+";
                             uniqueIds.Add(Convert.ToString(item.UniqueId));
-                        if (message.Subject == null)
-                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), "", message.TextBody.Replace("'", ""), "INB", Convert.ToString(item.UniqueId), ID);
-                        else if (message.TextBody == null)
-                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), message.Subject.Replace("'", ""), "", "INB", Convert.ToString(item.UniqueId), ID);
+                        }
                         else
-                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), message.Subject.Replace("'", ""), message.TextBody.Replace("'", ""), "INB", Convert.ToString(item.UniqueId), ID);
+                            messageFromMailServer.SeenMessage = "-";
+                        arrayMessagesFromMailServer.Add(messageFromMailServer);
+                        if (message.Subject == null)
+                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), "", message.TextBody.Replace("'", ""), "INB", Convert.ToString(item.UniqueId), ID, messageFromMailServer.SeenMessage);
+                        else if (message.TextBody == null)
+                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), message.Subject.Replace("'", ""), "", "INB", Convert.ToString(item.UniqueId), ID, messageFromMailServer.SeenMessage);
+                        else
+                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), message.Subject.Replace("'", ""), message.TextBody.Replace("'", ""), "INB", Convert.ToString(item.UniqueId), ID, messageFromMailServer.SeenMessage);
                         countProcesses++;
                         if (countProcesses >= numMessagesForPersent)
                             worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
@@ -744,6 +759,28 @@ namespace MainClient
                     var inbox = client.Inbox;
                     inbox.Open(FolderAccess.ReadWrite);
                     inbox.AddFlags(index, MessageFlags.Deleted, true);
+                    inbox.Expunge();
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+        }
+
+        public void MarkMessageAsRead(int index)
+        {
+            try
+            {
+                using (var client = new ImapClient())
+                {
+                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                    client.Authenticate(email, password);
+                    var inbox = client.Inbox;
+                    inbox.Open(FolderAccess.ReadWrite);
+                    inbox.AddFlags(index, MessageFlags.Seen, true);
                     inbox.Expunge();
                     client.Disconnect(true);
                 }

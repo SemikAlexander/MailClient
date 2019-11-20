@@ -11,7 +11,7 @@ namespace MainClient
     {
         public struct Message
         {
-            public string RecipientAdress, Subject, Text;
+            public string RecipientAdress, Subject, Text, Seen;
         }
         Message message;
         public bool GetUser(string UserEmail, string UserPassword, out int IDUser)
@@ -85,14 +85,14 @@ namespace MainClient
                 }
             }
         }
-        public void AddMessageInDB(string RecipientAdress, string Subject, string Text, string typeMessage, string IDMessage, int IDUser)
+        public void AddMessageInDB(string RecipientAdress, string Subject, string Text, string typeMessage, string IDMessage, int IDUser, string IsSeen)
         {
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
             {
                 using (SQLiteCommand command = new SQLiteCommand(connection))
                 {
                     connection.Open();
-                    command.CommandText = $"INSERT INTO UserMessages (RecipientAdress, SubjectLetter, TextLetter, IDSender, TypeMessage, MessageID) VALUES ('{RecipientAdress}','{Subject}','{Text}',{IDUser},'{typeMessage}','{IDMessage}');";
+                    command.CommandText = $"INSERT INTO UserMessages (RecipientAdress, SubjectLetter, TextLetter, IDSender, TypeMessage, MessageID, Seen) VALUES ('{RecipientAdress}','{Subject}','{Text}',{IDUser},'{typeMessage}','{IDMessage}', '{IsSeen}');";
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
@@ -154,6 +154,7 @@ namespace MainClient
                             message.RecipientAdress = Convert.ToString(reader["RecipientAdress"]);
                             message.Subject = Convert.ToString(reader["SubjectLetter"]);
                             message.Text = Convert.ToString(reader["TextLetter"]);
+                            message.Seen = Convert.ToString(reader["Seen"]);
                             messages.Add(message);
                         }
                         connection.Close();
