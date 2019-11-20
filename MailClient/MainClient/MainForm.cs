@@ -72,15 +72,7 @@ namespace MainClient
                 }
             }
             else
-            {
-                workWithDatabase.GetMessage(ID, "SNT", out messages);
-                UserMessagesTable.Rows.Clear();
-                if (messages.Count > 0)
-                    foreach (var arraySendMessages in messages)
-                        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                else
-                    toolStripStatusLabel1.Text = "Эта папка пуста.";
-            }
+                DataGridOutputMessages("SNT");
         }
 
         private void DraftMessages_Click(object sender, EventArgs e)
@@ -98,16 +90,7 @@ namespace MainClient
                 }
             }
             else
-            {
-                toolStripStatusLabel1.Text = "";
-                workWithDatabase.GetMessage(ID, "DFT", out messages);
-                UserMessagesTable.Rows.Clear();
-                if (messages.Count > 0)
-                    foreach (var arraySendMessages in messages)
-                        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                else
-                    toolStripStatusLabel1.Text = "Эта папка пуста.";
-            }
+                DataGridOutputMessages("DFT");
         }
 
         private void DeleteMessage_Click(object sender, EventArgs e)
@@ -126,15 +109,7 @@ namespace MainClient
                 }
             }
             else
-            {
-                workWithDatabase.GetMessage(ID, "DEL", out messages);
-                UserMessagesTable.Rows.Clear();
-                if (messages.Count > 0)
-                    foreach (var arraySendMessages in messages)
-                        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                else
-                    toolStripStatusLabel1.Text = "Эта папка пуста.";
-            }
+                DataGridOutputMessages("DEL");
             
         }
 
@@ -154,16 +129,7 @@ namespace MainClient
                 }
             }
             else
-            {
-                toolStripStatusLabel1.Text = "";
-                workWithDatabase.GetMessage(ID, "INB", out messages);
-                UserMessagesTable.Rows.Clear();
-                if (messages.Count > 0)
-                    foreach (var arraySendMessages in messages)
-                        UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                else
-                    toolStripStatusLabel1.Text = "Эта папка пуста.";
-            }
+                DataGridOutputMessages("INB");
         }
 
         private void UserMessagesTable_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -256,48 +222,42 @@ namespace MainClient
             switch (button)
             {
                 case "Входящие":
-                    
+                    workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
+                        "DEL",
+                        ID);
+                    MarkMessageAsDelete(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString());
+                    DataGridOutputMessages("INB");
                     break;
                 case "Отправленные":
                     workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
                         "DEL",
                         ID);
-                    workWithDatabase.GetMessage(ID, "SNT", out messages);
-                    UserMessagesTable.Rows.Clear();
-                    if (messages.Count > 0)
-                        foreach (var arraySendMessages in messages)
-                            UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                    else
-                        toolStripStatusLabel1.Text = "Эта папка пуста.";
+                    DataGridOutputMessages("SNT");
                     break;
                 case "Черновик":
                     workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
                         "DEL",
                         ID);
-                    workWithDatabase.GetMessage(ID, "DFT", out messages);
-                    UserMessagesTable.Rows.Clear();
-                    if (messages.Count > 0)
-                        foreach (var arraySendMessages in messages)
-                            UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                    else
-                        toolStripStatusLabel1.Text = "Эта папка пуста.";
+                    MarkMessageAsDelete(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString());
+                    DataGridOutputMessages("DFT");
                     break;
                 case "Удалённые":
                     workWithDatabase.DeleteMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
                         ID);
-                    workWithDatabase.GetMessage(ID, "DEL", out messages);
-                    UserMessagesTable.Rows.Clear();
-                    if (messages.Count > 0)
-                        foreach (var arraySendMessages in messages)
-                            UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-                    else
-                        toolStripStatusLabel1.Text = "Эта папка пуста.";
+                    DataGridOutputMessages("DEL");
+                    DeleteByIndex(UserMessagesTable.CurrentRow.Index);  /*Окончательное удаление письма*/
                     break;
             }
         }
@@ -355,13 +315,7 @@ namespace MainClient
                         UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
                         "DFT",
                         ID);
-            workWithDatabase.GetMessage(ID, "DFT", out messages);
-            UserMessagesTable.Rows.Clear();
-            if (messages.Count > 0)
-                foreach (var arraySendMessages in messages)
-                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
-            else
-                toolStripStatusLabel1.Text = "Эта папка пуста.";
+            DataGridOutputMessages("DFT");
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -512,7 +466,7 @@ namespace MainClient
                         var message = inbox.GetMessage(item.UniqueId);
                         messageFromMailServer.RecipientAdress = Convert.ToString(message.From);
                         messageFromMailServer.Subject = message.Subject;
-                        messageFromMailServer.Text = message.TextBody;
+                        messageFromMailServer.Text = (message.TextBody == null || message.TextBody.Trim().Length == 0) ? message.HtmlBody : message.TextBody;
                         messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
                         arrayMessagesFromMailServer.Add(messageFromMailServer);
                         if (item.Flags.Value.HasFlag(MessageFlags.Seen))
@@ -590,7 +544,6 @@ namespace MainClient
                 MessageBox.Show(ex.Message);
             }
         }
-
         public void GetDraftMessages(BackgroundWorker worker)
         {
             workWithDatabase.DeleteAllMessageByTypeInDB("DFT", ID);
@@ -766,6 +719,74 @@ namespace MainClient
                     return true;
             }
             return false;
+        }
+
+        public void DataGridOutputMessages(string TypeMessage)
+        {
+            workWithDatabase.GetMessage(ID, TypeMessage, out messages);
+            UserMessagesTable.Rows.Clear();
+            if (messages.Count > 0)
+                foreach (var arraySendMessages in messages)
+                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text);
+            else
+                toolStripStatusLabel1.Text = "Эта папка пуста.";
+        }
+
+        public void DeleteByIndex(int index)
+        {
+            try
+            {
+                using (var client = new ImapClient())
+                {
+                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                    client.Authenticate(email, password);
+                    var inbox = client.Inbox;
+                    inbox.Open(FolderAccess.ReadWrite);
+                    inbox.AddFlags(index, MessageFlags.Deleted, true);
+                    inbox.Expunge();
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+        }
+
+        public void MarkMessageAsDelete(string RecAdress, string Subject, string Text)
+        {
+            string[] adress = RecAdress.Split('<');
+            RecAdress = adress[1].Replace(">", "");
+            try
+            {
+                using (var client = new ImapClient())
+                {
+                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                    client.Authenticate(email, password);
+
+                    var message = new MimeMessage();
+                    message.From.Add(new MailboxAddress(RecAdress));
+                    message.To.Add(new MailboxAddress(email));
+                    message.Subject = Subject;
+                    var builder = new BodyBuilder();
+                    builder.TextBody = Text;
+                    message.Body = builder.ToMessageBody();
+                    var TrashFolder = client.GetFolder(SpecialFolder.Trash);
+                    if (TrashFolder != null)
+                    {
+                        TrashFolder.Open(FolderAccess.ReadWrite);
+                        TrashFolder.Append(message, MessageFlags.None);
+                        TrashFolder.Expunge();
+                    }
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = "Ошибка: " + ex.Message;
+            }
         }
     }
 }
