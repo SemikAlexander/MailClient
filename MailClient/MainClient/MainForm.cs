@@ -63,6 +63,7 @@ namespace MainClient
             button = OutgoingMessages.Text.Trim(' ');
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
+            menuPanel.Enabled = functionalPanel.Enabled = false;
             if (check.IsInternetConnected())
             {
                 sentMessageWorker.DoWork += (c, ex) => sentMessageWorker_DoWork(c, ex);
@@ -81,6 +82,7 @@ namespace MainClient
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
+            menuPanel.Enabled = functionalPanel.Enabled = false;
             if (check.IsInternetConnected())
             {
                 draftMessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex);
@@ -100,7 +102,8 @@ namespace MainClient
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
-            if (check.IsInternetConnected())
+            menuPanel.Enabled = functionalPanel.Enabled = false;
+            if (check.IsInternetConnected()/* & UserMessageFromMailServer() > workWithDatabase.CountInboxMessages("INB")*/)
             {
                 trashMessageWorker.DoWork += (c, ex) => trashMessageWorker_DoWork(c, ex);
                 if (!trashMessageWorker.IsBusy)
@@ -120,7 +123,7 @@ namespace MainClient
             button = InboxMessages.Text.Trim(' ');
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
-            if (check.IsInternetConnected())
+            if (check.IsInternetConnected() & UserMessageFromMailServer() > workWithDatabase.CountInboxMessages("INB"))
             {
                 inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
                 if (!inboxMessageWorker.IsBusy)
@@ -347,9 +350,10 @@ namespace MainClient
 
         private void inboxMessageWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            toolStripStatusLabel1.Text = "Готово!";
-            foreach (var info in arrayMessagesFromMailServer)
-                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID, info.SeenMessage);
+            //toolStripStatusLabel1.Text = "Готово!";
+            //foreach (var info in arrayMessagesFromMailServer)
+            //    UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID, info.SeenMessage);
+            menuPanel.Enabled = functionalPanel.Enabled = true;
         }
 
         private void inboxMessageWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e, bool TypeProtocol)
@@ -378,6 +382,7 @@ namespace MainClient
             toolStripStatusLabel1.Text = "Готово!";
             foreach (var info in arrayMessagesFromMailServer)
                 UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+            menuPanel.Enabled = functionalPanel.Enabled = true;
         }
         #endregion
         #region For sent message
@@ -397,6 +402,7 @@ namespace MainClient
             toolStripStatusLabel1.Text = "Готово!";
             foreach (var info in arrayMessagesFromMailServer)
                 UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+            menuPanel.Enabled = functionalPanel.Enabled = true;
         }
         #endregion
         #region For trash message
@@ -416,6 +422,7 @@ namespace MainClient
             toolStripStatusLabel1.Text = "Готово!";
             foreach (var info in arrayMessagesFromMailServer)
                 UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+            menuPanel.Enabled = functionalPanel.Enabled = true;
         }
         #endregion
         #endregion
@@ -450,6 +457,15 @@ namespace MainClient
             int index = email.IndexOf("@");
             Text = email.Substring(0, index);
             toolStripStatusLabel1.Text = "";
+            menuPanel.Enabled = functionalPanel.Enabled = false;
+            if (check.IsInternetConnected())
+            {
+                inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
+                if (!inboxMessageWorker.IsBusy)
+                {
+                    inboxMessageWorker.RunWorkerAsync();
+                }
+            }
         }
 
         #region Get messages
@@ -820,6 +836,20 @@ namespace MainClient
             catch (Exception ex)
             {
                 toolStripStatusLabel1.Text = "Ошибка: " + ex.Message;
+            }
+        }
+        public int UserMessageFromMailServer()
+        {
+            using (var client = new ImapClient())
+            {
+                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+                client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                client.Authenticate(email, password);
+                var inbox = client.Inbox;
+                inbox.Open(FolderAccess.ReadOnly);
+                var result = inbox.Count;
+                client.Disconnect(true);
+                return result;
             }
         }
     }

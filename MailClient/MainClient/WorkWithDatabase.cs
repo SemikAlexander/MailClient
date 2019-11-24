@@ -220,5 +220,27 @@ namespace MainClient
                 }
             }
         }
+        public int CountInboxMessages(string TypeMessage)
+        {
+            int res = 0;
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT COUNT(*) AS res FROM UserMessages WHERE TypeMessage = \"{TypeMessage}\"";
+                    command.ExecuteNonQuery();
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            res = Convert.ToInt32(reader["res"]);
+                        }
+                        connection.Close();
+                        return res;
+                    }
+                }
+            }
+        }
     }
 }
