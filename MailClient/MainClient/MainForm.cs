@@ -10,6 +10,7 @@ using System.ComponentModel;
 using MailKit.Security;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace MainClient
 {
@@ -37,8 +38,8 @@ namespace MainClient
             workWithDatabase = new WorkWithDatabase();
             inboxMessageWorker.WorkerReportsProgress = true;
             inboxMessageWorker.WorkerSupportsCancellation = true;
-            draftMessageWorker.WorkerReportsProgress = true;
-            draftMessageWorker.WorkerSupportsCancellation = true;
+            MessageWorker.WorkerReportsProgress = true;
+            MessageWorker.WorkerSupportsCancellation = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -67,10 +68,10 @@ namespace MainClient
             menuPanel.Enabled = functionalPanel.Enabled = false;
             if (check.IsInternetConnected())
             {
-                sentMessageWorker.DoWork += (c, ex) => sentMessageWorker_DoWork(c, ex);
-                if (!sentMessageWorker.IsBusy)
+                MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Отправленные");
+                if (!MessageWorker.IsBusy)
                 {
-                    sentMessageWorker.RunWorkerAsync();
+                    MessageWorker.RunWorkerAsync();
                 }
             }
             else
@@ -86,10 +87,10 @@ namespace MainClient
             menuPanel.Enabled = functionalPanel.Enabled = false;
             if (check.IsInternetConnected())
             {
-                draftMessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex);
-                if (!draftMessageWorker.IsBusy)
+                MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Черновик");
+                if (!MessageWorker.IsBusy)
                 {
-                    draftMessageWorker.RunWorkerAsync();
+                    MessageWorker.RunWorkerAsync();
                 }
             }
             else
@@ -104,17 +105,37 @@ namespace MainClient
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected()/* & UserMessageFromMailServer() > workWithDatabase.CountInboxMessages("INB")*/)
+            if (check.IsInternetConnected())
             {
-                trashMessageWorker.DoWork += (c, ex) => trashMessageWorker_DoWork(c, ex);
-                if (!trashMessageWorker.IsBusy)
+                MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Удалённые");
+                if (!MessageWorker.IsBusy)
                 {
-                    trashMessageWorker.RunWorkerAsync();
+                    MessageWorker.RunWorkerAsync();
                 }
             }
             else
                 DataGridOutputMessages("DEL");
             
+        }
+
+        private void JunkMessages_Click(object sender, EventArgs e)
+        {
+            toolStripStatusLabel1.Text = "";
+            EditMessageButton.Visible = EditMessageButton.Visible = RestoreMessageButton.Visible = DeleteMessageButton.Visible = false;
+            button = OutgoingMessages.Text.Trim(' ');
+            arrayMessagesFromMailServer.Clear();
+            UserMessagesTable.Rows.Clear();
+            menuPanel.Enabled = functionalPanel.Enabled = false;
+            if (check.IsInternetConnected())
+            {
+                MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Спам");
+                if (!MessageWorker.IsBusy)
+                {
+                    MessageWorker.RunWorkerAsync();
+                }
+            }
+            else
+                DataGridOutputMessages("JNK");
         }
 
         private void InboxMessages_Click(object sender, EventArgs e)
@@ -351,7 +372,7 @@ namespace MainClient
 
         private void inboxMessageWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            //toolStripStatusLabel1.Text = "Готово!";
+            toolStripStatusLabel1.Text = "Готово!";
             //foreach (var info in arrayMessagesFromMailServer)
             //    UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID, info.SeenMessage);
             menuPanel.Enabled = functionalPanel.Enabled = true;
@@ -366,10 +387,25 @@ namespace MainClient
                 GetMessagesByIMAP(worker);
         }
         #endregion
-        #region For draft messages
-        private void draftMessageWorker_DoWork(object sender, DoWorkEventArgs e)
+        #region For other type of messages
+        private void draftMessageWorker_DoWork(object sender, DoWorkEventArgs e, string TypeGetMessange)
         {
             BackgroundWorker worker = (BackgroundWorker)sender;
+            switch (TypeGetMessange)
+            {
+                case "Отправленные":
+                    GetSentMessages(worker);
+                    break;
+                case "Удалённые":
+                    GetTrashMessages(worker);
+                    break;
+                case "Спам":
+                    GetJunkMessages(worker);
+                    break;
+                case "Черновик":
+                    GetDraftMessages(worker);
+                    break;
+            }
             GetDraftMessages(worker);
         }
 
@@ -379,46 +415,6 @@ namespace MainClient
         }
 
         private void draftMessageWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            toolStripStatusLabel1.Text = "Готово!";
-            foreach (var info in arrayMessagesFromMailServer)
-                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
-            menuPanel.Enabled = functionalPanel.Enabled = true;
-        }
-        #endregion
-        #region For sent message
-        private void sentMessageWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker worker = (BackgroundWorker)sender;
-            GetSentMessages(worker);
-        }
-
-        private void sentMessageWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            toolStripStatusLabel1.Text = $"Идёт загрузка...{(e.ProgressPercentage.ToString() + "%")}";
-        }
-
-        private void sentMessageWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            toolStripStatusLabel1.Text = "Готово!";
-            foreach (var info in arrayMessagesFromMailServer)
-                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
-            menuPanel.Enabled = functionalPanel.Enabled = true;
-        }
-        #endregion
-        #region For trash message
-        private void trashMessageWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker worker = (BackgroundWorker)sender;
-            GetTrashMessages(worker);
-        }
-
-        private void trashMessageWorker_ProgressChanged_1(object sender, ProgressChangedEventArgs e)
-        {
-            toolStripStatusLabel1.Text = $"Идёт загрузка...{(e.ProgressPercentage.ToString() + "%")}";
-        }
-
-        private void trashMessageWorker_RunWorkerCompleted_1(object sender, RunWorkerCompletedEventArgs e)
         {
             toolStripStatusLabel1.Text = "Готово!";
             foreach (var info in arrayMessagesFromMailServer)
@@ -599,12 +595,56 @@ namespace MainClient
                                 messageFromMailServer.Text = draftMessages.TextBody;
                                 messageFromMailServer.UnicID = draftMessages.MessageId;
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
-                                if (draftMessages.Subject == null)
-                                    workWithDatabase.AddMessageInDB(Convert.ToString(draftMessages.From).Replace("'", ""), "", draftMessages.TextBody.Replace("'", ""), "DFT", ID);
-                                else if (draftMessages.TextBody == null)
-                                    workWithDatabase.AddMessageInDB(Convert.ToString(draftMessages.From).Replace("'", ""), draftMessages.Subject.Replace("'", ""), "", "DFT", ID);
-                                else
-                                    workWithDatabase.AddMessageInDB(Convert.ToString(draftMessages.From).Replace("'", ""), draftMessages.Subject.Replace("'", ""), draftMessages.TextBody.Replace("'", ""), "DFT", ID);
+                                countProcesses++;
+                                if (countProcesses >= numMessagesForPersent)
+                                    worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        toolStripStatusLabel1.Text = "Папки \"Черновик\" нет на этом почтовом сервере.";
+                    }
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+        }
+        public void GetJunkMessages(BackgroundWorker worker)
+        {
+            workWithDatabase.DeleteAllMessageByTypeInDB("DFT", ID);
+            try
+            {
+                arrayMessagesFromMailServer.Clear();
+                using (var client = new ImapClient())
+                {
+                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                    client.Authenticate(email, password);
+                    var draftFolder = client.GetFolder(SpecialFolder.Junk);
+                    if (draftFolder != null)
+                    {
+                        draftFolder.Open(FolderAccess.ReadOnly);
+                        if (draftFolder.Count == 0)
+                        {
+                            toolStripStatusLabel1.Text = "Эта папка пуста.";
+                        }
+                        else
+                        {
+                            double numMessagesForPersent = (double)draftFolder.Count / 100;
+                            int countProcesses = 0;
+                            for (int i = 0; i < draftFolder.Count; i++)
+                            {
+                                var draftMessages = draftFolder.GetMessage(i);
+                                messageFromMailServer.RecipientAdress = Convert.ToString(draftMessages.From);
+                                messageFromMailServer.Subject = draftMessages.Subject;
+                                messageFromMailServer.Text = draftMessages.TextBody;
+                                messageFromMailServer.UnicID = draftMessages.MessageId;
+                                arrayMessagesFromMailServer.Add(messageFromMailServer);
+                                workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "JNK", ID);
                                 countProcesses++;
                                 if (countProcesses >= numMessagesForPersent)
                                     worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
@@ -654,12 +694,7 @@ namespace MainClient
                                 messageFromMailServer.Text = sentMessages.TextBody;
                                 messageFromMailServer.UnicID = sentMessages.MessageId;
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
-                                if (sentMessages.Subject == null)
-                                    workWithDatabase.AddMessageInDB(Convert.ToString(sentMessages.From).Replace("'", ""), "", sentMessages.TextBody.Replace("'", ""), "SNT", ID);
-                                else if (sentMessages.TextBody == null)
-                                    workWithDatabase.AddMessageInDB(Convert.ToString(sentMessages.From).Replace("'", ""), sentMessages.Subject.Replace("'", ""), "", "SNT", ID);
-                                else
-                                    workWithDatabase.AddMessageInDB(Convert.ToString(sentMessages.From).Replace("'", ""), sentMessages.Subject.Replace("'", ""), sentMessages.TextBody.Replace("'", ""), "SNT", ID);
+                                workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "SNT", ID);
                                 countProcesses++;
                                 if (countProcesses >= numMessagesForPersent)
                                     worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
@@ -709,12 +744,7 @@ namespace MainClient
                                 messageFromMailServer.Text = trashMessages.TextBody;
                                 messageFromMailServer.UnicID = trashMessages.MessageId;
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
-                                if (trashMessages.Subject == null)
-                                    workWithDatabase.AddMessageInDB(Convert.ToString(trashMessages.From).Replace("'", ""), "", trashMessages.TextBody.Replace("'", ""), "DEL", ID);
-                                else if (trashMessages.TextBody == null)
-                                    workWithDatabase.AddMessageInDB(Convert.ToString(trashMessages.From).Replace("'", ""), trashMessages.Subject.Replace("'", ""), "", "DEL", ID);
-                                else
-                                    workWithDatabase.AddMessageInDB(Convert.ToString(trashMessages.From).Replace("'", ""), trashMessages.Subject.Replace("'", ""), trashMessages.TextBody.Replace("'", ""), "DEL", ID);
+                                workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "DEL", ID);
                                 countProcesses++;
                                 if (countProcesses >= numMessagesForPersent)
                                     worker.ReportProgress((int)(countProcesses / numMessagesForPersent));

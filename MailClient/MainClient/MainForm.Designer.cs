@@ -30,11 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuPanel = new System.Windows.Forms.Panel();
+            this.JunkMessages = new System.Windows.Forms.Button();
             this.InfoButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.DeleteMessage = new System.Windows.Forms.Button();
@@ -52,16 +53,14 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.UserMessagesTable = new System.Windows.Forms.DataGridView();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.inboxMessageWorker = new System.ComponentModel.BackgroundWorker();
-            this.draftMessageWorker = new System.ComponentModel.BackgroundWorker();
-            this.sentMessageWorker = new System.ComponentModel.BackgroundWorker();
-            this.trashMessageWorker = new System.ComponentModel.BackgroundWorker();
             this.TitleMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ThemeMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ContentMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IDMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsMessageSeen = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.inboxMessageWorker = new System.ComponentModel.BackgroundWorker();
+            this.MessageWorker = new System.ComponentModel.BackgroundWorker();
             this.menuPanel.SuspendLayout();
             this.functionalPanel.SuspendLayout();
             this.contentPanel.SuspendLayout();
@@ -73,6 +72,7 @@
             // 
             this.menuPanel.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.menuPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.menuPanel.Controls.Add(this.JunkMessages);
             this.menuPanel.Controls.Add(this.InfoButton);
             this.menuPanel.Controls.Add(this.label1);
             this.menuPanel.Controls.Add(this.DeleteMessage);
@@ -84,6 +84,21 @@
             this.menuPanel.Name = "menuPanel";
             this.menuPanel.Size = new System.Drawing.Size(180, 519);
             this.menuPanel.TabIndex = 0;
+            // 
+            // JunkMessages
+            // 
+            this.JunkMessages.FlatAppearance.BorderSize = 0;
+            this.JunkMessages.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.JunkMessages.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.JunkMessages.Image = global::MainClient.Properties.Resources.GetSpamMessages;
+            this.JunkMessages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.JunkMessages.Location = new System.Drawing.Point(-1, 211);
+            this.JunkMessages.Name = "JunkMessages";
+            this.JunkMessages.Size = new System.Drawing.Size(180, 45);
+            this.JunkMessages.TabIndex = 8;
+            this.JunkMessages.Text = "       Спам";
+            this.JunkMessages.UseVisualStyleBackColor = true;
+            this.JunkMessages.Click += new System.EventHandler(this.JunkMessages_Click);
             // 
             // InfoButton
             // 
@@ -117,7 +132,7 @@
             this.DeleteMessage.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.DeleteMessage.Image = global::MainClient.Properties.Resources.DeleteMessage;
             this.DeleteMessage.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.DeleteMessage.Location = new System.Drawing.Point(-1, 211);
+            this.DeleteMessage.Location = new System.Drawing.Point(-1, 160);
             this.DeleteMessage.Name = "DeleteMessage";
             this.DeleteMessage.Size = new System.Drawing.Size(180, 45);
             this.DeleteMessage.TabIndex = 4;
@@ -132,7 +147,7 @@
             this.DraftMessages.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.DraftMessages.Image = global::MainClient.Properties.Resources.DraftMessage;
             this.DraftMessages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.DraftMessages.Location = new System.Drawing.Point(-1, 160);
+            this.DraftMessages.Location = new System.Drawing.Point(-1, 262);
             this.DraftMessages.Name = "DraftMessages";
             this.DraftMessages.Size = new System.Drawing.Size(180, 45);
             this.DraftMessages.TabIndex = 3;
@@ -297,14 +312,14 @@
             // UserMessagesTable
             // 
             this.UserMessagesTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.UserMessagesTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.UserMessagesTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.UserMessagesTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.UserMessagesTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TitleMessage,
@@ -322,35 +337,10 @@
             this.UserMessagesTable.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.UserMessagesTable_RowPrePaint);
             this.UserMessagesTable.MouseClick += new System.Windows.Forms.MouseEventHandler(this.UserMessagesTable_MouseClick);
             // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            // 
-            // inboxMessageWorker
-            // 
-            this.inboxMessageWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.inboxMessageWorker_ProgressChanged);
-            this.inboxMessageWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.inboxMessageWorker_RunWorkerCompleted);
-            // 
-            // draftMessageWorker
-            // 
-            this.draftMessageWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.draftMessageWorker_ProgressChanged);
-            this.draftMessageWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.draftMessageWorker_RunWorkerCompleted);
-            // 
-            // sentMessageWorker
-            // 
-            this.sentMessageWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.sentMessageWorker_ProgressChanged);
-            this.sentMessageWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.sentMessageWorker_RunWorkerCompleted);
-            // 
-            // trashMessageWorker
-            // 
-            this.trashMessageWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.trashMessageWorker_ProgressChanged_1);
-            this.trashMessageWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.trashMessageWorker_RunWorkerCompleted_1);
-            // 
             // TitleMessage
             // 
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TitleMessage.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.TitleMessage.DefaultCellStyle = dataGridViewCellStyle6;
             this.TitleMessage.HeaderText = "Адрес";
             this.TitleMessage.Name = "TitleMessage";
             this.TitleMessage.ReadOnly = true;
@@ -358,8 +348,8 @@
             // 
             // ThemeMessage
             // 
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ThemeMessage.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ThemeMessage.DefaultCellStyle = dataGridViewCellStyle7;
             this.ThemeMessage.HeaderText = "Тема";
             this.ThemeMessage.Name = "ThemeMessage";
             this.ThemeMessage.ReadOnly = true;
@@ -367,8 +357,8 @@
             // 
             // ContentMessage
             // 
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ContentMessage.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ContentMessage.DefaultCellStyle = dataGridViewCellStyle8;
             this.ContentMessage.HeaderText = "Содержимое";
             this.ContentMessage.Name = "ContentMessage";
             this.ContentMessage.ReadOnly = true;
@@ -387,6 +377,21 @@
             this.IsMessageSeen.Name = "IsMessageSeen";
             this.IsMessageSeen.ReadOnly = true;
             this.IsMessageSeen.Visible = false;
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
+            // inboxMessageWorker
+            // 
+            this.inboxMessageWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.inboxMessageWorker_ProgressChanged);
+            this.inboxMessageWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.inboxMessageWorker_RunWorkerCompleted);
+            // 
+            // MessageWorker
+            // 
+            this.MessageWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.draftMessageWorker_ProgressChanged);
+            this.MessageWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.draftMessageWorker_RunWorkerCompleted);
             // 
             // MainForm
             // 
@@ -436,13 +441,12 @@
         private System.Windows.Forms.Button DeleteMessageButton;
         private System.Windows.Forms.Button RestoreMessageButton;
         private System.ComponentModel.BackgroundWorker inboxMessageWorker;
-        private System.ComponentModel.BackgroundWorker draftMessageWorker;
-        private System.ComponentModel.BackgroundWorker sentMessageWorker;
-        private System.ComponentModel.BackgroundWorker trashMessageWorker;
+        private System.ComponentModel.BackgroundWorker MessageWorker;
         private System.Windows.Forms.DataGridViewTextBoxColumn TitleMessage;
         private System.Windows.Forms.DataGridViewTextBoxColumn ThemeMessage;
         private System.Windows.Forms.DataGridViewTextBoxColumn ContentMessage;
         private System.Windows.Forms.DataGridViewTextBoxColumn IDMessage;
         private System.Windows.Forms.DataGridViewTextBoxColumn IsMessageSeen;
+        private System.Windows.Forms.Button JunkMessages;
     }
 }
