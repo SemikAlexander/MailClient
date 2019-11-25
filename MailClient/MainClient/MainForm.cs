@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using MailKit.Security;
 using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace MainClient
 {
@@ -489,8 +490,9 @@ namespace MainClient
                         var message = inbox.GetMessage(item.UniqueId);
                         messageFromMailServer.RecipientAdress = Convert.ToString(message.From);
                         messageFromMailServer.Subject = message.Subject;
-                        messageFromMailServer.Text = (message.TextBody == null || message.TextBody.Trim().Length == 0) ? message.HtmlBody : message.TextBody;
+                        messageFromMailServer.Text = StripHTML((string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody);
                         messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
+                        workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject.Replace("'", ""), messageFromMailServer.Text.Replace("'", ""), "INB", messageFromMailServer.UnicID, ID, messageFromMailServer.SeenMessage);
                         if (item.Flags.Value.HasFlag(MessageFlags.Seen))
                         {
                             messageFromMailServer.SeenMessage = "+";
@@ -499,12 +501,6 @@ namespace MainClient
                         else
                             messageFromMailServer.SeenMessage = "-";
                         arrayMessagesFromMailServer.Add(messageFromMailServer);
-                        if (message.Subject == null)
-                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), "", message.TextBody.Replace("'", ""), "INB", Convert.ToString(item.UniqueId), ID, messageFromMailServer.SeenMessage);
-                        else if (message.TextBody == null)
-                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), message.Subject.Replace("'", ""), "", "INB", Convert.ToString(item.UniqueId), ID, messageFromMailServer.SeenMessage);
-                        else
-                            workWithDatabase.AddMessageInDB(Convert.ToString(message.From).Replace("'", ""), message.Subject.Replace("'", ""), message.TextBody.Replace("'", ""), "INB", Convert.ToString(item.UniqueId), ID, messageFromMailServer.SeenMessage);
                         countProcesses++;
                         if (countProcesses >= numMessagesForPersent)
                             worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
@@ -851,6 +847,10 @@ namespace MainClient
                 client.Disconnect(true);
                 return result;
             }
+        }
+        public static string StripHTML(string input)
+        {
+            return Regex.Replace(input, "<.*?>", String.Empty);
         }
     }
 }

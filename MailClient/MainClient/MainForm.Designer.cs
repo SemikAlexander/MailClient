@@ -351,7 +351,7 @@
             // 
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.TitleMessage.DefaultCellStyle = dataGridViewCellStyle2;
-            this.TitleMessage.HeaderText = "Титул";
+            this.TitleMessage.HeaderText = "Адрес";
             this.TitleMessage.Name = "TitleMessage";
             this.TitleMessage.ReadOnly = true;
             this.TitleMessage.Width = 180;

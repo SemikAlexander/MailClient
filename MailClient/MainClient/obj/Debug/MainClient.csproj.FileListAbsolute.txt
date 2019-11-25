@@ -51,3 +51,6 @@ C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\D
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\Debug\MainClient.exe
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\Debug\MainClient.pdb
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\Debug\MainClient.ReadMessage.resources
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\HtmlAgilityPack.dll
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\HtmlAgilityPack.xml
