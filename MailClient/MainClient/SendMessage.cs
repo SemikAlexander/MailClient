@@ -18,6 +18,7 @@ namespace MainClient
         string UserEmail, UserPassword;
         int ID;
         WorkWithDatabase workWithDatabase;
+        Crypto crypto;
         bool MessageFromDraft;
         string StartTegs = "";
         string EndTegs = "";
@@ -30,6 +31,7 @@ namespace MainClient
             ID = IDUser;
             MessageFromDraft = IsMessageFromDraft;
             workWithDatabase = new WorkWithDatabase();
+            crypto = new Crypto();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -235,11 +237,19 @@ namespace MainClient
                         break;
                 }
             }
+
+            /*Шифрование происходит здесь!*/
+
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(UserEmail));
             message.To.Add(new MailboxAddress(email_client.Text));
-            message.Subject = theme.Text;
+            message.Subject = crypto.ReturnEncryptRijndaelString(theme.Text);   /*Шифруем тему сообщения*/
             var builder = new BodyBuilder();
+
+            string[] temp = crypto.ReturnEncryptRijndaelString(TextLetter.Text).Split(new string[] { "^&*" }, StringSplitOptions.None); /*временный массив для формирования зашифрованного сообщения согласно заданной последовательности*/
+            
+            
+
             builder.TextBody = TextLetter.Text;
             builder.HtmlBody = $"<p align=\"{TextLetter.TextAlign}\">{StartTegs}<font size=\"{Convert.ToInt32(UserFontSize.Value)}\" face=\"{FontsComboBox.SelectedItem.ToString()}\">{TextLetter.Text}{EndTegs}</p>";
             if (AttachmentFile != "")

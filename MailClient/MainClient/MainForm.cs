@@ -145,7 +145,7 @@ namespace MainClient
             button = InboxMessages.Text.Trim(' ');
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
-            if (check.IsInternetConnected() & UserMessageFromMailServer() > workWithDatabase.CountInboxMessages("INB"))
+            if (check.IsInternetConnected() & (UserMessageFromMailServer() > workWithDatabase.CountInboxMessages("INB") | UserMessageFromMailServer() < workWithDatabase.CountInboxMessages("INB")))
             {
                 inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
                 if (!inboxMessageWorker.IsBusy)
@@ -160,137 +160,126 @@ namespace MainClient
         private void UserMessagesTable_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             ReadMessage readMessage = new ReadMessage();
-            #region Get inbox message from net
-            if (true/*button == "Входящие"*/)
+            #region Get message from net
+            if (check.IsInternetConnected())
             {
-                if (check.IsInternetConnected())
+                try
                 {
-                    try
+                    toolStripStatusLabel1.Text = "Идет загрузка...";
+                    if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
                     {
-                        toolStripStatusLabel1.Text = "Идет загрузка...";
-                        if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
+                        using (var client = new Pop3Client())
                         {
-                            using (var client = new Pop3Client())
+                            client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                            client.Connect(Settings.Default["POP3Adress"].ToString(), Convert.ToInt32(Settings.Default["POP3Port"]), true);
+                            client.Authenticate(email, password);
+                            if (LastIndex < 0) LastIndex = 0;
+                            if (client.Count == 0 | LastIndex + UserMessagesTable.CurrentCell.RowIndex > client.Count)
                             {
-                                client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                                client.Connect(Settings.Default["POP3Adress"].ToString(), Convert.ToInt32(Settings.Default["POP3Port"]), true);
-                                client.Authenticate(email, password);
-                                if (LastIndex < 0) LastIndex = 0;
-                                if (client.Count == 0 | LastIndex + UserMessagesTable.CurrentCell.RowIndex > client.Count)
-                                {
-                                    toolStripStatusLabel1.Text = "Письма нет.";
-                                    return;
-                                }
-                                var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
-                                readMessage.email_client.Text = message.From.ToString();
-                                readMessage.theme.Text = message.Subject;
-                                string textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
-                                
-                                WebBrowser wb = new WebBrowser();
-                                wb.Navigate("about:blank");
-                                wb.Document.Write(textForOutput);
-                                wb.Document.ExecCommand("SelectAll", false, null);
-                                wb.Document.ExecCommand("Copy", false, null);
-                                readMessage.TextLetter.SelectAll();
-                                readMessage.TextLetter.Paste();
-                                
-                                readMessage.MimeMessage = message;
-                                client.Disconnect(true);
-                                readMessage.ShowDialog();
+                                toolStripStatusLabel1.Text = "Письма нет.";
+                                return;
                             }
-                        }
-                        if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
-                        {
-                            using (var client = new ImapClient())
-                            {
-                                client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                                client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                                client.Authenticate(email, password);
-                                IMailFolder inbox;
-                                string OutputType = "";
-                                switch (button)
-                                {
-                                    case "Спам":
-                                        inbox = client.GetFolder(SpecialFolder.Junk);
-                                        OutputType = "JNK";
-                                        break;
-                                    case "Входящие":
-                                        inbox = client.Inbox;
-                                        OutputType = "INB";
-                                        break;
-                                    case "Отправленные":
-                                        inbox = client.GetFolder(SpecialFolder.Sent);
-                                        OutputType = "SNT";
-                                        break;
-                                    case "Черновик":
-                                        inbox = client.GetFolder(SpecialFolder.Drafts);
-                                        OutputType = "DFT";
-                                        break;
-                                    case "Удалённые":
-                                        inbox = client.GetFolder(SpecialFolder.Trash);
-                                        OutputType = "DEL";
-                                        break;
-                                    default:
-                                        inbox = client.Inbox;
-                                        OutputType = "INB";
-                                        break;
-                                }
-                                inbox.Open(FolderAccess.ReadOnly);
-                                if (LastIndex < 0) LastIndex = 0;
-                                var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
-                                readMessage.email_client.Text = message.From.ToString();
-                                readMessage.theme.Text = message.Subject;
-                                string textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                            var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
+                            readMessage.email_client.Text = message.From.ToString();
+                            readMessage.theme.Text = message.Subject;
+                            string textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
 
-                                WebBrowser wb = new WebBrowser();
-                                wb.Navigate("about:blank");
-                                wb.Document.Write(textForOutput);
-                                wb.Document.ExecCommand("SelectAll", false, null);
-                                wb.Document.ExecCommand("Copy", false, null);
-                                readMessage.TextLetter.SelectAll();
-                                readMessage.TextLetter.Paste();
+                            WebBrowser wb = new WebBrowser();
+                            wb.Navigate("about:blank");
+                            wb.Document.Write(textForOutput);
+                            wb.Document.ExecCommand("SelectAll", false, null);
+                            wb.Document.ExecCommand("Copy", false, null);
+                            readMessage.TextLetter.SelectAll();
+                            readMessage.TextLetter.Paste();
 
-                                readMessage.MimeMessage = message;
-                                toolStripStatusLabel1.Text = "Готово!";
-                                client.Disconnect(true);
-
-                                MarkMessageAsRead(UserMessagesTable.CurrentRow.Index);
-                                workWithDatabase.MarkMessageAsReadInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                                    UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'",""),
-                                    UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
-                                    "INB",
-                                    ID);
-
-                                DataGridOutputMessages(OutputType);
-
-                                readMessage.ShowDialog();
-                            }
+                            readMessage.MimeMessage = message;
+                            client.Disconnect(true);
+                            readMessage.ShowDialog();
                         }
                     }
-                    catch (Exception ex)
+                    if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
                     {
-                        toolStripStatusLabel1.Text = $"Ошибка: {ex.Message}";
+                        using (var client = new ImapClient())
+                        {
+                            client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                            client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                            client.Authenticate(email, password);
+                            IMailFolder inbox;
+                            string OutputType = "";
+                            switch (button)
+                            {
+                                case "Спам":
+                                    inbox = client.GetFolder(SpecialFolder.Junk);
+                                    OutputType = "JNK";
+                                    break;
+                                case "Входящие":
+                                    inbox = client.Inbox;
+                                    OutputType = "INB";
+                                    break;
+                                case "Отправленные":
+                                    inbox = client.GetFolder(SpecialFolder.Sent);
+                                    OutputType = "SNT";
+                                    break;
+                                case "Черновик":
+                                    inbox = client.GetFolder(SpecialFolder.Drafts);
+                                    OutputType = "DFT";
+                                    break;
+                                case "Удалённые":
+                                    inbox = client.GetFolder(SpecialFolder.Trash);
+                                    OutputType = "DEL";
+                                    break;
+                                default:
+                                    inbox = client.Inbox;
+                                    OutputType = "INB";
+                                    break;
+                            }
+                            inbox.Open(FolderAccess.ReadOnly);
+                            if (LastIndex < 0) LastIndex = 0;
+                            var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
+                            readMessage.email_client.Text = message.From.ToString();
+                            readMessage.theme.Text = message.Subject;
+                            string textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+
+                            WebBrowser wb = new WebBrowser();
+                            wb.Navigate("about:blank");
+                            wb.Document.Write(textForOutput);
+                            wb.Document.ExecCommand("SelectAll", false, null);
+                            wb.Document.ExecCommand("Copy", false, null);
+                            readMessage.TextLetter.SelectAll();
+                            readMessage.TextLetter.Paste();
+
+                            readMessage.MimeMessage = message;
+                            toolStripStatusLabel1.Text = "Готово!";
+                            client.Disconnect(true);
+
+                            MarkMessageAsRead(UserMessagesTable.CurrentRow.Index);
+                            workWithDatabase.MarkMessageAsReadInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                                UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
+                                UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
+                                "INB",
+                                ID);
+
+                            DataGridOutputMessages(OutputType);
+
+                            readMessage.ShowDialog();
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    toolStripStatusLabel1.Text = $"Ошибка: {ex.Message}";
+                }
             }
-            #endregion
             else
             {
-                if (UserMessagesTable.CurrentRow.Cells[0].Value == null)
-                    readMessage.email_client.Text = "";
-                else
-                    readMessage.email_client.Text = UserMessagesTable.CurrentRow.Cells[0].Value.ToString();
-                if (UserMessagesTable.CurrentRow.Cells[1].Value == null)
-                    readMessage.theme.Text = "";
-                else
-                    readMessage.theme.Text = UserMessagesTable.CurrentRow.Cells[1].Value.ToString();
-                if (UserMessagesTable.CurrentRow.Cells[2].Value == null)
-                    readMessage.TextLetter.Text = "";
-                else
-                    readMessage.TextLetter.Text = UserMessagesTable.CurrentRow.Cells[2].Value.ToString();
+                readMessage.email_client.Text = (UserMessagesTable.CurrentRow.Cells[0].Value == null) ? "" : UserMessagesTable.CurrentRow.Cells[0].Value.ToString();
+                readMessage.email_client.Text = (UserMessagesTable.CurrentRow.Cells[1].Value == null) ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString();
+                readMessage.email_client.Text = (UserMessagesTable.CurrentRow.Cells[2].Value == null) ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString();
                 readMessage.ShowDialog();
                 toolStripStatusLabel1.Text = "Готово!";
             }
+            #endregion
+            
         }
 
         private void InfoButton_Click(object sender, EventArgs e)
@@ -333,6 +322,14 @@ namespace MainClient
                     DataGridOutputMessages("DFT");
                     break;
                 case "Удалённые":
+                    workWithDatabase.DeleteMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
+                        ID);
+                    DataGridOutputMessages("DEL");
+                    DeleteByIndex(UserMessagesTable.CurrentRow.Index);  /*Окончательное удаление письма*/
+                    break;
+                case "Спам":
                     workWithDatabase.DeleteMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
                         UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
                         UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
@@ -828,7 +825,6 @@ namespace MainClient
             }
             return false;
         }
-
         public void DataGridOutputMessages(string TypeMessage)
         {
             workWithDatabase.GetMessage(ID, TypeMessage, out messages);
@@ -839,7 +835,6 @@ namespace MainClient
             else
                 toolStripStatusLabel1.Text = "Эта папка пуста.";
         }
-
         public void DeleteByIndex(int index)
         {
             try
@@ -861,7 +856,6 @@ namespace MainClient
                 toolStripStatusLabel1.Text = ex.Message;
             }
         }
-
         public void MarkMessageAsRead(int index)
         {
             try

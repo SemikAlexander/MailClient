@@ -227,9 +227,9 @@
             // 
             this.FontsComboBox.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FontsComboBox.FormattingEnabled = true;
-            this.FontsComboBox.Location = new System.Drawing.Point(199, 71);
+            this.FontsComboBox.Location = new System.Drawing.Point(189, 71);
             this.FontsComboBox.Name = "FontsComboBox";
-            this.FontsComboBox.Size = new System.Drawing.Size(182, 25);
+            this.FontsComboBox.Size = new System.Drawing.Size(200, 25);
             this.FontsComboBox.TabIndex = 33;
             this.FontsComboBox.SelectedIndexChanged += new System.EventHandler(this.FontsComboBox_SelectedIndexChanged);
             // 
