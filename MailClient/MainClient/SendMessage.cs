@@ -156,6 +156,7 @@ namespace MainClient
             {
                 FontsComboBox.Items.Add(allFonts.Name);
             }
+            FontsComboBox.SelectedItem = UserFonts[0].Name;
         }
 
         private void button2_Click(object sender, EventArgs e)

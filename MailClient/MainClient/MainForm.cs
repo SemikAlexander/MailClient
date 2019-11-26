@@ -454,9 +454,9 @@ namespace MainClient
             int index = email.IndexOf("@");
             Text = email.Substring(0, index);
             toolStripStatusLabel1.Text = "";
-            menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected())
+            if (check.IsInternetConnected() & UserMessageFromMailServer() > workWithDatabase.CountInboxMessages("INB"))
             {
+                menuPanel.Enabled = functionalPanel.Enabled = false;
                 inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
                 if (!inboxMessageWorker.IsBusy)
                 {
