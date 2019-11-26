@@ -67,7 +67,9 @@ namespace MainClient
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected())
+            if (check.IsInternetConnected() & 
+                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("SNT") | 
+                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("SNT")))
             {
                 MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Отправленные");
                 if (!MessageWorker.IsBusy)
@@ -86,7 +88,9 @@ namespace MainClient
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected())
+            if (check.IsInternetConnected() & 
+                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("DFT") | 
+                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("DFT")))
             {
                 MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Черновик");
                 if (!MessageWorker.IsBusy)
@@ -106,7 +110,9 @@ namespace MainClient
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected())
+            if (check.IsInternetConnected() & 
+                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("DEL") | 
+                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("DEL")))
             {
                 MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Удалённые");
                 if (!MessageWorker.IsBusy)
@@ -127,7 +133,9 @@ namespace MainClient
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected())
+            if (check.IsInternetConnected() & 
+                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("JNK") | 
+                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("JNK")))
             {
                 MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Спам");
                 if (!MessageWorker.IsBusy)
@@ -146,7 +154,9 @@ namespace MainClient
             button = InboxMessages.Text.Trim(' ');
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
-            if (check.IsInternetConnected() & (UserMessageFromMailServer() > workWithDatabase.CountInboxMessages("INB") | UserMessageFromMailServer() < workWithDatabase.CountInboxMessages("INB")))
+            if (check.IsInternetConnected() & 
+                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("INB") | 
+                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("INB")))
             {
                 inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
                 if (!inboxMessageWorker.IsBusy)
@@ -513,7 +523,9 @@ namespace MainClient
             int index = email.IndexOf("@");
             Text = email.Substring(0, index);
             toolStripStatusLabel1.Text = "";
-            if (check.IsInternetConnected() & UserMessageFromMailServer() > workWithDatabase.CountInboxMessages("INB"))
+            if (check.IsInternetConnected() & 
+                (UserCountMessagesFromMailServer("Входящие") > workWithDatabase.CountInboxMessages("INB") | 
+                UserCountMessagesFromMailServer("Входящие") < workWithDatabase.CountInboxMessages("INB")))
             {
                 menuPanel.Enabled = functionalPanel.Enabled = false;
                 inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
@@ -925,14 +937,35 @@ namespace MainClient
                 toolStripStatusLabel1.Text = "Ошибка: " + ex.Message;
             }
         }
-        public int UserMessageFromMailServer()
+        public int UserCountMessagesFromMailServer(string Type)
         {
             using (var client = new ImapClient())
             {
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
                 client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
                 client.Authenticate(email, password);
-                var inbox = client.Inbox;
+                IMailFolder inbox;
+                switch (Type)
+                {
+                    case "Спам":
+                        inbox = client.GetFolder(SpecialFolder.Junk);
+                        break;
+                    case "Входящие":
+                        inbox = client.Inbox;
+                        break;
+                    case "Отправленные":
+                        inbox = client.GetFolder(SpecialFolder.Sent);
+                        break;
+                    case "Черновик":
+                        inbox = client.GetFolder(SpecialFolder.Drafts);
+                        break;
+                    case "Удалённые":
+                        inbox = client.GetFolder(SpecialFolder.Trash);
+                        break;
+                    default:
+                        inbox = client.Inbox;
+                        break;
+                }
                 inbox.Open(FolderAccess.ReadOnly);
                 var result = inbox.Count;
                 client.Disconnect(true);
