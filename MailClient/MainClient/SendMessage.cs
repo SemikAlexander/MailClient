@@ -247,11 +247,23 @@ namespace MainClient
             var builder = new BodyBuilder();
 
             string[] temp = crypto.ReturnEncryptRijndaelString(TextLetter.Text).Split(new string[] { "^&*" }, StringSplitOptions.None); /*временный массив для формирования зашифрованного сообщения согласно заданной последовательности*/
-            
-            
 
-            builder.TextBody = TextLetter.Text;
-            builder.HtmlBody = $"<p align=\"{TextLetter.TextAlign}\">{StartTegs}<font size=\"{Convert.ToInt32(UserFontSize.Value)}\" face=\"{FontsComboBox.SelectedItem.ToString()}\">{TextLetter.Text}{EndTegs}</p>";
+            string pbKey = workWithDatabase.GetPublicKeyForUser(ID);  /*"Берём public ключ из базы"*/
+            
+            temp[1] = crypto.Encrypt(temp[1], pbKey);   /*Шифруем ключ при помощи алгоритма RSA*/
+
+            string EncryptText = "";
+
+            for(int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
+            {
+                if (i < temp.Length - 1)
+                    EncryptText += $"{temp[i]}^&*";
+                else
+                    EncryptText += temp[i];
+            }
+
+            builder.TextBody = EncryptText;
+            builder.HtmlBody = $"<p align=\"{TextLetter.TextAlign}\">{StartTegs}<font size=\"{Convert.ToInt32(UserFontSize.Value)}\" face=\"{FontsComboBox.SelectedItem.ToString()}\">{EncryptText}{EndTegs}</p>";
             if (AttachmentFile != "")
             {
                 builder.Attachments.Add(AttachmentFile);

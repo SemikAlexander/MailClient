@@ -20,6 +20,7 @@ namespace MainClient
         string email, password, button = "";
         int ID;
         Check check = new Check();
+        Crypto crypto = new Crypto();
         struct StructMessage
         {
             public string RecipientAdress, Subject, Text, UnicID, SeenMessage;
@@ -181,8 +182,10 @@ namespace MainClient
                             }
                             var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                             readMessage.email_client.Text = message.From.ToString();
-                            readMessage.theme.Text = message.Subject;
-                            string textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                            readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
+                            
+                            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
+                            var textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : crypto.Decrypt(message.TextBody, prKey);
 
                             WebBrowser wb = new WebBrowser();
                             wb.Navigate("about:blank");
@@ -237,9 +240,20 @@ namespace MainClient
                             if (LastIndex < 0) LastIndex = 0;
                             var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                             readMessage.email_client.Text = message.From.ToString();
-                            readMessage.theme.Text = message.Subject;
-                            string textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
 
+                            readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
+
+                            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
+                            var textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                            string[] temp = textForOutput.Split(new string[] { "^&*" }, StringSplitOptions.None);
+                            temp[1] = crypto.Decrypt(temp[1], prKey);
+                            string DecryptText = "";
+                            for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
+                                if (i < temp.Length - 1)
+                                    DecryptText += $"{temp[i]}^&*";
+                                else
+                                    DecryptText += temp[i];
+                            textForOutput = crypto.ReturnDecryptRijndaelString(DecryptText);
                             WebBrowser wb = new WebBrowser();
                             wb.Navigate("about:blank");
                             wb.Document.Write(textForOutput);

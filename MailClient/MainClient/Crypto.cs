@@ -27,7 +27,13 @@ namespace MainClient
                 return $"{Convert.ToBase64String(Encrypted)}^&*{Convert.ToBase64String(rijndael.Key)}^&*{Convert.ToBase64String(rijndael.IV)}";
             }
         }
-
+        public string ReturnDecryptRijndaelString(string inputString)
+        {
+            string[] Decrypted = inputString.Split(new string[] { "^&*" }, StringSplitOptions.None);
+            return RijndaelDecrypt(Convert.FromBase64String(Decrypted[0].ToString()), 
+                Convert.FromBase64String(Decrypted[1].ToString()), 
+                Convert.FromBase64String(Decrypted[2].ToString()));
+        }
         public byte[] RijndaelEncrypt(string plainText, byte[] Key, byte[] IV)
         {
             if (plainText == null || plainText.Length <= 0)
@@ -59,7 +65,6 @@ namespace MainClient
             }
             return encrypted;
         }
-
         public string RijndaelDecrypt(byte[] cipherText, byte[] Key, byte[] IV)
         {
             if (cipherText == null || cipherText.Length <= 0)
@@ -92,7 +97,6 @@ namespace MainClient
             }
             return plaintext;
         }
-
         public enum RSAKeySize
         {
             Key512 = 512,
@@ -100,13 +104,11 @@ namespace MainClient
             Key2048 = 2048,
             Key4096 = 4096
         }
-
         public class RSAKeysTypes
         {
             public string PublicKey { get; set; }
             public string PrivateKey { get; set; }
         }
-
         public RSAKeysTypes GenerateKeys(RSAKeySize rsaKeySize)
         {
             int keySize = (int)rsaKeySize;
@@ -124,7 +126,6 @@ namespace MainClient
             }
             return rsaKeysTypes;
         }
-
         public bool _optimalAsymmetricEncryptionPadding = false;
         //конвертирование в base64 ключа
         public string IncludeKeyInEncryptionString(string publicKey)

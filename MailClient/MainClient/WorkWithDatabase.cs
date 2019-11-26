@@ -58,7 +58,7 @@ namespace MainClient
                 }
             }
         }
-        public void AddUser(string UserEmail, string UserPassword, out int IDUser)
+        public void AddUser(string UserEmail, string UserPassword, string pbKey, string prKey, out int IDUser)
         {
             IDUser = GetCountUser() + 1;
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
@@ -66,7 +66,7 @@ namespace MainClient
                 using (SQLiteCommand command = new SQLiteCommand(connection))
                 {
                     connection.Open();
-                    command.CommandText = $"INSERT INTO Users (ID, Login, Password) VALUES ({IDUser}, '{UserEmail}', '{UserPassword}');";
+                    command.CommandText = $"INSERT INTO Users (ID, Login, Password, PublicKey, PrivateKey) VALUES ({IDUser}, '{UserEmail}', '{UserPassword}', '{pbKey}', '{prKey}');";
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
@@ -192,6 +192,50 @@ namespace MainClient
                             NameServers.Add(Convert.ToString(reader["NameServer"]));
                         }
                         connection.Close();
+                    }
+                }
+            }
+        }
+        public string GetPublicKeyForUser(int IDUser)
+        {
+            string res = "";
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT PublicKey FROM Users WHERE ID = {IDUser}";
+                    command.ExecuteNonQuery();
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            res = Convert.ToString(reader["PublicKey"]);
+                        }
+                        connection.Close();
+                        return res;
+                    }
+                }
+            }
+        }
+        public string GetPrivateKeyForUser(int IDUser)
+        {
+            string res = "";
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT PrivateKey FROM Users WHERE ID = {IDUser}";
+                    command.ExecuteNonQuery();
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            res = Convert.ToString(reader["PrivateKey"]);
+                        }
+                        connection.Close();
+                        return res;
                     }
                 }
             }

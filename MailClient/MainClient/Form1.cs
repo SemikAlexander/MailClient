@@ -25,9 +25,11 @@ namespace MainClient
             WorkWithDatabase workWithDatabase = new WorkWithDatabase();
             if(!string.IsNullOrWhiteSpace(mailTextBox.Text) & !string.IsNullOrWhiteSpace(passwordTextBox.Text))
             {
+                #region Get name mail server
                 string[] name = mailTextBox.Text.Split('@');
                 string nameServer = name[1];
                 nameServer = nameServer.Substring(0, nameServer.IndexOf('.'));
+                #endregion
                 if (!check.IsValidEmail(mailTextBox.Text))
                 {
                     MessageBox.Show("Email неверный!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -45,7 +47,7 @@ namespace MainClient
                 }
                 else
                 {
-                    GetConfigurationForConnection(mailTextBox.Text);
+                    GetConfigurationForConnection(mailTextBox.Text);    /*Проверка на то, что с файло БД всё впорядке*/
                     try
                     {
                         using (var client = new SmtpClient())
@@ -64,7 +66,8 @@ namespace MainClient
                                 }
                                 else
                                 {
-                                    workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), out IDUser);
+                                    var keys = crypto.GenerateKeys(Crypto.RSAKeySize.Key2048); /*Генерация ключей под конкретного пользователя*/
+                                    workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), keys.PublicKey, keys.PrivateKey, out IDUser);
                                     MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
                                     mainForm.Show();
                                     this.Hide();
