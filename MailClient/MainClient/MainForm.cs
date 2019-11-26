@@ -161,7 +161,7 @@ namespace MainClient
         {
             ReadMessage readMessage = new ReadMessage();
             #region Get inbox message from net
-            if (button == "Входящие")
+            if (true/*button == "Входящие"*/)
             {
                 if (check.IsInternetConnected())
                 {
@@ -206,23 +206,63 @@ namespace MainClient
                                 client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
                                 client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
                                 client.Authenticate(email, password);
-                                var inbox = client.Inbox;
+                                IMailFolder inbox;
+                                string OutputType = "";
+                                switch (button)
+                                {
+                                    case "Спам":
+                                        inbox = client.GetFolder(SpecialFolder.Junk);
+                                        OutputType = "JNK";
+                                        break;
+                                    case "Входящие":
+                                        inbox = client.Inbox;
+                                        OutputType = "INB";
+                                        break;
+                                    case "Отправленные":
+                                        inbox = client.GetFolder(SpecialFolder.Sent);
+                                        OutputType = "SNT";
+                                        break;
+                                    case "Черновик":
+                                        inbox = client.GetFolder(SpecialFolder.Drafts);
+                                        OutputType = "DFT";
+                                        break;
+                                    case "Удалённые":
+                                        inbox = client.GetFolder(SpecialFolder.Trash);
+                                        OutputType = "DEL";
+                                        break;
+                                    default:
+                                        inbox = client.Inbox;
+                                        OutputType = "INB";
+                                        break;
+                                }
                                 inbox.Open(FolderAccess.ReadOnly);
                                 if (LastIndex < 0) LastIndex = 0;
                                 var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                                 readMessage.email_client.Text = message.From.ToString();
                                 readMessage.theme.Text = message.Subject;
-                                readMessage.TextLetter.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                                string textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+
+                                WebBrowser wb = new WebBrowser();
+                                wb.Navigate("about:blank");
+                                wb.Document.Write(textForOutput);
+                                wb.Document.ExecCommand("SelectAll", false, null);
+                                wb.Document.ExecCommand("Copy", false, null);
+                                readMessage.TextLetter.SelectAll();
+                                readMessage.TextLetter.Paste();
+
                                 readMessage.MimeMessage = message;
                                 toolStripStatusLabel1.Text = "Готово!";
                                 client.Disconnect(true);
+
                                 MarkMessageAsRead(UserMessagesTable.CurrentRow.Index);
                                 workWithDatabase.MarkMessageAsReadInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
                                     UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'",""),
                                     UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
                                     "INB",
                                     ID);
-                                DataGridOutputMessages("INB");
+
+                                DataGridOutputMessages(OutputType);
+
                                 readMessage.ShowDialog();
                             }
                         }
@@ -843,7 +883,6 @@ namespace MainClient
                 toolStripStatusLabel1.Text = ex.Message;
             }
         }
-
         public void MarkMessageAsDelete(string RecAdress, string Subject, string Text)
         {
             string[] adress = RecAdress.Split('<');
