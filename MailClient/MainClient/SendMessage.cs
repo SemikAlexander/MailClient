@@ -19,6 +19,8 @@ namespace MainClient
         int ID;
         WorkWithDatabase workWithDatabase;
         bool MessageFromDraft;
+        string StartTegs = "";
+        string EndTegs = "";
         public SendMessage(string email, string password, int IDUser, MainForm mainForm1, bool IsMessageFromDraft)
         {
             InitializeComponent();
@@ -102,17 +104,65 @@ namespace MainClient
         #region Text format
         private void BoldButton_Click(object sender, EventArgs e)
         {
-            TextLetter.Font = ((TextLetter.Font.Style & FontStyle.Bold) != 0) ? new Font(TextLetter.Font, FontStyle.Regular) : new Font(TextLetter.Font, FontStyle.Bold);
+            if((TextLetter.Font.Style & FontStyle.Bold) != 0)
+            {
+                TextLetter.Font = new Font(TextLetter.Font, FontStyle.Regular);
+                StartTegs = StartTegs.Replace("<b>","");
+                EndTegs = EndTegs.Replace("</b>", "");
+            }
+            else
+            {
+                TextLetter.Font = new Font(TextLetter.Font, FontStyle.Bold);
+                if (StartTegs.IndexOf("<b>") == -1)
+                {
+                    StartTegs = "<b>";
+                    EndTegs = "</b>";
+                }
+                else
+                    return;
+            }
         }
 
         private void ItalicButton_Click(object sender, EventArgs e)
         {
-            TextLetter.Font = ((TextLetter.Font.Style & FontStyle.Italic) != 0) ? new Font(TextLetter.Font, FontStyle.Regular) : new Font(TextLetter.Font, FontStyle.Italic);
+            if ((TextLetter.Font.Style & FontStyle.Italic) != 0)
+            {
+                TextLetter.Font = new Font(TextLetter.Font, FontStyle.Regular);
+                StartTegs = StartTegs.Replace("<i>", "");
+                EndTegs = EndTegs.Replace("</i>", "");
+            }
+            else
+            {
+                TextLetter.Font = new Font(TextLetter.Font, FontStyle.Italic);
+                if (StartTegs.IndexOf("<i>") == -1)
+                {
+                    StartTegs = "<i>";
+                    EndTegs = "</i>";
+                }
+                else
+                    return;
+            }
         }
 
         private void UnderlineButton_Click(object sender, EventArgs e)
         {
-            TextLetter.Font = ((TextLetter.Font.Style & FontStyle.Underline) != 0) ? new Font(TextLetter.Font, FontStyle.Regular) : new Font(TextLetter.Font, FontStyle.Underline);
+            if ((TextLetter.Font.Style & FontStyle.Underline) != 0)
+            {
+                TextLetter.Font = new Font(TextLetter.Font, FontStyle.Regular);
+                StartTegs = StartTegs.Replace("<u>", "");
+                EndTegs = EndTegs.Replace("</u>", "");
+            }
+            else
+            {
+                TextLetter.Font = new Font(TextLetter.Font, FontStyle.Underline);
+                if (StartTegs.IndexOf("<u>") == -1)
+                {
+                    StartTegs = "<u>";
+                    EndTegs = "</u>";
+                }
+                else
+                    return;
+            }
         }
 
         private void AlginLeft_Click(object sender, EventArgs e)
@@ -191,6 +241,7 @@ namespace MainClient
             message.Subject = theme.Text;
             var builder = new BodyBuilder();
             builder.TextBody = TextLetter.Text;
+            builder.HtmlBody = $"<p align=\"{TextLetter.TextAlign}\">{StartTegs}<font size=\"{Convert.ToInt32(UserFontSize.Value)}\" face=\"{FontsComboBox.SelectedItem.ToString()}\">{TextLetter.Text}{EndTegs}</p>";
             if (AttachmentFile != "")
             {
                 builder.Attachments.Add(AttachmentFile);

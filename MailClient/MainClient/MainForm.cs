@@ -16,7 +16,7 @@ namespace MainClient
 {
     public partial class MainForm : Form
     {
-        int Letter = 0, LastIndex = 0, CountBack = 0;
+        int Letter = 0, LastIndex = 0;
         string email, password, button = "";
         int ID;
         Check check = new Check();
@@ -184,7 +184,16 @@ namespace MainClient
                                 var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                                 readMessage.email_client.Text = message.From.ToString();
                                 readMessage.theme.Text = message.Subject;
-                                readMessage.TextLetter.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                                string textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                                
+                                WebBrowser wb = new WebBrowser();
+                                wb.Navigate("about:blank");
+                                wb.Document.Write(textForOutput);
+                                wb.Document.ExecCommand("SelectAll", false, null);
+                                wb.Document.ExecCommand("Copy", false, null);
+                                readMessage.TextLetter.SelectAll();
+                                readMessage.TextLetter.Paste();
+                                
                                 readMessage.MimeMessage = message;
                                 client.Disconnect(true);
                                 readMessage.ShowDialog();
@@ -406,7 +415,6 @@ namespace MainClient
                     GetDraftMessages(worker);
                     break;
             }
-            GetDraftMessages(worker);
         }
 
         private void draftMessageWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -486,9 +494,15 @@ namespace MainClient
                         var message = inbox.GetMessage(item.UniqueId);
                         messageFromMailServer.RecipientAdress = Convert.ToString(message.From);
                         messageFromMailServer.Subject = message.Subject;
-                        messageFromMailServer.Text = StripHTML((string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody);
+                        messageFromMailServer.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
                         messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
-                        workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject.Replace("'", ""), messageFromMailServer.Text.Replace("'", ""), "INB", messageFromMailServer.UnicID, ID, messageFromMailServer.SeenMessage);
+                        workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), 
+                            messageFromMailServer.Subject.Replace("'", ""), 
+                            StripHTML((string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody).Replace("'", ""), 
+                            "INB", 
+                            messageFromMailServer.UnicID, 
+                            ID, 
+                            messageFromMailServer.SeenMessage);
                         if (item.Flags.Value.HasFlag(MessageFlags.Seen))
                         {
                             messageFromMailServer.SeenMessage = "+";
@@ -590,9 +604,9 @@ namespace MainClient
                             for (int i = 0; i < draftFolder.Count; i++)
                             {
                                 var draftMessages = draftFolder.GetMessage(i);
-                                messageFromMailServer.RecipientAdress = Convert.ToString(draftMessages.From);
-                                messageFromMailServer.Subject = draftMessages.Subject;
-                                messageFromMailServer.Text = draftMessages.TextBody;
+                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : Convert.ToString(draftMessages.From);
+                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : draftMessages.Subject;
+                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
                                 messageFromMailServer.UnicID = draftMessages.MessageId;
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
                                 countProcesses++;
@@ -639,9 +653,9 @@ namespace MainClient
                             for (int i = 0; i < draftFolder.Count; i++)
                             {
                                 var draftMessages = draftFolder.GetMessage(i);
-                                messageFromMailServer.RecipientAdress = Convert.ToString(draftMessages.From);
-                                messageFromMailServer.Subject = draftMessages.Subject;
-                                messageFromMailServer.Text = draftMessages.TextBody;
+                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : Convert.ToString(draftMessages.From);
+                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : draftMessages.Subject;
+                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
                                 messageFromMailServer.UnicID = draftMessages.MessageId;
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
                                 workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "JNK", ID);
@@ -689,9 +703,9 @@ namespace MainClient
                             for (int i = 0; i < sentFolder.Count; i++)
                             {
                                 var sentMessages = sentFolder.GetMessage(i);
-                                messageFromMailServer.RecipientAdress = Convert.ToString(sentMessages.From);
-                                messageFromMailServer.Subject = sentMessages.Subject;
-                                messageFromMailServer.Text = sentMessages.TextBody;
+                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(sentMessages.From))) ? "" : Convert.ToString(sentMessages.From);
+                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(sentMessages.Subject)) ? "" : sentMessages.Subject;
+                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(sentMessages.TextBody)) ? sentMessages.HtmlBody : sentMessages.TextBody;
                                 messageFromMailServer.UnicID = sentMessages.MessageId;
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
                                 workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "SNT", ID);
@@ -739,9 +753,9 @@ namespace MainClient
                             for (int i = 0; i < trashFolder.Count; i++)
                             {
                                 var trashMessages = trashFolder.GetMessage(i);
-                                messageFromMailServer.RecipientAdress = Convert.ToString(trashMessages.From);
-                                messageFromMailServer.Subject = trashMessages.Subject;
-                                messageFromMailServer.Text = trashMessages.TextBody;
+                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(trashMessages.From))) ? "" : Convert.ToString(trashMessages.From);
+                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(trashMessages.Subject)) ? "" : trashMessages.Subject;
+                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(trashMessages.TextBody)) ? trashMessages.HtmlBody : trashMessages.TextBody;
                                 messageFromMailServer.UnicID = trashMessages.MessageId;
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
                                 workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "DEL", ID);
