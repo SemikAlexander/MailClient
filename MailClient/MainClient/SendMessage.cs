@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using MainClient.Properties;
 using System.IO;
 using MailKit;
+using System.Drawing;
+using System.Drawing.Text;
 
 namespace MainClient
 {
@@ -94,6 +96,65 @@ namespace MainClient
                         Close();
                         break;
                 }
+            }
+        }
+
+        #region Text format
+        private void BoldButton_Click(object sender, EventArgs e)
+        {
+            TextLetter.Font = ((TextLetter.Font.Style & FontStyle.Bold) != 0) ? new Font(TextLetter.Font, FontStyle.Regular) : new Font(TextLetter.Font, FontStyle.Bold);
+        }
+
+        private void ItalicButton_Click(object sender, EventArgs e)
+        {
+            TextLetter.Font = ((TextLetter.Font.Style & FontStyle.Italic) != 0) ? new Font(TextLetter.Font, FontStyle.Regular) : new Font(TextLetter.Font, FontStyle.Italic);
+        }
+
+        private void UnderlineButton_Click(object sender, EventArgs e)
+        {
+            TextLetter.Font = ((TextLetter.Font.Style & FontStyle.Underline) != 0) ? new Font(TextLetter.Font, FontStyle.Regular) : new Font(TextLetter.Font, FontStyle.Underline);
+        }
+
+        private void AlginLeft_Click(object sender, EventArgs e)
+        {
+            TextLetter.TextAlign = HorizontalAlignment.Left;
+        }
+
+        private void AlginCenter_Click(object sender, EventArgs e)
+        {
+            TextLetter.TextAlign = HorizontalAlignment.Center;
+        }
+
+        private void AlginRight_Click(object sender, EventArgs e)
+        {
+            TextLetter.TextAlign = HorizontalAlignment.Right;
+        }       
+
+        private void UserFontSize_ValueChanged(object sender, EventArgs e)
+        {
+            TextLetter.Font = new System.Drawing.Font(FontsComboBox.SelectedItem.ToString(), (float)UserFontSize.Value);
+        }
+
+        private void FontsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                TextLetter.Font = new System.Drawing.Font(FontsComboBox.SelectedItem.ToString(), (float)UserFontSize.Value);
+            }
+            catch(Exception)
+            {
+
+            }
+        }
+        #endregion
+
+        private void SendMessage_Load(object sender, EventArgs e)
+        {
+            InstalledFontCollection fonts = new InstalledFontCollection();
+            FontFamily[] UserFonts = fonts.Families;
+            foreach (var allFonts in UserFonts)
+            {
+                FontsComboBox.Items.Add(allFonts.Name);
             }
         }
 

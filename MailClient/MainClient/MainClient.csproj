@@ -205,6 +205,15 @@
   <ItemGroup>
     <None Include="bin\Images\GetSpamMessages.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\Underline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\Bold.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Images\Italic.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

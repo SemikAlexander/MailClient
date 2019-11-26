@@ -51,7 +51,7 @@ namespace MainClient
             return encrypted;
         }
 
-        public byte[] RijndaelDecrypt(byte[] cipherText, byte[] Key, byte[] IV)
+        public string RijndaelDecrypt(byte[] cipherText, byte[] Key, byte[] IV)
         {
             if (cipherText == null || cipherText.Length <= 0)
                 throw new ArgumentNullException("cipherText");
