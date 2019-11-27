@@ -58,7 +58,7 @@ namespace MainClient
                                 client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true); //https://www.google.com/settings/security/lesssecureapps
                                 client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
                                 client.Disconnect(true);
-                                if (workWithDatabase.GetUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), out IDUser))
+                                if (workWithDatabase.GetUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(passwordTextBox.Text), out IDUser))
                                 {
                                     MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
                                     mainForm.Show();
@@ -67,7 +67,7 @@ namespace MainClient
                                 else
                                 {
                                     var keys = crypto.GenerateKeys(Crypto.RSAKeySize.Key2048); /*Генерация ключей под конкретного пользователя*/
-                                    workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(mailTextBox.Text), keys.PublicKey, keys.PrivateKey, out IDUser);
+                                    workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(passwordTextBox.Text), keys.PublicKey, keys.PrivateKey, out IDUser);
                                     MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
                                     mainForm.Show();
                                     this.Hide();

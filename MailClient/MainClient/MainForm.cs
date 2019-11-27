@@ -61,9 +61,11 @@ namespace MainClient
 
         private void OutgoingMessages_Click(object sender, EventArgs e)
         {
-            toolStripStatusLabel1.Text = "";
-            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;    /*Блокируем панели, чтобы не вызвать гонку потоков или же другие сбои в программе*/
+
             button = OutgoingMessages.Text.Trim(' ');
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
+
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
@@ -84,6 +86,8 @@ namespace MainClient
         private void DraftMessages_Click(object sender, EventArgs e)
         {
             button = DraftMessages.Text.Trim(' ');
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
+
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
@@ -104,8 +108,8 @@ namespace MainClient
 
         private void DeleteMessage_Click(object sender, EventArgs e)
         {
-            toolStripStatusLabel1.Text = "";
             button = DeleteMessage.Text.Trim(' ');
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
@@ -127,9 +131,11 @@ namespace MainClient
 
         private void JunkMessages_Click(object sender, EventArgs e)
         {
-            toolStripStatusLabel1.Text = "";
             EditMessageButton.Visible = EditMessageButton.Visible = RestoreMessageButton.Visible = DeleteMessageButton.Visible = false;
+
             button = OutgoingMessages.Text.Trim(' ');
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
+
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
@@ -149,9 +155,11 @@ namespace MainClient
 
         private void InboxMessages_Click(object sender, EventArgs e)
         {
-            toolStripStatusLabel1.Text = "Идёт загрузка...";
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+
             button = InboxMessages.Text.Trim(' ');
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
+
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             if (check.IsInternetConnected() & 
@@ -250,20 +258,29 @@ namespace MainClient
                             if (LastIndex < 0) LastIndex = 0;
                             var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                             readMessage.email_client.Text = message.From.ToString();
+                            string textForOutput = "";
+                            /*Расшифровываем сообщение*/
+                            try
+                            {
+                                readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
 
-                            readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
-
-                            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
-                            var textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
-                            string[] temp = textForOutput.Split(new string[] { "^&*" }, StringSplitOptions.None);
-                            temp[1] = crypto.Decrypt(temp[1], prKey);
-                            string DecryptText = "";
-                            for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
-                                if (i < temp.Length - 1)
-                                    DecryptText += $"{temp[i]}^&*";
-                                else
-                                    DecryptText += temp[i];
-                            textForOutput = crypto.ReturnDecryptRijndaelString(DecryptText);
+                                string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
+                                textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                                string[] temp = textForOutput.Split(new string[] { "^&*" }, StringSplitOptions.None);
+                                temp[1] = crypto.Decrypt(temp[1], prKey);
+                                string DecryptText = "";
+                                for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
+                                    if (i < temp.Length - 1)
+                                        DecryptText += $"{temp[i]}^&*";
+                                    else
+                                        DecryptText += temp[i];
+                                textForOutput = crypto.ReturnDecryptRijndaelString(DecryptText);
+                            }
+                            catch (Exception)
+                            {
+                                readMessage.theme.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? "" : message.Subject;
+                                textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                            }
                             WebBrowser wb = new WebBrowser();
                             wb.Navigate("about:blank");
                             wb.Document.Write(textForOutput);
@@ -303,7 +320,6 @@ namespace MainClient
                 toolStripStatusLabel1.Text = "Готово!";
             }
             #endregion
-            
         }
 
         private void InfoButton_Click(object sender, EventArgs e)
@@ -860,6 +876,8 @@ namespace MainClient
                     UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text, arraySendMessages.MessId, arraySendMessages.Seen);
             else
                 toolStripStatusLabel1.Text = "Эта папка пуста.";
+            menuPanel.Enabled = functionalPanel.Enabled = true;
+            toolStripStatusLabel1.Text = "Готово!";
         }
         public void DeleteByIndex(int index)
         {

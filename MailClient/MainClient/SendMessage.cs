@@ -40,6 +40,7 @@ namespace MainClient
             if (FD.ShowDialog() == DialogResult.OK)
             {
                 AttachmentFile = FD.FileName;
+                AttachmentFileLabel.Text = Path.GetFileName(FD.FileName);
             }
         }
 

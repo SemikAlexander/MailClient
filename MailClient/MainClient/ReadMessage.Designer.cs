@@ -76,7 +76,7 @@
             // 
             this.TextLetter.Location = new System.Drawing.Point(12, 65);
             this.TextLetter.Name = "TextLetter";
-            this.TextLetter.Size = new System.Drawing.Size(598, 335);
+            this.TextLetter.Size = new System.Drawing.Size(598, 345);
             this.TextLetter.TabIndex = 19;
             this.TextLetter.Text = "";
             // 
@@ -84,7 +84,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 412);
+            this.ClientSize = new System.Drawing.Size(622, 422);
             this.Controls.Add(this.TextLetter);
             this.Controls.Add(this.theme);
             this.Controls.Add(this.label2);

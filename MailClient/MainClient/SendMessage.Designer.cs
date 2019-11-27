@@ -45,6 +45,7 @@
             this.Send = new System.Windows.Forms.Button();
             this.FileAttachment = new System.Windows.Forms.Button();
             this.FontsComboBox = new System.Windows.Forms.ComboBox();
+            this.AttachmentFileLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.UserFontSize)).BeginInit();
             this.SuspendLayout();
             // 
@@ -233,12 +234,22 @@
             this.FontsComboBox.TabIndex = 33;
             this.FontsComboBox.SelectedIndexChanged += new System.EventHandler(this.FontsComboBox_SelectedIndexChanged);
             // 
+            // AttachmentFileLabel
+            // 
+            this.AttachmentFileLabel.AutoSize = true;
+            this.AttachmentFileLabel.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AttachmentFileLabel.Location = new System.Drawing.Point(65, 370);
+            this.AttachmentFileLabel.Name = "AttachmentFileLabel";
+            this.AttachmentFileLabel.Size = new System.Drawing.Size(0, 17);
+            this.AttachmentFileLabel.TabIndex = 34;
+            // 
             // SendMessage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(622, 412);
+            this.Controls.Add(this.AttachmentFileLabel);
             this.Controls.Add(this.FontsComboBox);
             this.Controls.Add(this.BoldButton);
             this.Controls.Add(this.ItalicButton);
@@ -284,5 +295,6 @@
         private System.Windows.Forms.Button ItalicButton;
         private System.Windows.Forms.Button UnderlineButton;
         private System.Windows.Forms.ComboBox FontsComboBox;
+        private System.Windows.Forms.Label AttachmentFileLabel;
     }
 }
