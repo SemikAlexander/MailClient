@@ -46,7 +46,7 @@
             this.RestoreMessageButton = new System.Windows.Forms.Button();
             this.EditMessageButton = new System.Windows.Forms.Button();
             this.DeleteMessageButton = new System.Windows.Forms.Button();
-            this.writeMessage = new System.Windows.Forms.Button();
+            this.WriteMessage = new System.Windows.Forms.Button();
             this.SettingsButton = new System.Windows.Forms.Button();
             this.MenuBarButton = new System.Windows.Forms.Button();
             this.contentPanel = new System.Windows.Forms.Panel();
@@ -193,7 +193,7 @@
             this.functionalPanel.Controls.Add(this.RestoreMessageButton);
             this.functionalPanel.Controls.Add(this.EditMessageButton);
             this.functionalPanel.Controls.Add(this.DeleteMessageButton);
-            this.functionalPanel.Controls.Add(this.writeMessage);
+            this.functionalPanel.Controls.Add(this.WriteMessage);
             this.functionalPanel.Controls.Add(this.SettingsButton);
             this.functionalPanel.Controls.Add(this.MenuBarButton);
             this.functionalPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -244,18 +244,18 @@
             this.DeleteMessageButton.Visible = false;
             this.DeleteMessageButton.Click += new System.EventHandler(this.DeleteMessageButton_Click);
             // 
-            // writeMessage
+            // WriteMessage
             // 
-            this.writeMessage.Dock = System.Windows.Forms.DockStyle.Right;
-            this.writeMessage.FlatAppearance.BorderSize = 0;
-            this.writeMessage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.writeMessage.Image = global::MainClient.Properties.Resources.CreateNewMessage_32;
-            this.writeMessage.Location = new System.Drawing.Point(723, 0);
-            this.writeMessage.Name = "writeMessage";
-            this.writeMessage.Size = new System.Drawing.Size(40, 38);
-            this.writeMessage.TabIndex = 3;
-            this.writeMessage.UseVisualStyleBackColor = true;
-            this.writeMessage.Click += new System.EventHandler(this.writeMessage_Click);
+            this.WriteMessage.Dock = System.Windows.Forms.DockStyle.Right;
+            this.WriteMessage.FlatAppearance.BorderSize = 0;
+            this.WriteMessage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.WriteMessage.Image = global::MainClient.Properties.Resources.CreateNewMessage_32;
+            this.WriteMessage.Location = new System.Drawing.Point(723, 0);
+            this.WriteMessage.Name = "WriteMessage";
+            this.WriteMessage.Size = new System.Drawing.Size(40, 38);
+            this.WriteMessage.TabIndex = 3;
+            this.WriteMessage.UseVisualStyleBackColor = true;
+            this.WriteMessage.Click += new System.EventHandler(this.WriteMessage_Click);
             // 
             // SettingsButton
             // 
@@ -280,7 +280,7 @@
             this.MenuBarButton.Size = new System.Drawing.Size(40, 40);
             this.MenuBarButton.TabIndex = 0;
             this.MenuBarButton.UseVisualStyleBackColor = true;
-            this.MenuBarButton.Click += new System.EventHandler(this.button1_Click);
+            this.MenuBarButton.Click += new System.EventHandler(this.MenuBarButton_Click);
             // 
             // contentPanel
             // 
@@ -435,7 +435,7 @@
         private System.Windows.Forms.DataGridView UserMessagesTable;
         private System.Windows.Forms.ToolStrip toolStrip1;
         public System.Windows.Forms.ToolStripLabel toolStripStatusLabel1;
-        private System.Windows.Forms.Button writeMessage;
+        private System.Windows.Forms.Button WriteMessage;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Button EditMessageButton;
         private System.Windows.Forms.Button DeleteMessageButton;

@@ -209,7 +209,7 @@ namespace MainClient
             {
                 FontsComboBox.Items.Add(allFonts.Name);
             }
-            FontsComboBox.SelectedItem = UserFonts[0].Name;
+            FontsComboBox.SelectedItem = "Consolas";
         }
 
         private void button2_Click(object sender, EventArgs e)

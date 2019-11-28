@@ -27,9 +27,9 @@ namespace MainClient
         }
         WorkWithDatabase workWithDatabase;
         List<WorkWithDatabase.Message> messages = new List<WorkWithDatabase.Message>();
+        
         StructMessage messageFromMailServer;
         List<StructMessage> arrayMessagesFromMailServer = new List<StructMessage>();
-        List<string> uniqueIds = new List<string>();
         public MainForm(string UserEmail, string UserPassword, int IDUser)
         {
             InitializeComponent();
@@ -43,7 +43,7 @@ namespace MainClient
             MessageWorker.WorkerSupportsCancellation = true;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void MenuBarButton_Click(object sender, EventArgs e)
         {
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             if (menuPanel.Width == 180)
@@ -52,7 +52,8 @@ namespace MainClient
                 menuPanel.Width = 180;
         }
 
-        private void writeMessage_Click(object sender, EventArgs e)
+        #region Main button's
+        private void WriteMessage_Click(object sender, EventArgs e)
         {
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             SendMessage sendMessage = new SendMessage(email, password, ID, this, false);
@@ -69,9 +70,7 @@ namespace MainClient
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected() & 
-                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("SNT") | 
-                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("SNT")))
+            if (check.IsInternetConnected() & (UserCountMessagesFromMailServer(button) != workWithDatabase.CountInboxMessages("SNT")))
             {
                 MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Отправленные");
                 if (!MessageWorker.IsBusy)
@@ -92,9 +91,7 @@ namespace MainClient
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected() & 
-                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("DFT") | 
-                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("DFT")))
+            if (check.IsInternetConnected() & (UserCountMessagesFromMailServer(button) != workWithDatabase.CountInboxMessages("DFT")))
             {
                 MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Черновик");
                 if (!MessageWorker.IsBusy)
@@ -114,9 +111,7 @@ namespace MainClient
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected() & 
-                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("DEL") | 
-                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("DEL")))
+            if (check.IsInternetConnected() & (UserCountMessagesFromMailServer(button) != workWithDatabase.CountInboxMessages("DEL")))
             {
                 MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Удалённые");
                 if (!MessageWorker.IsBusy)
@@ -126,22 +121,20 @@ namespace MainClient
             }
             else
                 DataGridOutputMessages("DEL");
-            
+
         }
 
         private void JunkMessages_Click(object sender, EventArgs e)
         {
             EditMessageButton.Visible = EditMessageButton.Visible = RestoreMessageButton.Visible = DeleteMessageButton.Visible = false;
 
-            button = OutgoingMessages.Text.Trim(' ');
+            button = JunkMessages.Text.Trim(' ');
             toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
 
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
             menuPanel.Enabled = functionalPanel.Enabled = false;
-            if (check.IsInternetConnected() & 
-                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("JNK") | 
-                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("JNK")))
+            if (check.IsInternetConnected() & (UserCountMessagesFromMailServer(button) != workWithDatabase.CountInboxMessages("JNK")))
             {
                 MessageWorker.DoWork += (c, ex) => draftMessageWorker_DoWork(c, ex, "Спам");
                 if (!MessageWorker.IsBusy)
@@ -162,9 +155,7 @@ namespace MainClient
 
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
-            if (check.IsInternetConnected() & 
-                (UserCountMessagesFromMailServer(button) > workWithDatabase.CountInboxMessages("INB") | 
-                UserCountMessagesFromMailServer(button) < workWithDatabase.CountInboxMessages("INB")))
+            if (check.IsInternetConnected() & (UserCountMessagesFromMailServer(button) != workWithDatabase.CountInboxMessages("INB")))
             {
                 inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
                 if (!inboxMessageWorker.IsBusy)
@@ -175,6 +166,14 @@ namespace MainClient
             else
                 DataGridOutputMessages("INB");
         }
+
+        private void SettingsButton_Click(object sender, EventArgs e)
+        {
+            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+            SettingsForm settings = new SettingsForm("Edit");
+            settings.Show();
+        }
+        #endregion
 
         private void UserMessagesTable_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -322,6 +321,7 @@ namespace MainClient
             #endregion
         }
 
+        #region Letter button's
         private void InfoButton_Click(object sender, EventArgs e)
         {
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
@@ -419,13 +419,6 @@ namespace MainClient
             }
         }
 
-        private void SettingsButton_Click(object sender, EventArgs e)
-        {
-            DeleteMessageButton.Visible = EditMessageButton.Visible = false;
-            SettingsForm settings = new SettingsForm("Edit");
-            settings.Show();
-        }
-
         private void RestoreMessageButton_Click(object sender, EventArgs e)
         {
             workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
@@ -435,6 +428,7 @@ namespace MainClient
                         ID);
             DataGridOutputMessages("DFT");
         }
+        #endregion
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -515,20 +509,17 @@ namespace MainClient
             {
                 foreach (DataGridViewRow row in UserMessagesTable.Rows)
                 {
-                    foreach (var id in uniqueIds)
+                    try
                     {
-                        try
+                        if (row.Cells[4].Value == null)
                         {
-                            if (row.Cells[4].Value == null)
-                            {
-                                continue;
-                            }
-                            row.DefaultCellStyle.ForeColor = row.Cells[4].Value.ToString() == "+" ? Color.DimGray : Color.Black;                           
+                            continue;
                         }
-                        catch (Exception)
-                        {
-                            return;
-                        }
+                        row.DefaultCellStyle.ForeColor = row.Cells[4].Value.ToString() == "+" ? Color.DimGray : Color.Black;
+                    }
+                    catch (Exception)
+                    {
+                        return;
                     }
                 }
             }
@@ -539,9 +530,7 @@ namespace MainClient
             int index = email.IndexOf("@");
             Text = email.Substring(0, index);
             toolStripStatusLabel1.Text = "";
-            if (check.IsInternetConnected() & 
-                (UserCountMessagesFromMailServer("Входящие") > workWithDatabase.CountInboxMessages("INB") | 
-                UserCountMessagesFromMailServer("Входящие") < workWithDatabase.CountInboxMessages("INB")))
+            if (check.IsInternetConnected() & (UserCountMessagesFromMailServer("Входящие") != workWithDatabase.CountInboxMessages("INB")))
             {
                 menuPanel.Enabled = functionalPanel.Enabled = false;
                 inboxMessageWorker.DoWork += (c, ex) => inboxMessageWorker_DoWork(c, ex, Convert.ToBoolean(Settings.Default["POP3Checked"]));
@@ -585,7 +574,6 @@ namespace MainClient
                         if (item.Flags.Value.HasFlag(MessageFlags.Seen))
                         {
                             messageFromMailServer.SeenMessage = "+";
-                            uniqueIds.Add(Convert.ToString(item.UniqueId));
                         }
                         else
                             messageFromMailServer.SeenMessage = "-";
@@ -708,7 +696,7 @@ namespace MainClient
         }
         public void GetJunkMessages(BackgroundWorker worker)
         {
-            workWithDatabase.DeleteAllMessageByTypeInDB("DFT", ID);
+            workWithDatabase.DeleteAllMessageByTypeInDB("JNK", ID);
             try
             {
                 arrayMessagesFromMailServer.Clear();
@@ -858,15 +846,6 @@ namespace MainClient
         }
         #endregion
 
-        public bool IsMessageRead(string IDMessage)
-        {
-            foreach(var id in uniqueIds)
-            {
-                if (id == IDMessage)
-                    return true;
-            }
-            return false;
-        }
         public void DataGridOutputMessages(string TypeMessage)
         {
             workWithDatabase.GetMessage(ID, TypeMessage, out messages);
