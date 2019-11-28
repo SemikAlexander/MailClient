@@ -47,7 +47,7 @@ namespace MainClient
                 }
                 else
                 {
-                    GetConfigurationForConnection(mailTextBox.Text);    /*Проверка на то, что с файло БД всё впорядке*/
+                    GetConfigurationForConnection(mailTextBox.Text, nameServer);    /*Проверка на то, что с файлом БД всё впорядке*/
                     try
                     {
                         using (var client = new SmtpClient())
@@ -58,7 +58,7 @@ namespace MainClient
                                 client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true); //https://www.google.com/settings/security/lesssecureapps
                                 client.Authenticate(mailTextBox.Text, passwordTextBox.Text);
                                 client.Disconnect(true);
-                                if (workWithDatabase.GetUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(passwordTextBox.Text), out IDUser))
+                                if (workWithDatabase.AuthUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(passwordTextBox.Text), out IDUser))
                                 {
                                     MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
                                     mainForm.Show();
@@ -66,7 +66,7 @@ namespace MainClient
                                 }
                                 else
                                 {
-                                    var keys = crypto.GenerateKeys(Crypto.RSAKeySize.Key2048); /*Генерация ключей под конкретного пользователя*/
+                                    var keys = crypto.GenerateKeys(Crypto.RSAKeySize.Key2048);  /*Генерация ключей под конкретного пользователя*/
                                     workWithDatabase.AddUser(crypto.Hesh(mailTextBox.Text), crypto.Hesh(passwordTextBox.Text), keys.PublicKey, keys.PrivateKey, out IDUser);
                                     MainForm mainForm = new MainForm(mailTextBox.Text, passwordTextBox.Text, IDUser);
                                     mainForm.Show();
@@ -110,7 +110,7 @@ namespace MainClient
                 Text = "Авторизация (offline mode)";
         }
 
-        public void GetConfigurationForConnection(string userMail)  /*get ports and adress for connection*/
+        public void GetConfigurationForConnection(string userMail, string nameMailServer)  /*get ports and adress for connection*/
         {
             string pathToDBFileFromInternet = Path.GetFullPath(@"MailClientDB.db");
             if (!File.Exists(pathToDBFileFromInternet))
@@ -122,16 +122,12 @@ namespace MainClient
             }
             else
             {
-                int index = userMail.IndexOf('@');
-                string temp = userMail.Substring(index + 1);
-                index = temp.IndexOf(".");
-                string NameServer = temp.Substring(0, index);   /*get name server (yandex, gmail, mail)*/
                 using(SQLiteConnection connection = new SQLiteConnection($"Data Source={pathToDBFileFromInternet}"))
                 {
                     using(SQLiteCommand command = new SQLiteCommand(connection))
                     {
                         connection.Open();
-                        command.CommandText = $"SELECT IMAPAdress, POP3Adress, SMTPAdress, IMAPPort, POP3Port, SMTPPort FROM MailServers WHERE NameServer='{NameServer}'";
+                        command.CommandText = $"SELECT IMAPAdress, POP3Adress, SMTPAdress, IMAPPort, POP3Port, SMTPPort FROM MailServers WHERE NameServer='{nameMailServer}'";
                         command.ExecuteNonQuery();
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {

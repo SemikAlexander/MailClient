@@ -35,7 +35,41 @@ namespace MainClient
                     }
                 }
             }
-        }      
+        }
+        public bool AuthUser(string UserEmail, string UserPassword, out int IDUser)
+        {
+            if(!GetUser(UserEmail,UserPassword, out IDUser))
+            {
+                int temp = -1;
+                using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(connection))
+                    {
+                        connection.Open();
+                        command.CommandText = $"SELECT ID FROM Users WHERE Login = '{UserEmail}'";
+                        command.ExecuteNonQuery();
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                temp = Convert.ToInt32(reader["ID"]);
+                            }
+
+                        }
+                        if (temp != -1)
+                        {
+                            command.CommandText = $"UPDATE Users SET Password = '{UserPassword}' WHERE Login = '{UserEmail}' AND ID = {temp}";
+                            command.ExecuteNonQuery();
+                            connection.Close();
+                            IDUser = temp;
+                            return true;
+                        }
+                    }
+                    
+                }
+            }
+            return false;
+        }
         public int GetCountUser()
         {
             int res = 0;
