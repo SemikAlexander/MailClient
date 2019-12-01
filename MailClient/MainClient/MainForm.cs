@@ -453,8 +453,6 @@ namespace MainClient
         private void inboxMessageWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             toolStripStatusLabel1.Text = "Готово!";
-            //foreach (var info in arrayMessagesFromMailServer)
-            //    UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID, info.SeenMessage);
             menuPanel.Enabled = functionalPanel.Enabled = true;
         }
 
@@ -495,9 +493,16 @@ namespace MainClient
 
         private void draftMessageWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            toolStripStatusLabel1.Text = "Готово!";
-            foreach (var info in arrayMessagesFromMailServer)
-                UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+            if (arrayMessagesFromMailServer.Count == 0)
+            {
+                toolStripStatusLabel1.Text = $"Папка \"{button}\" пуста!";
+            }
+            else
+            {
+                toolStripStatusLabel1.Text = "Готово!";
+                foreach (var info in arrayMessagesFromMailServer)
+                    UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+            }
             menuPanel.Enabled = functionalPanel.Enabled = true;
         }
         #endregion
@@ -560,10 +565,14 @@ namespace MainClient
                     foreach (var item in items)
                     {
                         var message = inbox.GetMessage(item.UniqueId);
-                        messageFromMailServer.RecipientAdress = Convert.ToString(message.From);
-                        messageFromMailServer.Subject = message.Subject;
-                        messageFromMailServer.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+
+                        /*шифруем сообщения и добавляем в БД*/
+                        messageFromMailServer.RecipientAdress = crypto.ReturnEncryptRijndaelString(Convert.ToString(message.From));
+                        messageFromMailServer.Subject = crypto.ReturnEncryptRijndaelString(message.Subject);
+
+                        messageFromMailServer.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : crypto.ReturnStringWithTowChipers(message.TextBody, ID);
                         messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
+
                         workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), 
                             messageFromMailServer.Subject.Replace("'", ""), 
                             StripHTML((string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody).Replace("'", ""), 
@@ -671,10 +680,12 @@ namespace MainClient
                             for (int i = 0; i < draftFolder.Count; i++)
                             {
                                 var draftMessages = draftFolder.GetMessage(i);
-                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : Convert.ToString(draftMessages.From);
-                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : draftMessages.Subject;
-                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
+                                
+                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.From));
+                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(draftMessages.Subject);
+                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : crypto.ReturnStringWithTowChipers(draftMessages.TextBody, ID);
                                 messageFromMailServer.UnicID = draftMessages.MessageId;
+                                
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
                                 countProcesses++;
                                 if (countProcesses >= numMessagesForPersent)
@@ -720,11 +731,14 @@ namespace MainClient
                             for (int i = 0; i < draftFolder.Count; i++)
                             {
                                 var draftMessages = draftFolder.GetMessage(i);
-                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : Convert.ToString(draftMessages.From);
-                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : draftMessages.Subject;
-                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
+
+                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.From));
+                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(draftMessages.Subject);
+                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : crypto.ReturnStringWithTowChipers(draftMessages.TextBody, ID);
                                 messageFromMailServer.UnicID = draftMessages.MessageId;
+
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
+
                                 workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "JNK", ID);
                                 countProcesses++;
                                 if (countProcesses >= numMessagesForPersent)
@@ -770,10 +784,12 @@ namespace MainClient
                             for (int i = 0; i < sentFolder.Count; i++)
                             {
                                 var sentMessages = sentFolder.GetMessage(i);
-                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(sentMessages.From))) ? "" : Convert.ToString(sentMessages.From);
-                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(sentMessages.Subject)) ? "" : sentMessages.Subject;
-                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(sentMessages.TextBody)) ? sentMessages.HtmlBody : sentMessages.TextBody;
+                                
+                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(sentMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(sentMessages.From));
+                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(sentMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(sentMessages.Subject);
+                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(sentMessages.TextBody)) ? sentMessages.HtmlBody : crypto.ReturnStringWithTowChipers(sentMessages.TextBody, ID);
                                 messageFromMailServer.UnicID = sentMessages.MessageId;
+                               
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
                                 workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "SNT", ID);
                                 countProcesses++;
@@ -820,10 +836,12 @@ namespace MainClient
                             for (int i = 0; i < trashFolder.Count; i++)
                             {
                                 var trashMessages = trashFolder.GetMessage(i);
-                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(trashMessages.From))) ? "" : Convert.ToString(trashMessages.From);
-                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(trashMessages.Subject)) ? "" : trashMessages.Subject;
-                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(trashMessages.TextBody)) ? trashMessages.HtmlBody : trashMessages.TextBody;
+
+                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(trashMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(trashMessages.From));
+                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(trashMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(trashMessages.Subject);
+                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(trashMessages.TextBody)) ? trashMessages.HtmlBody : crypto.ReturnStringWithTowChipers(trashMessages.TextBody, ID);
                                 messageFromMailServer.UnicID = trashMessages.MessageId;
+
                                 arrayMessagesFromMailServer.Add(messageFromMailServer);
                                 workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "DEL", ID);
                                 countProcesses++;
@@ -852,7 +870,7 @@ namespace MainClient
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
                 foreach (var arraySendMessages in messages)
-                    UserMessagesTable.Rows.Add(arraySendMessages.RecipientAdress, arraySendMessages.Subject, arraySendMessages.Text, arraySendMessages.MessId, arraySendMessages.Seen);
+                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(arraySendMessages.RecipientAdress), crypto.ReturnDecryptRijndaelString(arraySendMessages.Subject), crypto.Decrypt(arraySendMessages.Text, ID), arraySendMessages.MessId, arraySendMessages.Seen);
             else
                 toolStripStatusLabel1.Text = "Эта папка пуста.";
             menuPanel.Enabled = functionalPanel.Enabled = true;

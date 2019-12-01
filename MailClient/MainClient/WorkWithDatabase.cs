@@ -38,7 +38,7 @@ namespace MainClient
         }
         public bool AuthUser(string UserEmail, string UserPassword, out int IDUser)
         {
-            if(!GetUser(UserEmail,UserPassword, out IDUser))
+            if (!GetUser(UserEmail, UserPassword, out IDUser))
             {
                 int temp = -1;
                 using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
@@ -65,9 +65,11 @@ namespace MainClient
                             return true;
                         }
                     }
-                    
+
                 }
             }
+            else if (GetUser(UserEmail, UserPassword, out IDUser))
+                return true;
             return false;
         }
         public int GetCountUser()

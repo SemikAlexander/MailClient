@@ -164,6 +164,13 @@ namespace MainClient
 
             return Encoding.UTF8.GetString(decrypted);
         }
+        public string Decrypt(string encryptedText, int ID)
+        {
+            WorkWithDatabase workWithDatabase = new WorkWithDatabase();
+            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
+            var decrypted = Decrypt(Convert.FromBase64String(encryptedText), prKey);
+            return Encoding.UTF8.GetString(decrypted);
+        }
         public byte[] Decrypt(byte[] data, string PrivateKey)
         {
             string publicAndPrivateKeyXml = "";
@@ -175,6 +182,25 @@ namespace MainClient
                 provider.FromXmlString(publicAndPrivateKeyXml);
                 return provider.Decrypt(data, _optimalAsymmetricEncryptionPadding);
             }
+        }
+        public string ReturnStringWithTowChipers(string text, int ID)
+        {
+            string[] temp = ReturnEncryptRijndaelString(text).Split(new string[] { "^&*" }, StringSplitOptions.None); /*временный массив для формирования зашифрованного сообщения согласно заданной последовательности*/
+            WorkWithDatabase workWithDatabase = new WorkWithDatabase();
+            string pbKey = workWithDatabase.GetPublicKeyForUser(ID);  /*"Берём public ключ из базы"*/
+
+            temp[1] = Encrypt(temp[1], pbKey);   /*Шифруем ключ при помощи алгоритма RSA*/
+
+            string EncryptText = "";
+
+            for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
+            {
+                if (i < temp.Length - 1)
+                    EncryptText += $"{temp[i]}^&*";
+                else
+                    EncryptText += temp[i];
+            }
+            return EncryptText;
         }
     }
 }
