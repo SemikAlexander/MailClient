@@ -67,7 +67,7 @@ namespace MainClient
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;    /*Блокируем панели, чтобы не вызвать гонку потоков или же другие сбои в программе*/
 
             button = OutgoingMessages.Text.Trim(' ');
-            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки \"{button}\"";
 
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
@@ -87,7 +87,7 @@ namespace MainClient
         private void DraftMessages_Click(object sender, EventArgs e)
         {
             button = DraftMessages.Text.Trim(' ');
-            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки \"{button}\"";
 
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             arrayMessagesFromMailServer.Clear();
@@ -108,7 +108,7 @@ namespace MainClient
         private void DeleteMessage_Click(object sender, EventArgs e)
         {
             button = DeleteMessage.Text.Trim(' ');
-            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки \"{button}\"";
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
@@ -131,7 +131,7 @@ namespace MainClient
             EditMessageButton.Visible = EditMessageButton.Visible = RestoreMessageButton.Visible = DeleteMessageButton.Visible = false;
 
             button = JunkMessages.Text.Trim(' ');
-            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки \"{button}\"";
 
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
@@ -153,7 +153,7 @@ namespace MainClient
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
 
             button = InboxMessages.Text.Trim(' ');
-            toolStripStatusLabel1.Text = $"Загружаются письма из папки {button}";
+            toolStripStatusLabel1.Text = $"Загружаются письма из папки \"{button}\"";
 
             arrayMessagesFromMailServer.Clear();
             UserMessagesTable.Rows.Clear();
@@ -186,39 +186,39 @@ namespace MainClient
                 try
                 {
                     toolStripStatusLabel1.Text = "Идет загрузка...";
-                    if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
-                    {
-                        using (var client = new Pop3Client())
-                        {
-                            client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                            client.Connect(Settings.Default["POP3Adress"].ToString(), Convert.ToInt32(Settings.Default["POP3Port"]), true);
-                            client.Authenticate(email, password);
-                            if (LastIndex < 0) LastIndex = 0;
-                            if (client.Count == 0 | LastIndex + UserMessagesTable.CurrentCell.RowIndex > client.Count)
-                            {
-                                toolStripStatusLabel1.Text = "Письма нет.";
-                                return;
-                            }
-                            var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
-                            readMessage.email_client.Text = message.From.ToString();
-                            readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
+                    //if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
+                    //{
+                    //    using (var client = new Pop3Client())
+                    //    {
+                    //        client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                    //        client.Connect(Settings.Default["POP3Adress"].ToString(), Convert.ToInt32(Settings.Default["POP3Port"]), true);
+                    //        client.Authenticate(email, password);
+                    //        if (LastIndex < 0) LastIndex = 0;
+                    //        if (client.Count == 0 | LastIndex + UserMessagesTable.CurrentCell.RowIndex > client.Count)
+                    //        {
+                    //            toolStripStatusLabel1.Text = "Письма нет.";
+                    //            return;
+                    //        }
+                    //        var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
+                    //        readMessage.email_client.Text = message.From.ToString();
+                    //        readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
                             
-                            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
-                            var textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : crypto.Decrypt(message.TextBody, prKey);
+                    //        string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
+                    //        var textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : crypto.Decrypt(message.TextBody, prKey);
 
-                            WebBrowser wb = new WebBrowser();
-                            wb.Navigate("about:blank");
-                            wb.Document.Write(textForOutput);
-                            wb.Document.ExecCommand("SelectAll", false, null);
-                            wb.Document.ExecCommand("Copy", false, null);
-                            readMessage.TextLetter.SelectAll();
-                            readMessage.TextLetter.Paste();
+                    //        WebBrowser wb = new WebBrowser();
+                    //        wb.Navigate("about:blank");
+                    //        wb.Document.Write(textForOutput);
+                    //        wb.Document.ExecCommand("SelectAll", false, null);
+                    //        wb.Document.ExecCommand("Copy", false, null);
+                    //        readMessage.TextLetter.SelectAll();
+                    //        readMessage.TextLetter.Paste();
 
-                            readMessage.MimeMessage = message;
-                            client.Disconnect(true);
-                            readMessage.ShowDialog();
-                        }
-                    }
+                    //        readMessage.MimeMessage = message;
+                    //        client.Disconnect(true);
+                    //        readMessage.ShowDialog();
+                    //    }
+                    //}
                     if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
                     {
                         IMailFolder inbox;
@@ -255,7 +255,8 @@ namespace MainClient
                         var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                         readMessage.email_client.Text = message.From.ToString();
                         string textForOutput = "";
-                        /*Расшифровываем сообщение*/
+                        /*Расшифровываем сообщение если оно зашифровано*/
+                        #region Decrypt message
                         try
                         {
                             readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
@@ -277,6 +278,8 @@ namespace MainClient
                             readMessage.theme.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? "" : message.Subject;
                             textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
                         }
+                        #endregion
+
                         WebBrowser wb = new WebBrowser();
                         wb.Navigate("about:blank");
                         wb.Document.Write(textForOutput);
@@ -288,14 +291,15 @@ namespace MainClient
                         readMessage.MimeMessage = message;
                         toolStripStatusLabel1.Text = "Готово!";
 
-                        MarkMessageAsRead(UserMessagesTable.CurrentRow.Index);
-                        workWithDatabase.MarkMessageAsReadInDB(crypto.ReturnEncryptRijndaelString(UserMessagesTable.CurrentRow.Cells[0].Value.ToString()),
-                            crypto.ReturnEncryptRijndaelString(UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", "")),
-                            UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
-                            "INB",
-                            ID);
+                        MarkMessageAsRead(UserMessagesTable.CurrentRow.Index);  //Отмечаем сообщение на почтовом сервере
 
-                        DataGridOutputMessages(OutputType);
+                        workWithDatabase.MarkMessageAsReadInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
+                            messages[UserMessagesTable.CurrentRow.Index].Subject,
+                            messages[UserMessagesTable.CurrentRow.Index].Text,
+                            "INB",
+                            ID);    //Изменяем данные в БД
+
+                        DataGridOutputMessages(OutputType); //Выводим обновлённый список сообщений
 
                         readMessage.ShowDialog();
                     }
@@ -327,9 +331,9 @@ namespace MainClient
             switch (button)
             {
                 case "Входящие":
-                    workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
-                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
+                    workWithDatabase.EditMessageInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Subject,
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
                         "DEL",
                         ID);
                     MarkMessageAsDelete(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
@@ -338,17 +342,17 @@ namespace MainClient
                     DataGridOutputMessages("INB");
                     break;
                 case "Отправленные":
-                    workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
-                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
+                    workWithDatabase.EditMessageInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Subject,
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
                         "DEL",
                         ID);
                     DataGridOutputMessages("SNT");
                     break;
                 case "Черновик":
-                    workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
-                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
+                    workWithDatabase.EditMessageInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Subject,
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
                         "DEL",
                         ID);
                     MarkMessageAsDelete(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
@@ -357,18 +361,20 @@ namespace MainClient
                     DataGridOutputMessages("DFT");
                     break;
                 case "Удалённые":
-                    workWithDatabase.DeleteMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
-                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
+                    workWithDatabase.EditMessageInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Subject,
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
+                        "DEL",
                         ID);
                     DataGridOutputMessages("DEL");
                     DeleteByIndex(UserMessagesTable.CurrentRow.Index);  /*Окончательное удаление письма*/
                     break;
                 case "Спам":
-                    workWithDatabase.DeleteMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
-                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
-                        ID);
+                    workWithDatabase.EditMessageInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
+                         UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Subject,
+                         UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
+                         "DEL",
+                         ID);
                     DataGridOutputMessages("DEL");
                     DeleteByIndex(UserMessagesTable.CurrentRow.Index);  /*Окончательное удаление письма*/
                     break;
@@ -416,9 +422,9 @@ namespace MainClient
 
         private void RestoreMessageButton_Click(object sender, EventArgs e)
         {
-            workWithDatabase.EditMessageInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[2].Value.ToString(),
+            workWithDatabase.EditMessageInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
+                        messages[UserMessagesTable.CurrentRow.Index].Subject,
+                        messages[UserMessagesTable.CurrentRow.Index].Text,
                         "DFT",
                         ID);
             DataGridOutputMessages("DFT");
@@ -664,8 +670,8 @@ namespace MainClient
                         for (int i = 0; i < draftFolder.Count; i++)
                         {
                             var draftMessages = draftFolder.GetMessage(i);
-                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : Convert.ToString(draftMessages.From);
-                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : draftMessages.Subject;
+                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.From));
+                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(draftMessages.Subject);
                             messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
                             messageFromMailServer.UnicID = draftMessages.MessageId;
                             arrayMessagesFromMailServer.Add(messageFromMailServer);
@@ -706,11 +712,14 @@ namespace MainClient
                         for (int i = 0; i < draftFolder.Count; i++)
                         {
                             var draftMessages = draftFolder.GetMessage(i);
-                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : Convert.ToString(draftMessages.From);
-                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : draftMessages.Subject;
+                            
+                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.From));
+                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(draftMessages.Subject);
                             messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
                             messageFromMailServer.UnicID = draftMessages.MessageId;
+
                             arrayMessagesFromMailServer.Add(messageFromMailServer);
+
                             workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "JNK", ID);
                             countProcesses++;
                             if (countProcesses >= numMessagesForPersent)
@@ -749,8 +758,8 @@ namespace MainClient
                         for (int i = 0; i < sentFolder.Count; i++)
                         {
                             var sentMessages = sentFolder.GetMessage(i);
-                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(sentMessages.From))) ? "" : Convert.ToString(sentMessages.From);
-                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(sentMessages.Subject)) ? "" : sentMessages.Subject;
+                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(sentMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(sentMessages.From));
+                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(sentMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(sentMessages.Subject);
                             messageFromMailServer.Text = (string.IsNullOrWhiteSpace(sentMessages.TextBody)) ? sentMessages.HtmlBody : sentMessages.TextBody;
                             messageFromMailServer.UnicID = sentMessages.MessageId;
                             arrayMessagesFromMailServer.Add(messageFromMailServer);
@@ -792,8 +801,8 @@ namespace MainClient
                         for (int i = 0; i < trashFolder.Count; i++)
                         {
                             var trashMessages = trashFolder.GetMessage(i);
-                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(trashMessages.From))) ? "" : Convert.ToString(trashMessages.From);
-                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(trashMessages.Subject)) ? "" : trashMessages.Subject;
+                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(trashMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(trashMessages.From));
+                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(trashMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(trashMessages.Subject);
                             messageFromMailServer.Text = (string.IsNullOrWhiteSpace(trashMessages.TextBody)) ? trashMessages.HtmlBody : trashMessages.TextBody;
                             messageFromMailServer.UnicID = trashMessages.MessageId;
                             arrayMessagesFromMailServer.Add(messageFromMailServer);
@@ -859,7 +868,8 @@ namespace MainClient
         public void MarkMessageAsDelete(string RecAdress, string Subject, string Text)
         {
             string[] adress = RecAdress.Split('<');
-            RecAdress = adress[1].Replace(">", "");
+            if (adress.Length > 1)
+                RecAdress = adress[1].Replace(">", "");
             try
             {
                 var message = new MimeMessage();

@@ -30,15 +30,11 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.smtpAdress = new System.Windows.Forms.TextBox();
             this.smtpPort = new System.Windows.Forms.TextBox();
-            this.pop3Adress = new System.Windows.Forms.TextBox();
-            this.pop3Port = new System.Windows.Forms.TextBox();
             this.imapAdress = new System.Windows.Forms.TextBox();
             this.SMTPPortLabel = new System.Windows.Forms.Label();
-            this.POP3PortLabel = new System.Windows.Forms.Label();
             this.imapPort = new System.Windows.Forms.TextBox();
             this.IMAPPortLabel = new System.Windows.Forms.Label();
             this.connectionOptions = new System.Windows.Forms.GroupBox();
@@ -50,6 +46,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.nameMailServer = new System.Windows.Forms.TextBox();
             this.NameServerPanel = new System.Windows.Forms.Panel();
+            this.POP3PortLabel = new System.Windows.Forms.Label();
+            this.pop3Port = new System.Windows.Forms.TextBox();
+            this.pop3Adress = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.connectionOptions.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.NameServerPanel.SuspendLayout();
@@ -65,21 +65,11 @@
             this.label1.TabIndex = 42;
             this.label1.Text = "SMTP";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(36, 87);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(51, 21);
-            this.label2.TabIndex = 43;
-            this.label2.Text = "POP3";
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(35, 145);
+            this.label3.Location = new System.Drawing.Point(35, 87);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(52, 21);
             this.label3.TabIndex = 44;
@@ -104,29 +94,10 @@
             this.smtpPort.TextChanged += new System.EventHandler(this.smtpPort_TextChanged);
             this.smtpPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.smtpPort_KeyPress);
             // 
-            // pop3Adress
-            // 
-            this.pop3Adress.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.pop3Adress.Location = new System.Drawing.Point(96, 88);
-            this.pop3Adress.Name = "pop3Adress";
-            this.pop3Adress.Size = new System.Drawing.Size(192, 23);
-            this.pop3Adress.TabIndex = 47;
-            this.pop3Adress.TextChanged += new System.EventHandler(this.pop3Adress_TextChanged);
-            // 
-            // pop3Port
-            // 
-            this.pop3Port.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.pop3Port.Location = new System.Drawing.Point(96, 117);
-            this.pop3Port.Name = "pop3Port";
-            this.pop3Port.Size = new System.Drawing.Size(192, 23);
-            this.pop3Port.TabIndex = 48;
-            this.pop3Port.TextChanged += new System.EventHandler(this.pop3Port_TextChanged);
-            this.pop3Port.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.pop3Port_KeyPress);
-            // 
             // imapAdress
             // 
             this.imapAdress.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.imapAdress.Location = new System.Drawing.Point(96, 146);
+            this.imapAdress.Location = new System.Drawing.Point(96, 88);
             this.imapAdress.Name = "imapAdress";
             this.imapAdress.Size = new System.Drawing.Size(192, 23);
             this.imapAdress.TabIndex = 49;
@@ -142,20 +113,10 @@
             this.SMTPPortLabel.TabIndex = 50;
             this.SMTPPortLabel.Text = "Port SMTP";
             // 
-            // POP3PortLabel
-            // 
-            this.POP3PortLabel.AutoSize = true;
-            this.POP3PortLabel.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.POP3PortLabel.Location = new System.Drawing.Point(1, 116);
-            this.POP3PortLabel.Name = "POP3PortLabel";
-            this.POP3PortLabel.Size = new System.Drawing.Size(86, 21);
-            this.POP3PortLabel.TabIndex = 51;
-            this.POP3PortLabel.Text = "Port POP3";
-            // 
             // imapPort
             // 
             this.imapPort.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.imapPort.Location = new System.Drawing.Point(96, 175);
+            this.imapPort.Location = new System.Drawing.Point(96, 117);
             this.imapPort.Name = "imapPort";
             this.imapPort.Size = new System.Drawing.Size(192, 23);
             this.imapPort.TabIndex = 52;
@@ -166,7 +127,7 @@
             // 
             this.IMAPPortLabel.AutoSize = true;
             this.IMAPPortLabel.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.IMAPPortLabel.Location = new System.Drawing.Point(0, 174);
+            this.IMAPPortLabel.Location = new System.Drawing.Point(0, 116);
             this.IMAPPortLabel.Name = "IMAPPortLabel";
             this.IMAPPortLabel.Size = new System.Drawing.Size(87, 21);
             this.IMAPPortLabel.TabIndex = 53;
@@ -174,17 +135,17 @@
             // 
             // connectionOptions
             // 
-            this.connectionOptions.Controls.Add(this.IMAPPortLabel);
-            this.connectionOptions.Controls.Add(this.imapPort);
             this.connectionOptions.Controls.Add(this.POP3PortLabel);
-            this.connectionOptions.Controls.Add(this.SMTPPortLabel);
-            this.connectionOptions.Controls.Add(this.imapAdress);
             this.connectionOptions.Controls.Add(this.pop3Port);
             this.connectionOptions.Controls.Add(this.pop3Adress);
+            this.connectionOptions.Controls.Add(this.label2);
+            this.connectionOptions.Controls.Add(this.IMAPPortLabel);
+            this.connectionOptions.Controls.Add(this.imapPort);
+            this.connectionOptions.Controls.Add(this.SMTPPortLabel);
+            this.connectionOptions.Controls.Add(this.imapAdress);
             this.connectionOptions.Controls.Add(this.smtpPort);
             this.connectionOptions.Controls.Add(this.smtpAdress);
             this.connectionOptions.Controls.Add(this.label3);
-            this.connectionOptions.Controls.Add(this.label2);
             this.connectionOptions.Controls.Add(this.label1);
             this.connectionOptions.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.connectionOptions.Location = new System.Drawing.Point(12, 12);
@@ -221,17 +182,18 @@
             this.groupBox2.Controls.Add(this.imap);
             this.groupBox2.Controls.Add(this.pop3);
             this.groupBox2.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(12, 232);
+            this.groupBox2.Location = new System.Drawing.Point(11, 289);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(303, 83);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Тип приёма почты";
+            this.groupBox2.Visible = false;
             // 
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(65, 372);
+            this.button1.Location = new System.Drawing.Point(65, 378);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(192, 35);
             this.button1.TabIndex = 4;
@@ -243,7 +205,7 @@
             // 
             this.RestoreLinkLabel.AutoSize = true;
             this.RestoreLinkLabel.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.RestoreLinkLabel.Location = new System.Drawing.Point(91, 410);
+            this.RestoreLinkLabel.Location = new System.Drawing.Point(91, 418);
             this.RestoreLinkLabel.Name = "RestoreLinkLabel";
             this.RestoreLinkLabel.Size = new System.Drawing.Size(225, 17);
             this.RestoreLinkLabel.TabIndex = 5;
@@ -273,16 +235,56 @@
             // 
             this.NameServerPanel.Controls.Add(this.nameMailServer);
             this.NameServerPanel.Controls.Add(this.label4);
-            this.NameServerPanel.Location = new System.Drawing.Point(12, 315);
+            this.NameServerPanel.Location = new System.Drawing.Point(11, 232);
             this.NameServerPanel.Name = "NameServerPanel";
             this.NameServerPanel.Size = new System.Drawing.Size(304, 51);
             this.NameServerPanel.TabIndex = 6;
+            // 
+            // POP3PortLabel
+            // 
+            this.POP3PortLabel.AutoSize = true;
+            this.POP3PortLabel.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.POP3PortLabel.Location = new System.Drawing.Point(1, 174);
+            this.POP3PortLabel.Name = "POP3PortLabel";
+            this.POP3PortLabel.Size = new System.Drawing.Size(86, 21);
+            this.POP3PortLabel.TabIndex = 57;
+            this.POP3PortLabel.Text = "Port POP3";
+            this.POP3PortLabel.Visible = false;
+            // 
+            // pop3Port
+            // 
+            this.pop3Port.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.pop3Port.Location = new System.Drawing.Point(96, 175);
+            this.pop3Port.Name = "pop3Port";
+            this.pop3Port.Size = new System.Drawing.Size(192, 23);
+            this.pop3Port.TabIndex = 56;
+            this.pop3Port.Visible = false;
+            // 
+            // pop3Adress
+            // 
+            this.pop3Adress.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.pop3Adress.Location = new System.Drawing.Point(96, 146);
+            this.pop3Adress.Name = "pop3Adress";
+            this.pop3Adress.Size = new System.Drawing.Size(192, 23);
+            this.pop3Adress.TabIndex = 55;
+            this.pop3Adress.Visible = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label2.Location = new System.Drawing.Point(36, 145);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(51, 21);
+            this.label2.TabIndex = 54;
+            this.label2.Text = "POP3";
+            this.label2.Visible = false;
             // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(328, 436);
+            this.ClientSize = new System.Drawing.Size(328, 444);
             this.Controls.Add(this.NameServerPanel);
             this.Controls.Add(this.RestoreLinkLabel);
             this.Controls.Add(this.button1);
@@ -307,15 +309,11 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         public System.Windows.Forms.TextBox smtpAdress;
         public System.Windows.Forms.TextBox smtpPort;
-        public System.Windows.Forms.TextBox pop3Adress;
-        public System.Windows.Forms.TextBox pop3Port;
         public System.Windows.Forms.TextBox imapAdress;
         private System.Windows.Forms.Label SMTPPortLabel;
-        private System.Windows.Forms.Label POP3PortLabel;
         public System.Windows.Forms.TextBox imapPort;
         private System.Windows.Forms.Label IMAPPortLabel;
         private System.Windows.Forms.GroupBox connectionOptions;
@@ -327,5 +325,9 @@
         private System.Windows.Forms.Label label4;
         public System.Windows.Forms.TextBox nameMailServer;
         private System.Windows.Forms.Panel NameServerPanel;
+        private System.Windows.Forms.Label POP3PortLabel;
+        public System.Windows.Forms.TextBox pop3Port;
+        public System.Windows.Forms.TextBox pop3Adress;
+        private System.Windows.Forms.Label label2;
     }
 }

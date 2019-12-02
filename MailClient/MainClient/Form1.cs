@@ -30,6 +30,7 @@ namespace MainClient
                 string nameServer = name[1];
                 nameServer = nameServer.Substring(0, nameServer.IndexOf('.'));
                 #endregion
+
                 if (!check.IsValidEmail(mailTextBox.Text))
                 {
                     MessageBox.Show("Email неверный!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -83,7 +84,7 @@ namespace MainClient
                                 }
                                 else
                                 {
-                                    MessageBox.Show("Вы не были авторизированны в программе. Подключитесь к интернету и повторите попытку!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    MessageBox.Show("Вы не были авторизированны в программе. Подключитесь к интернету и повторите попытку!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     return;
                                 }
                             }
