@@ -36,8 +36,6 @@ C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\D
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\System.Data.SQLite.Linq.dll
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\EntityFramework.xml
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\EntityFramework.SqlServer.xml
-C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\MailKit.xml
-C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\MimeKit.xml
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\System.Data.SQLite.xml
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\bin\Debug\System.Data.SQLite.dll.config
 C:\Users\Admin\Documents\Visual Studio 2019\Projects\MailClient\MainClient\obj\Debug\MainClient.csprojAssemblyReference.cache

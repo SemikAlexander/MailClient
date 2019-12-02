@@ -182,6 +182,7 @@ namespace MainClient
         {
             ReadMessage readMessage = new ReadMessage();
             #region Get message from net
+            string textForOutput = "";
             if (check.IsInternetConnected())
             {
                 try
@@ -255,7 +256,6 @@ namespace MainClient
                         if (LastIndex < 0) LastIndex = 0;
                         var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                         readMessage.email_client.Text = message.From.ToString();
-                        string textForOutput = "";
                         /*Расшифровываем сообщение если оно зашифровано*/
                         #region Decrypt message
                         try
@@ -313,8 +313,28 @@ namespace MainClient
             else
             {
                 readMessage.email_client.Text = (UserMessagesTable.CurrentRow.Cells[0].Value == null) ? "" : UserMessagesTable.CurrentRow.Cells[0].Value.ToString();
-                readMessage.email_client.Text = (UserMessagesTable.CurrentRow.Cells[1].Value == null) ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString();
-                readMessage.email_client.Text = (UserMessagesTable.CurrentRow.Cells[2].Value == null) ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString();
+                readMessage.theme.Text = (UserMessagesTable.CurrentRow.Cells[1].Value == null) ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString();
+
+                try
+                {
+                    string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
+                    textForOutput = (UserMessagesTable.CurrentRow.Cells[2].Value == null) ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString();
+                    string[] temp = textForOutput.Split(new string[] { "^&*" }, StringSplitOptions.None);
+                    temp[1] = crypto.Decrypt(temp[1], prKey);
+                    string DecryptText = "";
+                    for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
+                        if (i < temp.Length - 1)
+                            DecryptText += $"{temp[i]}^&*";
+                        else
+                            DecryptText += temp[i];
+                    textForOutput = crypto.ReturnDecryptRijndaelString(DecryptText);
+                }
+                catch (Exception)
+                {
+                    textForOutput = (UserMessagesTable.CurrentRow.Cells[2].Value == null) ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString(); ;
+                }
+
+                readMessage.TextLetter.Text = textForOutput;
                 readMessage.ShowDialog();
                 toolStripStatusLabel1.Text = "Готово!";
             }
@@ -359,9 +379,10 @@ namespace MainClient
                         UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
                         "DEL",
                         ID);
-                    MarkMessageAsDelete(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
-                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Subject,
-                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text);
+                    MarkMessageAsDelete(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
+                       UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString());
+                    DeleteByIndexDraft(UserMessagesTable.CurrentRow.Index);
                     DataGridOutputMessages("DFT");
                     break;
                 case "Удалённые":
@@ -378,8 +399,9 @@ namespace MainClient
                          UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
                          "DEL",
                          ID);
+                    DeleteByIndex(UserMessagesTable.CurrentRow.Index);
                     DataGridOutputMessages("DEL");
-                    DeleteByIndex(UserMessagesTable.CurrentRow.Index);  /*Окончательное удаление письма*/
+                      /*Окончательное удаление письма*/
                     break;
             }
         }
@@ -688,11 +710,14 @@ namespace MainClient
                         for (int i = 0; i < draftFolder.Count; i++)
                         {
                             var draftMessages = draftFolder.GetMessage(i);
-                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.From));
+                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.To))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.To));
                             messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(draftMessages.Subject);
                             messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? crypto.ReturnEncryptRijndaelString(draftMessages.HtmlBody) : crypto.ReturnEncryptRijndaelString(draftMessages.TextBody);
                             messageFromMailServer.UnicID = draftMessages.MessageId;
                             arrayMessagesFromMailServer.Add(messageFromMailServer);
+
+                            workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress, messageFromMailServer.Subject, messageFromMailServer.Text, "DFT", ID);
+
                             countProcesses++;
                             if (countProcesses >= numMessagesForPersent)
                                 worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
@@ -862,6 +887,20 @@ namespace MainClient
             try
             {
                 var inbox = client.GetFolder(SpecialFolder.Trash);
+                inbox.Open(FolderAccess.ReadWrite);
+                inbox.AddFlags(index, MessageFlags.Deleted, true);
+                inbox.Expunge();
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+        }
+        public void DeleteByIndexDraft(int index)
+        {
+            try
+            {
+                var inbox = client.GetFolder(SpecialFolder.Drafts);
                 inbox.Open(FolderAccess.ReadWrite);
                 inbox.AddFlags(index, MessageFlags.Deleted, true);
                 inbox.Expunge();

@@ -56,7 +56,25 @@ namespace MainClient
                         message.To.Add(new MailboxAddress(email_client.Text));
                         message.Subject = theme.Text;
                         var builder = new BodyBuilder();
-                        builder.TextBody = TextLetter.Text;
+
+                        string[] temp = crypto.ReturnEncryptRijndaelString(TextLetter.Text).Split(new string[] { "^&*" }, StringSplitOptions.None); /*временный массив для формирования зашифрованного сообщения согласно заданной последовательности*/
+
+                        string pbKey = workWithDatabase.GetPublicKeyForUser(ID);  /*"Берём public ключ из базы"*/
+
+                        temp[1] = crypto.Encrypt(temp[1], pbKey);   /*Шифруем ключ при помощи алгоритма RSA*/
+
+                        string EncryptText = "";
+
+                        for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
+                        {
+                            if (i < temp.Length - 1)
+                                EncryptText += $"{temp[i]}^&*";
+                            else
+                                EncryptText += temp[i];
+                        }
+
+                        builder.TextBody = EncryptText;
+
                         if (AttachmentFile != "")
                         {
                             builder.Attachments.Add(AttachmentFile);
@@ -64,7 +82,11 @@ namespace MainClient
                         message.Body = builder.ToMessageBody();
                         if (!MessageFromDraft)
                         {
-                            workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "DFT", ID);
+                            workWithDatabase.AddMessageInDB(crypto.ReturnEncryptRijndaelString(email_client.Text),
+                                crypto.ReturnEncryptRijndaelString(theme.Text),
+                                crypto.ReturnEncryptRijndaelString(TextLetter.Text), 
+                                "DFT", 
+                                ID);
                             try
                             {
                                 using (var client1 = new ImapClient())
@@ -84,7 +106,6 @@ namespace MainClient
                                 }
                                 MessageBox.Show("Письмо сохранено в черновики!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 email_client.Text = theme.Text = TextLetter.Text = "";
-
                             }
                             catch (Exception ex)
                             {
@@ -230,7 +251,11 @@ namespace MainClient
                 switch (MessageBox.Show("Подключение с интернет отсутствует! Сохранить сообщение в черновики?", "Сохранить", MessageBoxButtons.OK, MessageBoxIcon.Warning))
                 {
                     case DialogResult.OK:
-                        workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "DFT", ID);
+                        workWithDatabase.AddMessageInDB(crypto.ReturnEncryptRijndaelString(email_client.Text), 
+                            crypto.ReturnEncryptRijndaelString(theme.Text),
+                            crypto.ReturnEncryptRijndaelString(TextLetter.Text), 
+                            "DFT", 
+                            ID);
                         email_client.Text = theme.Text = TextLetter.Text = "";
                         return;
                     default:
