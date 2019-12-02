@@ -30,6 +30,8 @@ namespace MainClient
         
         StructMessage messageFromMailServer;
         List<StructMessage> arrayMessagesFromMailServer = new List<StructMessage>();
+        
+        ImapClient client = new ImapClient();
         public MainForm(string UserEmail, string UserPassword, int IDUser)
         {
             InitializeComponent();
@@ -219,90 +221,83 @@ namespace MainClient
                     }
                     if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
                     {
-                        using (var client = new ImapClient())
+                        IMailFolder inbox;
+                        string OutputType = "";
+                        switch (button)
                         {
-                            client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                            client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                            client.Authenticate(email, password);
-                            IMailFolder inbox;
-                            string OutputType = "";
-                            switch (button)
-                            {
-                                case "Спам":
-                                    inbox = client.GetFolder(SpecialFolder.Junk);
-                                    OutputType = "JNK";
-                                    break;
-                                case "Входящие":
-                                    inbox = client.Inbox;
-                                    OutputType = "INB";
-                                    break;
-                                case "Отправленные":
-                                    inbox = client.GetFolder(SpecialFolder.Sent);
-                                    OutputType = "SNT";
-                                    break;
-                                case "Черновик":
-                                    inbox = client.GetFolder(SpecialFolder.Drafts);
-                                    OutputType = "DFT";
-                                    break;
-                                case "Удалённые":
-                                    inbox = client.GetFolder(SpecialFolder.Trash);
-                                    OutputType = "DEL";
-                                    break;
-                                default:
-                                    inbox = client.Inbox;
-                                    OutputType = "INB";
-                                    break;
-                            }
-                            inbox.Open(FolderAccess.ReadOnly);
-                            if (LastIndex < 0) LastIndex = 0;
-                            var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
-                            readMessage.email_client.Text = message.From.ToString();
-                            string textForOutput = "";
-                            /*Расшифровываем сообщение*/
-                            try
-                            {
-                                readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
-
-                                string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
-                                textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
-                                string[] temp = textForOutput.Split(new string[] { "^&*" }, StringSplitOptions.None);
-                                temp[1] = crypto.Decrypt(temp[1], prKey);
-                                string DecryptText = "";
-                                for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
-                                    if (i < temp.Length - 1)
-                                        DecryptText += $"{temp[i]}^&*";
-                                    else
-                                        DecryptText += temp[i];
-                                textForOutput = crypto.ReturnDecryptRijndaelString(DecryptText);
-                            }
-                            catch (Exception)
-                            {
-                                readMessage.theme.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? "" : message.Subject;
-                                textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
-                            }
-                            WebBrowser wb = new WebBrowser();
-                            wb.Navigate("about:blank");
-                            wb.Document.Write(textForOutput);
-                            wb.Document.ExecCommand("SelectAll", false, null);
-                            wb.Document.ExecCommand("Copy", false, null);
-                            readMessage.TextLetter.SelectAll();
-                            readMessage.TextLetter.Paste();
-
-                            readMessage.MimeMessage = message;
-                            toolStripStatusLabel1.Text = "Готово!";
-                            client.Disconnect(true);
-
-                            MarkMessageAsRead(UserMessagesTable.CurrentRow.Index);
-                            workWithDatabase.MarkMessageAsReadInDB(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                                UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", ""),
-                                UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
-                                "INB",
-                                ID);
-
-                            DataGridOutputMessages(OutputType);
-
-                            readMessage.ShowDialog();
+                            case "Спам":
+                                inbox = client.GetFolder(SpecialFolder.Junk);
+                                OutputType = "JNK";
+                                break;
+                            case "Входящие":
+                                inbox = client.Inbox;
+                                OutputType = "INB";
+                                break;
+                            case "Отправленные":
+                                inbox = client.GetFolder(SpecialFolder.Sent);
+                                OutputType = "SNT";
+                                break;
+                            case "Черновик":
+                                inbox = client.GetFolder(SpecialFolder.Drafts);
+                                OutputType = "DFT";
+                                break;
+                            case "Удалённые":
+                                inbox = client.GetFolder(SpecialFolder.Trash);
+                                OutputType = "DEL";
+                                break;
+                            default:
+                                inbox = client.Inbox;
+                                OutputType = "INB";
+                                break;
                         }
+                        inbox.Open(FolderAccess.ReadOnly);
+                        if (LastIndex < 0) LastIndex = 0;
+                        var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
+                        readMessage.email_client.Text = message.From.ToString();
+                        string textForOutput = "";
+                        /*Расшифровываем сообщение*/
+                        try
+                        {
+                            readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
+
+                            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
+                            textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                            string[] temp = textForOutput.Split(new string[] { "^&*" }, StringSplitOptions.None);
+                            temp[1] = crypto.Decrypt(temp[1], prKey);
+                            string DecryptText = "";
+                            for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
+                                if (i < temp.Length - 1)
+                                    DecryptText += $"{temp[i]}^&*";
+                                else
+                                    DecryptText += temp[i];
+                            textForOutput = crypto.ReturnDecryptRijndaelString(DecryptText);
+                        }
+                        catch (Exception)
+                        {
+                            readMessage.theme.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? "" : message.Subject;
+                            textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                        }
+                        WebBrowser wb = new WebBrowser();
+                        wb.Navigate("about:blank");
+                        wb.Document.Write(textForOutput);
+                        wb.Document.ExecCommand("SelectAll", false, null);
+                        wb.Document.ExecCommand("Copy", false, null);
+                        readMessage.TextLetter.SelectAll();
+                        readMessage.TextLetter.Paste();
+
+                        readMessage.MimeMessage = message;
+                        toolStripStatusLabel1.Text = "Готово!";
+
+                        MarkMessageAsRead(UserMessagesTable.CurrentRow.Index);
+                        workWithDatabase.MarkMessageAsReadInDB(crypto.ReturnEncryptRijndaelString(UserMessagesTable.CurrentRow.Cells[0].Value.ToString()),
+                            crypto.ReturnEncryptRijndaelString(UserMessagesTable.CurrentRow.Cells[1].Value.ToString().Replace("'", "")),
+                            UserMessagesTable.CurrentRow.Cells[2].Value.ToString().Replace("'", ""),
+                            "INB",
+                            ID);
+
+                        DataGridOutputMessages(OutputType);
+
+                        readMessage.ShowDialog();
                     }
                 }
                 catch (Exception ex)
@@ -535,6 +530,11 @@ namespace MainClient
             int index = email.IndexOf("@");
             Text = email.Substring(0, index);
             toolStripStatusLabel1.Text = "";
+
+            client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+            client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+            client.Authenticate(email, password);
+
             if (check.IsInternetConnected() & (UserCountMessagesFromMailServer("Входящие") != workWithDatabase.CountInboxMessages("INB")))
             {
                 menuPanel.Enabled = functionalPanel.Enabled = false;
@@ -552,46 +552,38 @@ namespace MainClient
             workWithDatabase.DeleteAllMessageByTypeInDB("INB", ID);
             try
             {
-                using (var client = new ImapClient())
+                var inbox = client.Inbox;
+                inbox.Open(FolderAccess.ReadOnly);
+                var items = inbox.Fetch(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags);
+                double numMessagesForPersent = (double)items.Count / 100;
+                int countProcesses = 0;
+                foreach (var item in items)
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                    client.Authenticate(email, password);
-                    var inbox = client.Inbox;
-                    inbox.Open(FolderAccess.ReadOnly);
-                    var items = inbox.Fetch(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags);
-                    double numMessagesForPersent = (double)items.Count / 100;
-                    int countProcesses = 0;
-                    foreach (var item in items)
+                    var message = inbox.GetMessage(item.UniqueId);
+
+                    messageFromMailServer.RecipientAdress = crypto.ReturnEncryptRijndaelString(Convert.ToString(message.From));
+                    messageFromMailServer.Subject = crypto.ReturnEncryptRijndaelString(message.Subject);
+
+                    messageFromMailServer.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                    messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
+
+                    workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""),
+                        messageFromMailServer.Subject.Replace("'", ""),
+                        StripHTML((string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody).Replace("'", ""),
+                        "INB",
+                        messageFromMailServer.UnicID,
+                        ID,
+                        messageFromMailServer.SeenMessage);
+                    if (item.Flags.Value.HasFlag(MessageFlags.Seen))
                     {
-                        var message = inbox.GetMessage(item.UniqueId);
-
-                        /*шифруем сообщения и добавляем в БД*/
-                        messageFromMailServer.RecipientAdress = crypto.ReturnEncryptRijndaelString(Convert.ToString(message.From));
-                        messageFromMailServer.Subject = crypto.ReturnEncryptRijndaelString(message.Subject);
-
-                        messageFromMailServer.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : crypto.ReturnStringWithTowChipers(message.TextBody, ID);
-                        messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
-
-                        workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), 
-                            messageFromMailServer.Subject.Replace("'", ""), 
-                            StripHTML((string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody).Replace("'", ""), 
-                            "INB", 
-                            messageFromMailServer.UnicID, 
-                            ID, 
-                            messageFromMailServer.SeenMessage);
-                        if (item.Flags.Value.HasFlag(MessageFlags.Seen))
-                        {
-                            messageFromMailServer.SeenMessage = "+";
-                        }
-                        else
-                            messageFromMailServer.SeenMessage = "-";
-                        arrayMessagesFromMailServer.Add(messageFromMailServer);
-                        countProcesses++;
-                        if (countProcesses >= numMessagesForPersent)
-                            worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
+                        messageFromMailServer.SeenMessage = "+";
                     }
-                    client.Disconnect(true);
+                    else
+                        messageFromMailServer.SeenMessage = "-";
+                    arrayMessagesFromMailServer.Add(messageFromMailServer);
+                    countProcesses++;
+                    if (countProcesses >= numMessagesForPersent)
+                        worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
                 }
             }
             catch (Exception ex)
@@ -606,9 +598,6 @@ namespace MainClient
                 toolStripStatusLabel1.Text = "Идет загрузка...";
                 using (var client = new Pop3Client())
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    client.Connect(Settings.Default["POP3Adress"].ToString(), Convert.ToInt32(Settings.Default["POP3Port"]), true);
-                    client.Authenticate(email, password);
                     UserMessagesTable.Rows.Clear();
                     if (Letter < 0) Letter = 0;
 
@@ -660,44 +649,35 @@ namespace MainClient
             try
             {
                 arrayMessagesFromMailServer.Clear();
-                using (var client = new ImapClient())
+                var draftFolder = client.GetFolder(SpecialFolder.Drafts);
+                if (draftFolder != null)
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                    client.Authenticate(email, password);
-                    var draftFolder = client.GetFolder(SpecialFolder.Drafts);
-                    if (draftFolder != null)
+                    draftFolder.Open(FolderAccess.ReadOnly);
+                    if (draftFolder.Count == 0)
                     {
-                        draftFolder.Open(FolderAccess.ReadOnly);
-                        if (draftFolder.Count == 0)
-                        {
-                            toolStripStatusLabel1.Text = "Эта папка пуста.";
-                        }
-                        else
-                        {
-                            double numMessagesForPersent = (double)draftFolder.Count / 100;
-                            int countProcesses = 0;
-                            for (int i = 0; i < draftFolder.Count; i++)
-                            {
-                                var draftMessages = draftFolder.GetMessage(i);
-                                
-                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.From));
-                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(draftMessages.Subject);
-                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : crypto.ReturnStringWithTowChipers(draftMessages.TextBody, ID);
-                                messageFromMailServer.UnicID = draftMessages.MessageId;
-                                
-                                arrayMessagesFromMailServer.Add(messageFromMailServer);
-                                countProcesses++;
-                                if (countProcesses >= numMessagesForPersent)
-                                    worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
-                            }
-                        }
+                        toolStripStatusLabel1.Text = "Эта папка пуста.";
                     }
                     else
                     {
-                        toolStripStatusLabel1.Text = "Папки \"Черновик\" нет на этом почтовом сервере.";
+                        double numMessagesForPersent = (double)draftFolder.Count / 100;
+                        int countProcesses = 0;
+                        for (int i = 0; i < draftFolder.Count; i++)
+                        {
+                            var draftMessages = draftFolder.GetMessage(i);
+                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : Convert.ToString(draftMessages.From);
+                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : draftMessages.Subject;
+                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
+                            messageFromMailServer.UnicID = draftMessages.MessageId;
+                            arrayMessagesFromMailServer.Add(messageFromMailServer);
+                            countProcesses++;
+                            if (countProcesses >= numMessagesForPersent)
+                                worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
+                        }
                     }
-                    client.Disconnect(true);
+                }
+                else
+                {
+                    toolStripStatusLabel1.Text = "Папки \"Черновик\" нет на этом почтовом сервере.";
                 }
             }
             catch (Exception ex)
@@ -711,46 +691,36 @@ namespace MainClient
             try
             {
                 arrayMessagesFromMailServer.Clear();
-                using (var client = new ImapClient())
+                var draftFolder = client.GetFolder(SpecialFolder.Junk);
+                if (draftFolder != null)
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                    client.Authenticate(email, password);
-                    var draftFolder = client.GetFolder(SpecialFolder.Junk);
-                    if (draftFolder != null)
+                    draftFolder.Open(FolderAccess.ReadOnly);
+                    if (draftFolder.Count == 0)
                     {
-                        draftFolder.Open(FolderAccess.ReadOnly);
-                        if (draftFolder.Count == 0)
-                        {
-                            toolStripStatusLabel1.Text = "Эта папка пуста.";
-                        }
-                        else
-                        {
-                            double numMessagesForPersent = (double)draftFolder.Count / 100;
-                            int countProcesses = 0;
-                            for (int i = 0; i < draftFolder.Count; i++)
-                            {
-                                var draftMessages = draftFolder.GetMessage(i);
-
-                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.From));
-                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(draftMessages.Subject);
-                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : crypto.ReturnStringWithTowChipers(draftMessages.TextBody, ID);
-                                messageFromMailServer.UnicID = draftMessages.MessageId;
-
-                                arrayMessagesFromMailServer.Add(messageFromMailServer);
-
-                                workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "JNK", ID);
-                                countProcesses++;
-                                if (countProcesses >= numMessagesForPersent)
-                                    worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
-                            }
-                        }
+                        toolStripStatusLabel1.Text = "Эта папка пуста.";
                     }
                     else
                     {
-                        toolStripStatusLabel1.Text = "Папки \"Черновик\" нет на этом почтовом сервере.";
+                        double numMessagesForPersent = (double)draftFolder.Count / 100;
+                        int countProcesses = 0;
+                        for (int i = 0; i < draftFolder.Count; i++)
+                        {
+                            var draftMessages = draftFolder.GetMessage(i);
+                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : Convert.ToString(draftMessages.From);
+                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : draftMessages.Subject;
+                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
+                            messageFromMailServer.UnicID = draftMessages.MessageId;
+                            arrayMessagesFromMailServer.Add(messageFromMailServer);
+                            workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "JNK", ID);
+                            countProcesses++;
+                            if (countProcesses >= numMessagesForPersent)
+                                worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
+                        }
                     }
-                    client.Disconnect(true);
+                }
+                else
+                {
+                    toolStripStatusLabel1.Text = "Папки \"Черновик\" нет на этом почтовом сервере.";
                 }
             }
             catch (Exception ex)
@@ -764,45 +734,36 @@ namespace MainClient
             try
             {
                 arrayMessagesFromMailServer.Clear();
-                using (var client = new ImapClient())
+                var sentFolder = client.GetFolder(SpecialFolder.Sent);
+                if (sentFolder != null)
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                    client.Authenticate(email, password);
-                    var sentFolder = client.GetFolder(SpecialFolder.Sent);
-                    if (sentFolder != null)
+                    sentFolder.Open(FolderAccess.ReadOnly);
+                    if (sentFolder.Count == 0)
                     {
-                        sentFolder.Open(FolderAccess.ReadOnly);
-                        if (sentFolder.Count == 0)
-                        {
-                            toolStripStatusLabel1.Text = "Эта папка пуста.";
-                        }
-                        else
-                        {
-                            double numMessagesForPersent = (double)sentFolder.Count / 100;
-                            int countProcesses = 0;
-                            for (int i = 0; i < sentFolder.Count; i++)
-                            {
-                                var sentMessages = sentFolder.GetMessage(i);
-                                
-                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(sentMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(sentMessages.From));
-                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(sentMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(sentMessages.Subject);
-                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(sentMessages.TextBody)) ? sentMessages.HtmlBody : crypto.ReturnStringWithTowChipers(sentMessages.TextBody, ID);
-                                messageFromMailServer.UnicID = sentMessages.MessageId;
-                               
-                                arrayMessagesFromMailServer.Add(messageFromMailServer);
-                                workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "SNT", ID);
-                                countProcesses++;
-                                if (countProcesses >= numMessagesForPersent)
-                                    worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
-                            }
-                        }
+                        toolStripStatusLabel1.Text = "Эта папка пуста.";
                     }
                     else
                     {
-                        toolStripStatusLabel1.Text = "Папки \"Отправленные\" нет на этом почтовом сервере.";
+                        double numMessagesForPersent = (double)sentFolder.Count / 100;
+                        int countProcesses = 0;
+                        for (int i = 0; i < sentFolder.Count; i++)
+                        {
+                            var sentMessages = sentFolder.GetMessage(i);
+                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(sentMessages.From))) ? "" : Convert.ToString(sentMessages.From);
+                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(sentMessages.Subject)) ? "" : sentMessages.Subject;
+                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(sentMessages.TextBody)) ? sentMessages.HtmlBody : sentMessages.TextBody;
+                            messageFromMailServer.UnicID = sentMessages.MessageId;
+                            arrayMessagesFromMailServer.Add(messageFromMailServer);
+                            workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "SNT", ID);
+                            countProcesses++;
+                            if (countProcesses >= numMessagesForPersent)
+                                worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
+                        }
                     }
-                    client.Disconnect(true);
+                }
+                else
+                {
+                    toolStripStatusLabel1.Text = "Папки \"Отправленные\" нет на этом почтовом сервере.";
                 }
             }
             catch (Exception ex)
@@ -816,45 +777,36 @@ namespace MainClient
             try
             {
                 arrayMessagesFromMailServer.Clear();
-                using (var client = new ImapClient())
+                var trashFolder = client.GetFolder(SpecialFolder.Trash);
+                if (trashFolder != null)
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                    client.Authenticate(email, password);
-                    var trashFolder = client.GetFolder(SpecialFolder.Trash);
-                    if (trashFolder != null)
+                    trashFolder.Open(FolderAccess.ReadOnly);
+                    if (trashFolder.Count == 0)
                     {
-                        trashFolder.Open(FolderAccess.ReadOnly);
-                        if (trashFolder.Count == 0)
-                        {
-                            toolStripStatusLabel1.Text = "Эта папка пуста.";
-                        }
-                        else
-                        {
-                            double numMessagesForPersent = (double)trashFolder.Count / 100;
-                            int countProcesses = 0;
-                            for (int i = 0; i < trashFolder.Count; i++)
-                            {
-                                var trashMessages = trashFolder.GetMessage(i);
-
-                                messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(trashMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(trashMessages.From));
-                                messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(trashMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(trashMessages.Subject);
-                                messageFromMailServer.Text = (string.IsNullOrWhiteSpace(trashMessages.TextBody)) ? trashMessages.HtmlBody : crypto.ReturnStringWithTowChipers(trashMessages.TextBody, ID);
-                                messageFromMailServer.UnicID = trashMessages.MessageId;
-
-                                arrayMessagesFromMailServer.Add(messageFromMailServer);
-                                workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "DEL", ID);
-                                countProcesses++;
-                                if (countProcesses >= numMessagesForPersent)
-                                    worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
-                            }
-                        }
+                        toolStripStatusLabel1.Text = "Эта папка пуста.";
                     }
                     else
                     {
-                        toolStripStatusLabel1.Text = "Папки \"Корзина\" нет на этом почтовом сервере.";
+                        double numMessagesForPersent = (double)trashFolder.Count / 100;
+                        int countProcesses = 0;
+                        for (int i = 0; i < trashFolder.Count; i++)
+                        {
+                            var trashMessages = trashFolder.GetMessage(i);
+                            messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(trashMessages.From))) ? "" : Convert.ToString(trashMessages.From);
+                            messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(trashMessages.Subject)) ? "" : trashMessages.Subject;
+                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(trashMessages.TextBody)) ? trashMessages.HtmlBody : trashMessages.TextBody;
+                            messageFromMailServer.UnicID = trashMessages.MessageId;
+                            arrayMessagesFromMailServer.Add(messageFromMailServer);
+                            workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "DEL", ID);
+                            countProcesses++;
+                            if (countProcesses >= numMessagesForPersent)
+                                worker.ReportProgress((int)(countProcesses / numMessagesForPersent));
+                        }
                     }
-                    client.Disconnect(true);
+                }
+                else
+                {
+                    toolStripStatusLabel1.Text = "Папки \"Корзина\" нет на этом почтовом сервере.";
                 }
             }
             catch (Exception ex)
@@ -870,7 +822,7 @@ namespace MainClient
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
                 foreach (var arraySendMessages in messages)
-                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(arraySendMessages.RecipientAdress), crypto.ReturnDecryptRijndaelString(arraySendMessages.Subject), crypto.Decrypt(arraySendMessages.Text, ID), arraySendMessages.MessId, arraySendMessages.Seen);
+                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(arraySendMessages.RecipientAdress), crypto.ReturnDecryptRijndaelString(arraySendMessages.Subject), arraySendMessages.Text, arraySendMessages.MessId, arraySendMessages.Seen);
             else
                 toolStripStatusLabel1.Text = "Эта папка пуста.";
             menuPanel.Enabled = functionalPanel.Enabled = true;
@@ -880,17 +832,10 @@ namespace MainClient
         {
             try
             {
-                using (var client = new ImapClient())
-                {
-                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                    client.Authenticate(email, password);
-                    var inbox = client.Inbox;
-                    inbox.Open(FolderAccess.ReadWrite);
-                    inbox.AddFlags(index, MessageFlags.Deleted, true);
-                    inbox.Expunge();
-                    client.Disconnect(true);
-                }
+                var inbox = client.Inbox;
+                inbox.Open(FolderAccess.ReadWrite);
+                inbox.AddFlags(index, MessageFlags.Deleted, true);
+                inbox.Expunge();
             }
             catch (Exception ex)
             {
@@ -901,17 +846,10 @@ namespace MainClient
         {
             try
             {
-                using (var client = new ImapClient())
-                {
-                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                    client.Authenticate(email, password);
-                    var inbox = client.Inbox;
-                    inbox.Open(FolderAccess.ReadWrite);
-                    inbox.AddFlags(index, MessageFlags.Seen, true);
-                    inbox.Expunge();
-                    client.Disconnect(true);
-                }
+                var inbox = client.Inbox;
+                inbox.Open(FolderAccess.ReadWrite);
+                inbox.AddFlags(index, MessageFlags.Seen, true);
+                inbox.Expunge();
             }
             catch (Exception ex)
             {
@@ -924,27 +862,19 @@ namespace MainClient
             RecAdress = adress[1].Replace(">", "");
             try
             {
-                using (var client = new ImapClient())
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(RecAdress));
+                message.To.Add(new MailboxAddress(email));
+                message.Subject = Subject;
+                var builder = new BodyBuilder();
+                builder.TextBody = Text;
+                message.Body = builder.ToMessageBody();
+                var TrashFolder = client.GetFolder(SpecialFolder.Trash);
+                if (TrashFolder != null)
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                    client.Authenticate(email, password);
-
-                    var message = new MimeMessage();
-                    message.From.Add(new MailboxAddress(RecAdress));
-                    message.To.Add(new MailboxAddress(email));
-                    message.Subject = Subject;
-                    var builder = new BodyBuilder();
-                    builder.TextBody = Text;
-                    message.Body = builder.ToMessageBody();
-                    var TrashFolder = client.GetFolder(SpecialFolder.Trash);
-                    if (TrashFolder != null)
-                    {
-                        TrashFolder.Open(FolderAccess.ReadWrite);
-                        TrashFolder.Append(message, MessageFlags.None);
-                        TrashFolder.Expunge();
-                    }
-                    client.Disconnect(true);
+                    TrashFolder.Open(FolderAccess.ReadWrite);
+                    TrashFolder.Append(message, MessageFlags.None);
+                    TrashFolder.Expunge();
                 }
             }
             catch (Exception ex)
@@ -954,38 +884,31 @@ namespace MainClient
         }
         public int UserCountMessagesFromMailServer(string Type)
         {
-            using (var client = new ImapClient())
+            IMailFolder inbox;
+            switch (Type)
             {
-                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                client.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                client.Authenticate(email, password);
-                IMailFolder inbox;
-                switch (Type)
-                {
-                    case "Спам":
-                        inbox = client.GetFolder(SpecialFolder.Junk);
-                        break;
-                    case "Входящие":
-                        inbox = client.Inbox;
-                        break;
-                    case "Отправленные":
-                        inbox = client.GetFolder(SpecialFolder.Sent);
-                        break;
-                    case "Черновик":
-                        inbox = client.GetFolder(SpecialFolder.Drafts);
-                        break;
-                    case "Удалённые":
-                        inbox = client.GetFolder(SpecialFolder.Trash);
-                        break;
-                    default:
-                        inbox = client.Inbox;
-                        break;
-                }
-                inbox.Open(FolderAccess.ReadOnly);
-                var result = inbox.Count;
-                client.Disconnect(true);
-                return result;
+                case "Спам":
+                    inbox = client.GetFolder(SpecialFolder.Junk);
+                    break;
+                case "Входящие":
+                    inbox = client.Inbox;
+                    break;
+                case "Отправленные":
+                    inbox = client.GetFolder(SpecialFolder.Sent);
+                    break;
+                case "Черновик":
+                    inbox = client.GetFolder(SpecialFolder.Drafts);
+                    break;
+                case "Удалённые":
+                    inbox = client.GetFolder(SpecialFolder.Trash);
+                    break;
+                default:
+                    inbox = client.Inbox;
+                    break;
             }
+            inbox.Open(FolderAccess.ReadOnly);
+            var result = inbox.Count;
+            return result;
         }
         public static string StripHTML(string input)
         {

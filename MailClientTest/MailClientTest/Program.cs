@@ -29,6 +29,12 @@ namespace MailClientTest
 
                     Console.WriteLine($"Encrypted: {text}");
 
+                    string text1 = $"{Convert.ToBase64String(encrypted)}^&*" +
+                        $"{Convert.ToBase64String(myRijndael.Key)}^&*" +
+                        $"{Convert.ToBase64String(myRijndael.IV)}\n";
+
+                    Console.WriteLine($"Encrypted: {text1}");
+
                     string[] EncText = text.Split(new string[] { "^&*" }, StringSplitOptions.None);
 
                     // Decrypt the bytes to a string.
