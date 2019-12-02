@@ -151,6 +151,7 @@ namespace MainClient
         private void InboxMessages_Click(object sender, EventArgs e)
         {
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+            menuPanel.Enabled = functionalPanel.Enabled = false;
 
             button = InboxMessages.Text.Trim(' ');
             toolStripStatusLabel1.Text = $"Загружаются письма из папки \"{button}\"";
@@ -502,7 +503,7 @@ namespace MainClient
             {
                 toolStripStatusLabel1.Text = "Готово!";
                 foreach (var info in arrayMessagesFromMailServer)
-                    UserMessagesTable.Rows.Add(info.RecipientAdress, info.Subject, info.Text, info.UnicID);
+                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(info.RecipientAdress), crypto.ReturnDecryptRijndaelString(info.Subject), info.Text, info.UnicID);
             }
             menuPanel.Enabled = functionalPanel.Enabled = true;
         }
