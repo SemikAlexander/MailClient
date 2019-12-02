@@ -260,7 +260,7 @@ namespace MainClient
                         #region Decrypt message
                         try
                         {
-                            readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
+                            readMessage.theme.Text = message.Subject;
 
                             string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
                             textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
@@ -348,6 +348,9 @@ namespace MainClient
                         UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
                         "DEL",
                         ID);
+                    MarkMessageAsDelete(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
+                       UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
+                       UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString());
                     DataGridOutputMessages("SNT");
                     break;
                 case "Черновик":
@@ -356,19 +359,18 @@ namespace MainClient
                         UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
                         "DEL",
                         ID);
-                    MarkMessageAsDelete(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
-                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString());
+                    MarkMessageAsDelete(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
+                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Subject,
+                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text);
                     DataGridOutputMessages("DFT");
                     break;
                 case "Удалённые":
-                    workWithDatabase.EditMessageInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
+                    workWithDatabase.DeleteMessageInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
                         UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Subject,
                         UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : messages[UserMessagesTable.CurrentRow.Index].Text,
-                        "DEL",
                         ID);
-                    DataGridOutputMessages("DEL");
                     DeleteByIndex(UserMessagesTable.CurrentRow.Index);  /*Окончательное удаление письма*/
+                    DataGridOutputMessages("DEL");
                     break;
                 case "Спам":
                     workWithDatabase.EditMessageInDB(messages[UserMessagesTable.CurrentRow.Index].RecipientAdress,
@@ -502,11 +504,21 @@ namespace MainClient
             else
             {
                 toolStripStatusLabel1.Text = "Готово!";
-                foreach (var info in arrayMessagesFromMailServer)
-                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(info.RecipientAdress), 
-                        crypto.ReturnDecryptRijndaelString(info.Subject), 
-                        crypto.ReturnDecryptRijndaelString(info.Text), 
-                        info.UnicID);
+                switch (button)
+                {
+                    case "Отправленные":
+                        DataGridOutputMessages("SNT");
+                        break;
+                    case "Удалённые":
+                        DataGridOutputMessages("DEL");
+                        break;
+                    case "Спам":
+                        DataGridOutputMessages("JNK");
+                        break;
+                    case "Черновик":
+                        DataGridOutputMessages("DFT");
+                        break;
+                }
             }
             menuPanel.Enabled = functionalPanel.Enabled = true;
         }
@@ -577,6 +589,13 @@ namespace MainClient
                     messageFromMailServer.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? crypto.ReturnEncryptRijndaelString(message.HtmlBody) : crypto.ReturnEncryptRijndaelString(message.TextBody);
                     messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
 
+                    if (item.Flags.Value.HasFlag(MessageFlags.Seen))
+                    {
+                        messageFromMailServer.SeenMessage = "+";
+                    }
+                    else
+                        messageFromMailServer.SeenMessage = "-";
+
                     workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""),
                         messageFromMailServer.Subject.Replace("'", ""),
                         StripHTML((string.IsNullOrWhiteSpace(message.TextBody)) ? crypto.ReturnEncryptRijndaelString(message.HtmlBody) : crypto.ReturnEncryptRijndaelString(message.TextBody)).Replace("'", ""),
@@ -584,12 +603,7 @@ namespace MainClient
                         messageFromMailServer.UnicID,
                         ID,
                         messageFromMailServer.SeenMessage);
-                    if (item.Flags.Value.HasFlag(MessageFlags.Seen))
-                    {
-                        messageFromMailServer.SeenMessage = "+";
-                    }
-                    else
-                        messageFromMailServer.SeenMessage = "-";
+                    
                     arrayMessagesFromMailServer.Add(messageFromMailServer);
                     countProcesses++;
                     if (countProcesses >= numMessagesForPersent)
@@ -847,7 +861,7 @@ namespace MainClient
         {
             try
             {
-                var inbox = client.Inbox;
+                var inbox = client.GetFolder(SpecialFolder.Trash);
                 inbox.Open(FolderAccess.ReadWrite);
                 inbox.AddFlags(index, MessageFlags.Deleted, true);
                 inbox.Expunge();

@@ -244,7 +244,7 @@ namespace MainClient
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(UserEmail));
             message.To.Add(new MailboxAddress(email_client.Text));
-            message.Subject = crypto.ReturnEncryptRijndaelString(theme.Text);   /*Шифруем тему сообщения*/
+            message.Subject = theme.Text;
             var builder = new BodyBuilder();
 
             string[] temp = crypto.ReturnEncryptRijndaelString(TextLetter.Text).Split(new string[] { "^&*" }, StringSplitOptions.None); /*временный массив для формирования зашифрованного сообщения согласно заданной последовательности*/
