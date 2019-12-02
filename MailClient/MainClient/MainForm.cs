@@ -503,7 +503,10 @@ namespace MainClient
             {
                 toolStripStatusLabel1.Text = "Готово!";
                 foreach (var info in arrayMessagesFromMailServer)
-                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(info.RecipientAdress), crypto.ReturnDecryptRijndaelString(info.Subject), info.Text, info.UnicID);
+                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(info.RecipientAdress), 
+                        crypto.ReturnDecryptRijndaelString(info.Subject), 
+                        crypto.ReturnDecryptRijndaelString(info.Text), 
+                        info.UnicID);
             }
             menuPanel.Enabled = functionalPanel.Enabled = true;
         }
@@ -571,12 +574,12 @@ namespace MainClient
                     messageFromMailServer.RecipientAdress = crypto.ReturnEncryptRijndaelString(Convert.ToString(message.From));
                     messageFromMailServer.Subject = crypto.ReturnEncryptRijndaelString(message.Subject);
 
-                    messageFromMailServer.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
+                    messageFromMailServer.Text = (string.IsNullOrWhiteSpace(message.TextBody)) ? crypto.ReturnEncryptRijndaelString(message.HtmlBody) : crypto.ReturnEncryptRijndaelString(message.TextBody);
                     messageFromMailServer.UnicID = Convert.ToString(item.UniqueId);
 
                     workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""),
                         messageFromMailServer.Subject.Replace("'", ""),
-                        StripHTML((string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody).Replace("'", ""),
+                        StripHTML((string.IsNullOrWhiteSpace(message.TextBody)) ? crypto.ReturnEncryptRijndaelString(message.HtmlBody) : crypto.ReturnEncryptRijndaelString(message.TextBody)).Replace("'", ""),
                         "INB",
                         messageFromMailServer.UnicID,
                         ID,
@@ -673,7 +676,7 @@ namespace MainClient
                             var draftMessages = draftFolder.GetMessage(i);
                             messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.From));
                             messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(draftMessages.Subject);
-                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
+                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? crypto.ReturnEncryptRijndaelString(draftMessages.HtmlBody) : crypto.ReturnEncryptRijndaelString(draftMessages.TextBody);
                             messageFromMailServer.UnicID = draftMessages.MessageId;
                             arrayMessagesFromMailServer.Add(messageFromMailServer);
                             countProcesses++;
@@ -716,7 +719,7 @@ namespace MainClient
                             
                             messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(draftMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(draftMessages.From));
                             messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(draftMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(draftMessages.Subject);
-                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? draftMessages.HtmlBody : draftMessages.TextBody;
+                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(draftMessages.TextBody)) ? crypto.ReturnEncryptRijndaelString(draftMessages.HtmlBody) : crypto.ReturnEncryptRijndaelString(draftMessages.TextBody);
                             messageFromMailServer.UnicID = draftMessages.MessageId;
 
                             arrayMessagesFromMailServer.Add(messageFromMailServer);
@@ -761,7 +764,7 @@ namespace MainClient
                             var sentMessages = sentFolder.GetMessage(i);
                             messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(sentMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(sentMessages.From));
                             messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(sentMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(sentMessages.Subject);
-                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(sentMessages.TextBody)) ? sentMessages.HtmlBody : sentMessages.TextBody;
+                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(sentMessages.TextBody)) ? crypto.ReturnEncryptRijndaelString(sentMessages.HtmlBody) : crypto.ReturnEncryptRijndaelString(sentMessages.TextBody);
                             messageFromMailServer.UnicID = sentMessages.MessageId;
                             arrayMessagesFromMailServer.Add(messageFromMailServer);
                             workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "SNT", ID);
@@ -804,7 +807,7 @@ namespace MainClient
                             var trashMessages = trashFolder.GetMessage(i);
                             messageFromMailServer.RecipientAdress = (string.IsNullOrWhiteSpace(Convert.ToString(trashMessages.From))) ? "" : crypto.ReturnEncryptRijndaelString(Convert.ToString(trashMessages.From));
                             messageFromMailServer.Subject = (string.IsNullOrWhiteSpace(trashMessages.Subject)) ? "" : crypto.ReturnEncryptRijndaelString(trashMessages.Subject);
-                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(trashMessages.TextBody)) ? trashMessages.HtmlBody : trashMessages.TextBody;
+                            messageFromMailServer.Text = (string.IsNullOrWhiteSpace(trashMessages.TextBody)) ? crypto.ReturnEncryptRijndaelString(trashMessages.HtmlBody) : crypto.ReturnEncryptRijndaelString(trashMessages.TextBody);
                             messageFromMailServer.UnicID = trashMessages.MessageId;
                             arrayMessagesFromMailServer.Add(messageFromMailServer);
                             workWithDatabase.AddMessageInDB(messageFromMailServer.RecipientAdress.Replace("'", ""), messageFromMailServer.Subject, messageFromMailServer.Text.Replace("'", ""), "DEL", ID);
@@ -832,7 +835,9 @@ namespace MainClient
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
                 foreach (var arraySendMessages in messages)
-                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(arraySendMessages.RecipientAdress), crypto.ReturnDecryptRijndaelString(arraySendMessages.Subject), arraySendMessages.Text, arraySendMessages.MessId, arraySendMessages.Seen);
+                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(arraySendMessages.RecipientAdress), 
+                        crypto.ReturnDecryptRijndaelString(arraySendMessages.Subject), 
+                        crypto.ReturnDecryptRijndaelString(arraySendMessages.Text), arraySendMessages.MessId, arraySendMessages.Seen);
             else
                 toolStripStatusLabel1.Text = "Эта папка пуста.";
             menuPanel.Enabled = functionalPanel.Enabled = true;
