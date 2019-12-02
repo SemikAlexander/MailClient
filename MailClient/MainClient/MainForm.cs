@@ -360,6 +360,7 @@ namespace MainClient
                     MarkMessageAsDelete(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
                         UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
                         UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString());
+                    DeleteByIndexInbox(UserMessagesTable.CurrentRow.Index);
                     DataGridOutputMessages("INB");
                     break;
                 case "Отправленные":
@@ -371,6 +372,7 @@ namespace MainClient
                     MarkMessageAsDelete(UserMessagesTable.CurrentRow.Cells[0].Value.ToString(),
                        UserMessagesTable.CurrentRow.Cells[1].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[1].Value.ToString(),
                        UserMessagesTable.CurrentRow.Cells[2].Value == null ? "" : UserMessagesTable.CurrentRow.Cells[2].Value.ToString());
+                    DeleteByIndexSent(UserMessagesTable.CurrentRow.Index);
                     DataGridOutputMessages("SNT");
                     break;
                 case "Черновик":
@@ -439,6 +441,9 @@ namespace MainClient
                             break;
                         case "Удалённые":
                             DeleteMessageButton.Visible = EditMessageButton.Visible = true;
+                            break;
+                        case "Спам":
+                            DeleteMessageButton.Visible = true;
                             break;
                     }
                 }
@@ -910,6 +915,34 @@ namespace MainClient
                 toolStripStatusLabel1.Text = ex.Message;
             }
         }
+        public void DeleteByIndexSent(int index)
+        {
+            try
+            {
+                var inbox = client.GetFolder(SpecialFolder.Sent);
+                inbox.Open(FolderAccess.ReadWrite);
+                inbox.AddFlags(index, MessageFlags.Deleted, true);
+                inbox.Expunge();
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+        }
+        public void DeleteByIndexInbox(int index)
+        {
+            try
+            {
+                var inbox = client.Inbox;
+                inbox.Open(FolderAccess.ReadWrite);
+                inbox.AddFlags(index, MessageFlags.Deleted, true);
+                inbox.Expunge();
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+        }
         public void MarkMessageAsRead(int index)
         {
             try
@@ -942,7 +975,7 @@ namespace MainClient
                 if (TrashFolder != null)
                 {
                     TrashFolder.Open(FolderAccess.ReadWrite);
-                    TrashFolder.Append(message, MessageFlags.None);
+                    TrashFolder.Append(message, MessageFlags.Seen);
                     TrashFolder.Expunge();
                 }
             }
