@@ -11,6 +11,7 @@ using MailKit.Security;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.IO;
 
 namespace MainClient
 {
@@ -256,6 +257,12 @@ namespace MainClient
                         if (LastIndex < 0) LastIndex = 0;
                         var message = inbox.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
                         readMessage.email_client.Text = message.From.ToString();
+                        foreach (MimeEntity attachment in message.Attachments)
+                        {
+                            var fileName = attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
+                            readMessage.AttachmentFileLabel.Text = fileName;
+                        }
+                        
                         /*Расшифровываем сообщение если оно зашифровано*/
                         #region Decrypt message
                         try

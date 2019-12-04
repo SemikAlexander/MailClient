@@ -34,6 +34,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.email_client = new System.Windows.Forms.TextBox();
             this.TextLetter = new System.Windows.Forms.RichTextBox();
+            this.AttachmentFileLabel = new System.Windows.Forms.Label();
+            this.FileAttachment = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // theme
@@ -80,11 +82,33 @@
             this.TextLetter.TabIndex = 19;
             this.TextLetter.Text = "";
             // 
+            // AttachmentFileLabel
+            // 
+            this.AttachmentFileLabel.AutoSize = true;
+            this.AttachmentFileLabel.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AttachmentFileLabel.Location = new System.Drawing.Point(65, 432);
+            this.AttachmentFileLabel.Name = "AttachmentFileLabel";
+            this.AttachmentFileLabel.Size = new System.Drawing.Size(0, 17);
+            this.AttachmentFileLabel.TabIndex = 36;
+            // 
+            // FileAttachment
+            // 
+            this.FileAttachment.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.FileAttachment.Image = ((System.Drawing.Image)(resources.GetObject("FileAttachment.Image")));
+            this.FileAttachment.Location = new System.Drawing.Point(12, 419);
+            this.FileAttachment.Name = "FileAttachment";
+            this.FileAttachment.Size = new System.Drawing.Size(47, 43);
+            this.FileAttachment.TabIndex = 35;
+            this.FileAttachment.UseVisualStyleBackColor = true;
+            this.FileAttachment.Click += new System.EventHandler(this.FileAttachment_Click);
+            // 
             // ReadMessage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 422);
+            this.ClientSize = new System.Drawing.Size(622, 474);
+            this.Controls.Add(this.AttachmentFileLabel);
+            this.Controls.Add(this.FileAttachment);
             this.Controls.Add(this.TextLetter);
             this.Controls.Add(this.theme);
             this.Controls.Add(this.label2);
@@ -105,5 +129,7 @@
         public System.Windows.Forms.Label label1;
         public System.Windows.Forms.TextBox email_client;
         public System.Windows.Forms.RichTextBox TextLetter;
+        public System.Windows.Forms.Label AttachmentFileLabel;
+        public System.Windows.Forms.Button FileAttachment;
     }
 }
