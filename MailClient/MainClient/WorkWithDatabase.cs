@@ -300,7 +300,7 @@ namespace MainClient
                 }
             }
         }
-        public int CountInboxMessages(string TypeMessage)
+        public int CountInboxMessages(string TypeMessage, int IDUser)
         {
             int res = 0;
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
@@ -308,7 +308,7 @@ namespace MainClient
                 using (SQLiteCommand command = new SQLiteCommand(connection))
                 {
                     connection.Open();
-                    command.CommandText = $"SELECT COUNT(*) AS res FROM UserMessages WHERE TypeMessage = \"{TypeMessage}\"";
+                    command.CommandText = $"SELECT COUNT(*) AS res FROM UserMessages WHERE TypeMessage = \"{TypeMessage}\" AND IDSender = {IDUser}";
                     command.ExecuteNonQuery();
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
