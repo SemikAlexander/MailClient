@@ -36,6 +36,7 @@
             this.TextLetter = new System.Windows.Forms.RichTextBox();
             this.AttachmentFileLabel = new System.Windows.Forms.Label();
             this.FileAttachment = new System.Windows.Forms.Button();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
             // theme
@@ -102,11 +103,20 @@
             this.FileAttachment.UseVisualStyleBackColor = true;
             this.FileAttachment.Click += new System.EventHandler(this.FileAttachment_Click);
             // 
+            // webBrowser1
+            // 
+            this.webBrowser1.Location = new System.Drawing.Point(13, 65);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(597, 345);
+            this.webBrowser1.TabIndex = 37;
+            // 
             // ReadMessage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(622, 474);
+            this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.AttachmentFileLabel);
             this.Controls.Add(this.FileAttachment);
             this.Controls.Add(this.TextLetter);
@@ -131,5 +141,6 @@
         public System.Windows.Forms.RichTextBox TextLetter;
         public System.Windows.Forms.Label AttachmentFileLabel;
         public System.Windows.Forms.Button FileAttachment;
+        public System.Windows.Forms.WebBrowser webBrowser1;
     }
 }

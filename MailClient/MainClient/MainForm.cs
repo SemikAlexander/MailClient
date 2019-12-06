@@ -288,11 +288,10 @@ namespace MainClient
                         }
                         #endregion
 
-                        WebBrowser wb = new WebBrowser();
-                        wb.Navigate("about:blank");
-                        wb.Document.Write(textForOutput);
-                        wb.Document.ExecCommand("SelectAll", false, null);
-                        wb.Document.ExecCommand("Copy", false, null);
+                        readMessage.webBrowser1.Navigate("about:blank");
+                        readMessage.webBrowser1.Document.Write(textForOutput);
+                        readMessage.webBrowser1.Document.ExecCommand("SelectAll", false, null);
+                        readMessage.webBrowser1.Document.ExecCommand("Copy", false, null);
                         readMessage.TextLetter.SelectAll();
                         readMessage.TextLetter.Paste();
 
