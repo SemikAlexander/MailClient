@@ -292,8 +292,8 @@ namespace MainClient
                         readMessage.webBrowser1.Document.Write(textForOutput);
                         readMessage.webBrowser1.Document.ExecCommand("SelectAll", false, null);
                         readMessage.webBrowser1.Document.ExecCommand("Copy", false, null);
-                        readMessage.TextLetter.SelectAll();
-                        readMessage.TextLetter.Paste();
+                        //readMessage.TextLetter.SelectAll();
+                        //readMessage.TextLetter.Paste();
 
                         readMessage.MimeMessage = message;
                         toolStripStatusLabel1.Text = "Готово!";

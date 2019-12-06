@@ -44,7 +44,7 @@
             this.theme.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.theme.Location = new System.Drawing.Point(71, 37);
             this.theme.Name = "theme";
-            this.theme.Size = new System.Drawing.Size(539, 22);
+            this.theme.Size = new System.Drawing.Size(606, 22);
             this.theme.TabIndex = 18;
             // 
             // label2
@@ -72,7 +72,7 @@
             this.email_client.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.email_client.Location = new System.Drawing.Point(69, 9);
             this.email_client.Name = "email_client";
-            this.email_client.Size = new System.Drawing.Size(541, 22);
+            this.email_client.Size = new System.Drawing.Size(608, 22);
             this.email_client.TabIndex = 15;
             // 
             // TextLetter
@@ -108,14 +108,14 @@
             this.webBrowser1.Location = new System.Drawing.Point(13, 65);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(597, 345);
+            this.webBrowser1.Size = new System.Drawing.Size(664, 345);
             this.webBrowser1.TabIndex = 37;
             // 
             // ReadMessage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 474);
+            this.ClientSize = new System.Drawing.Size(689, 474);
             this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.AttachmentFileLabel);
             this.Controls.Add(this.FileAttachment);
