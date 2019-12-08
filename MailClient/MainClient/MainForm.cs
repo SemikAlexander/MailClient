@@ -269,9 +269,11 @@ namespace MainClient
                         {
                             readMessage.theme.Text = message.Subject;
 
-                            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
                             textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
                             string[] temp = textForOutput.Split(new string[] { "^&*" }, StringSplitOptions.None);
+
+                            string prKey = /*workWithDatabase.GetPrivateKeyForUser(ID);*/temp[3];
+
                             temp[1] = crypto.Decrypt(temp[1], prKey);
                             string DecryptText = "";
                             for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
@@ -472,7 +474,9 @@ namespace MainClient
             switch (MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
             {
                 case DialogResult.OK:
-                    Application.Exit();
+                    Hide();
+                    Authorization authorization = new Authorization();
+                    authorization.ShowDialog();
                     break;
                 case DialogResult.Cancel:
                     e.Cancel = true;
