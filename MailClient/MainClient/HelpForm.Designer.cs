@@ -58,7 +58,7 @@
             // дляПользователяToolStripMenuItem
             // 
             this.дляПользователяToolStripMenuItem.Name = "дляПользователяToolStripMenuItem";
-            this.дляПользователяToolStripMenuItem.Size = new System.Drawing.Size(118, 20);
+            this.дляПользователяToolStripMenuItem.Size = new System.Drawing.Size(123, 21);
             this.дляПользователяToolStripMenuItem.Text = "Для пользователя";
             this.дляПользователяToolStripMenuItem.Click += new System.EventHandler(this.дляПользователяToolStripMenuItem_Click);
             // 
@@ -70,26 +70,29 @@
             this.синхронизацияToolStripMenuItem,
             this.безопасностьToolStripMenuItem});
             this.информацияToolStripMenuItem.Name = "информацияToolStripMenuItem";
-            this.информацияToolStripMenuItem.Size = new System.Drawing.Size(107, 20);
+            this.информацияToolStripMenuItem.Size = new System.Drawing.Size(112, 21);
             this.информацияToolStripMenuItem.Text = "Дополнительно";
             // 
             // библиотекаToolStripMenuItem
             // 
             this.библиотекаToolStripMenuItem.Name = "библиотекаToolStripMenuItem";
-            this.библиотекаToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.библиотекаToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.библиотекаToolStripMenuItem.Text = "Библиотека";
+            this.библиотекаToolStripMenuItem.Click += new System.EventHandler(this.библиотекаToolStripMenuItem_Click);
             // 
             // отправкаСообщенияToolStripMenuItem
             // 
             this.отправкаСообщенияToolStripMenuItem.Name = "отправкаСообщенияToolStripMenuItem";
-            this.отправкаСообщенияToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.отправкаСообщенияToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.отправкаСообщенияToolStripMenuItem.Text = "Отправка сообщения";
+            this.отправкаСообщенияToolStripMenuItem.Click += new System.EventHandler(this.отправкаСообщенияToolStripMenuItem_Click);
             // 
             // синхронизацияToolStripMenuItem
             // 
             this.синхронизацияToolStripMenuItem.Name = "синхронизацияToolStripMenuItem";
-            this.синхронизацияToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.синхронизацияToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.синхронизацияToolStripMenuItem.Text = "Синхронизация";
+            this.синхронизацияToolStripMenuItem.Click += new System.EventHandler(this.синхронизацияToolStripMenuItem_Click);
             // 
             // безопасностьToolStripMenuItem
             // 
@@ -97,25 +100,27 @@
             this.алгоритмRSAToolStripMenuItem,
             this.алгоритмToolStripMenuItem});
             this.безопасностьToolStripMenuItem.Name = "безопасностьToolStripMenuItem";
-            this.безопасностьToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.безопасностьToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.безопасностьToolStripMenuItem.Text = "Безопасность";
             // 
             // алгоритмRSAToolStripMenuItem
             // 
             this.алгоритмRSAToolStripMenuItem.Name = "алгоритмRSAToolStripMenuItem";
-            this.алгоритмRSAToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.алгоритмRSAToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.алгоритмRSAToolStripMenuItem.Text = "Алгоритм RSA";
+            this.алгоритмRSAToolStripMenuItem.Click += new System.EventHandler(this.алгоритмRSAToolStripMenuItem_Click);
             // 
             // алгоритмToolStripMenuItem
             // 
             this.алгоритмToolStripMenuItem.Name = "алгоритмToolStripMenuItem";
-            this.алгоритмToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.алгоритмToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.алгоритмToolStripMenuItem.Text = "Алгоритм Rijndael";
+            this.алгоритмToolStripMenuItem.Click += new System.EventHandler(this.алгоритмToolStripMenuItem_Click);
             // 
             // оРазработчикеToolStripMenuItem
             // 
             this.оРазработчикеToolStripMenuItem.Name = "оРазработчикеToolStripMenuItem";
-            this.оРазработчикеToolStripMenuItem.Size = new System.Drawing.Size(107, 20);
+            this.оРазработчикеToolStripMenuItem.Size = new System.Drawing.Size(118, 21);
             this.оРазработчикеToolStripMenuItem.Text = "О разработчике";
             // 
             // textBox1

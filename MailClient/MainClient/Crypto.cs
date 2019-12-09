@@ -18,7 +18,6 @@ namespace MainClient
                 return string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
             }
         }
-
         public string ReturnEncryptRijndaelString(string inputString)
         {
             using (Rijndael rijndael = Rijndael.Create())

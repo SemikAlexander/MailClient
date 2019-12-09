@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace MainClient
 {
@@ -20,6 +14,55 @@ namespace MainClient
             ID = IDUser;
             UserLogin = Login;
             UserPassword = Password;
+        }
+
+        private void библиотекаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (FileStream fs = new FileStream("Info\\LibraryInfo.txt",FileMode.Open))
+            {
+                using(StreamReader reader = new StreamReader(fs))
+                {
+                    textBox1.Text = reader.ReadToEnd();
+                }
+            }
+        }
+
+        private void алгоритмRSAToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (FileStream fs = new FileStream("Info\\RijndaelInfo.txt", FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(fs))
+                {
+                    textBox1.Text = reader.ReadToEnd();
+                }
+            }
+        }
+
+        private void алгоритмToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (FileStream fs = new FileStream("Info\\RSAInfo.txt", FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(fs))
+                {
+                    textBox1.Text = reader.ReadToEnd();
+                }
+            }
+        }
+
+        private void отправкаСообщенияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (FileStream fs = new FileStream("Info\\SendMessageInfo.txt", FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(fs))
+                {
+                    textBox1.Text = reader.ReadToEnd();
+                }
+            }
+        }
+
+        private void синхронизацияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void дляПользователяToolStripMenuItem_Click(object sender, EventArgs e)
