@@ -359,7 +359,8 @@ namespace MainClient
         private void InfoButton_Click(object sender, EventArgs e)
         {
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
-
+            HelpForm helpForm = new HelpForm(ID, email, password);
+            helpForm.ShowDialog();
         }
 
         private void DeleteMessageButton_Click(object sender, EventArgs e)
