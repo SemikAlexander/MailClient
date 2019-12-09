@@ -147,5 +147,10 @@ namespace MainClient
                 }
             }
         }
+
+        private void Authorization_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
     }
 }

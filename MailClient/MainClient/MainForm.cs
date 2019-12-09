@@ -272,7 +272,7 @@ namespace MainClient
                             textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : message.TextBody;
                             string[] temp = textForOutput.Split(new string[] { "^&*" }, StringSplitOptions.None);
 
-                            string prKey = /*workWithDatabase.GetPrivateKeyForUser(ID);*/temp[3];
+                            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
 
                             temp[1] = crypto.Decrypt(temp[1], prKey);
                             string DecryptText = "";
@@ -282,6 +282,12 @@ namespace MainClient
                                 else
                                     DecryptText += temp[i];
                             textForOutput = crypto.ReturnDecryptRijndaelString(DecryptText);
+                            /*Электронноцифровая подпись*/
+                            if(crypto.Hesh(textForOutput) != temp[3])
+                            {
+                                MessageBox.Show("Электронно-цифровые подписи не совпадают! Сообщение повреждено!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
                         }
                         catch (Exception)
                         {
@@ -353,6 +359,7 @@ namespace MainClient
         private void InfoButton_Click(object sender, EventArgs e)
         {
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
+
         }
 
         private void DeleteMessageButton_Click(object sender, EventArgs e)

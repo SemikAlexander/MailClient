@@ -8,6 +8,7 @@ using System.IO;
 using MailKit;
 using System.Drawing;
 using System.Drawing.Text;
+using Microsoft.VisualBasic;
 
 namespace MainClient
 {
@@ -265,73 +266,95 @@ namespace MainClient
             }
 
             /*Шифрование происходит здесь!*/
-
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(UserEmail));
-            message.To.Add(new MailboxAddress(email_client.Text));
-            message.Subject = theme.Text;
-            var builder = new BodyBuilder();
-
-            string[] temp = crypto.ReturnEncryptRijndaelString(TextLetter.Text).Split(new string[] { "^&*" }, StringSplitOptions.None); /*временный массив для формирования зашифрованного сообщения согласно заданной последовательности*/
-
-            string pbKey = workWithDatabase.GetPublicKeyForUser(ID);  /*"Берём public ключ из базы"*/
-            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
-
-            temp[1] = crypto.Encrypt(temp[1], pbKey);   /*Шифруем ключ при помощи алгоритма RSA*/
-
-            string EncryptText = "";
-
-            for(int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
+            string pbKey = workWithDatabase.GetPublicKeyForUser(email_client.Text);  /*Берём public ключ из базы*/
+            if (!string.IsNullOrWhiteSpace(pbKey))
             {
-                EncryptText += $"{temp[i]}^&*";
-            }
-            EncryptText += $"{prKey}";
-            builder.TextBody = EncryptText;
-            builder.HtmlBody = $"<p align=\"{TextLetter.TextAlign}\">{StartTegs}<font size=\"{Convert.ToInt32(UserFontSize.Value)}\" face=\"{FontsComboBox.SelectedItem.ToString()}\">{EncryptText}{EndTegs}</p>";
-            if (AttachmentFile != "")
-            {
-                builder.Attachments.Add(AttachmentFile);
-            }
-            message.Body = builder.ToMessageBody();
-            try
-            {
-                using (var client = new SmtpClient())
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(UserEmail));
+                message.To.Add(new MailboxAddress(email_client.Text));
+                message.Subject = theme.Text;
+                var builder = new BodyBuilder();
+
+                string[] temp = crypto.ReturnEncryptRijndaelString(TextLetter.Text).Split(new string[] { "^&*" }, StringSplitOptions.None); /*временный массив для формирования зашифрованного сообщения согласно заданной последовательности*/
+
+                temp[1] = crypto.Encrypt(temp[1], pbKey);   /*Шифруем ключ при помощи алгоритма RSA*/
+
+                string EncryptText = "";
+
+                for (int i = 0; i < temp.Length; i++)    /*Формируем конечную строку*/
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true);
-                    client.Authenticate(UserEmail, UserPassword);
-                    client.Send(message);
-                    client.Disconnect(true);
-                    if (!MessageFromDraft)
+                    EncryptText += $"{temp[i]}^&*";
+                }
+
+                EncryptText += crypto.Hesh(TextLetter.Text);
+
+                builder.TextBody = EncryptText;
+                builder.HtmlBody = $"<p align=\"{TextLetter.TextAlign}\">{StartTegs}<font size=\"{Convert.ToInt32(UserFontSize.Value / 2)}\" face=\"{FontsComboBox.SelectedItem.ToString()}\">{EncryptText}{EndTegs}</p>";
+                if (AttachmentFile != "")
+                {
+                    builder.Attachments.Add(AttachmentFile);
+                }
+                message.Body = builder.ToMessageBody();
+                try
+                {
+                    using (var client = new SmtpClient())
                     {
-                        workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SNT", ID);
-                        using (var client1 = new ImapClient())
+                        client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                        client.Connect(Settings.Default["SMTPAdress"].ToString(), Convert.ToInt32(Settings.Default["SMTPPort"]), true);
+                        client.Authenticate(UserEmail, UserPassword);
+                        client.Send(message);
+                        client.Disconnect(true);
+                        if (!MessageFromDraft)
                         {
-                            client1.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                            client1.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
-                            client1.Authenticate(UserEmail, UserPassword);
-                            var draftFolder = client1.GetFolder(SpecialFolder.Sent);
-                            if (draftFolder != null)
+                            workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SNT", ID);
+                            using (var client1 = new ImapClient())
                             {
-                                draftFolder.Open(FolderAccess.ReadWrite);
-                                draftFolder.Append(message, MessageFlags.None);
-                                draftFolder.Expunge();
+                                client1.ServerCertificateValidationCallback = (s, c, h, ex) => true;
+                                client1.Connect(Settings.Default["IMAPAdress"].ToString(), Convert.ToInt32(Settings.Default["IMAPPort"]), true);
+                                client1.Authenticate(UserEmail, UserPassword);
+                                var draftFolder = client1.GetFolder(SpecialFolder.Sent);
+                                if (draftFolder != null)
+                                {
+                                    draftFolder.Open(FolderAccess.ReadWrite);
+                                    draftFolder.Append(message, MessageFlags.None);
+                                    draftFolder.Expunge();
+                                }
+                                client1.Disconnect(true);
                             }
-                            client1.Disconnect(true);
                         }
+                        else
+                        {
+                            workWithDatabase.EditMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SNT", ID);
+                        }
+                        MessageBox.Show("Письмо отправленно!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        email_client.Text = theme.Text = TextLetter.Text = "";
                     }
-                    else
-                    {
-                        workWithDatabase.EditMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SNT", ID);
-                    }
-                    MessageBox.Show("Письмо отправленно!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    email_client.Text = theme.Text = TextLetter.Text = "";
+                }
+                catch (Exception ex)
+                {
+                    mainForm.toolStripStatusLabel1.Text = "Ошибка: " + ex.Message;
+                    MessageBox.Show(ex.Message);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                mainForm.toolStripStatusLabel1.Text = "Ошибка: " + ex.Message;
-                MessageBox.Show(ex.Message);
+                switch (MessageBox.Show("Для данного пользователя у вас отсутствует публичный ключ! Хотите ввести ключ?", "Ошибка", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
+                {
+                    case DialogResult.OK:
+                        pbKey = Interaction.InputBox("Введите публичный ключ в текстовое поле и нажмите \"ОК\"", "Ввод ключа", "");
+                        if (!string.IsNullOrWhiteSpace(pbKey))
+                            workWithDatabase.AddUser(email_client.Text, pbKey);
+                        else
+                        {
+                            MessageBox.Show("Вы не ввели публичный ключ!", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        break;
+                    case DialogResult.Cancel:
+                        return;
+                        break;
+                }
             }
         }
     }

@@ -108,6 +108,19 @@ namespace MainClient
                 }
             }
         }
+        public void AddUser(string UserEmail, string PublicKey)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"INSERT INTO Interlocutors (Login, PublicKey) VALUES ('{UserEmail}', '{PublicKey}');";
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
         public void AddMessageInDB(string RecipientAdress, string Subject, string Text, string typeMessage, int IDUser)
         {
             using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
@@ -254,6 +267,28 @@ namespace MainClient
                 }
             }
         }
+        public string GetPublicKeyForUser(string Login)
+        {
+            string res = "";
+            using (SQLiteConnection connection = new SQLiteConnection(@"Data Source=MailClientDB.db"))
+            {
+                using (SQLiteCommand command = new SQLiteCommand(connection))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT PublicKey FROM Interlocutors WHERE Login = '{Login}'";
+                    command.ExecuteNonQuery();
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            res = Convert.ToString(reader["PublicKey"]);
+                        }
+                        connection.Close();
+                        return res;
+                    }
+                }
+            }
+        } /*Публичный ключ для шифрования сообщения*/
         public string GetPrivateKeyForUser(int IDUser)
         {
             string res = "";
