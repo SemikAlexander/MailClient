@@ -29,7 +29,7 @@ namespace MainClient
 
         private void алгоритмRSAToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (FileStream fs = new FileStream("Info\\RijndaelInfo.txt", FileMode.Open))
+            using (FileStream fs = new FileStream("Info\\RSAInfo.txt", FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(fs))
                 {
@@ -40,7 +40,7 @@ namespace MainClient
 
         private void алгоритмToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (FileStream fs = new FileStream("Info\\RSAInfo.txt", FileMode.Open))
+            using (FileStream fs = new FileStream("Info\\RijndaelInfo.txt", FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(fs))
                 {
@@ -62,7 +62,24 @@ namespace MainClient
 
         private void синхронизацияToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            using (FileStream fs = new FileStream("Info\\SynchronizationInfo.txt", FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(fs))
+                {
+                    textBox1.Text = reader.ReadToEnd();
+                }
+            }
+        }
 
+        private void базаДанныхToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (FileStream fs = new FileStream("Info\\DBInfo.txt", FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(fs))
+                {
+                    textBox1.Text = reader.ReadToEnd();
+                }
+            }
         }
 
         private void дляПользователяToolStripMenuItem_Click(object sender, EventArgs e)

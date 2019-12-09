@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.дляПользователяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.информацияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,6 +40,7 @@
             this.алгоритмToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.оРазработчикеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.базаДанныхToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,7 +70,8 @@
             this.библиотекаToolStripMenuItem,
             this.отправкаСообщенияToolStripMenuItem,
             this.синхронизацияToolStripMenuItem,
-            this.безопасностьToolStripMenuItem});
+            this.безопасностьToolStripMenuItem,
+            this.базаДанныхToolStripMenuItem});
             this.информацияToolStripMenuItem.Name = "информацияToolStripMenuItem";
             this.информацияToolStripMenuItem.Size = new System.Drawing.Size(112, 21);
             this.информацияToolStripMenuItem.Text = "Дополнительно";
@@ -133,6 +136,13 @@
             this.textBox1.Size = new System.Drawing.Size(776, 411);
             this.textBox1.TabIndex = 1;
             // 
+            // базаДанныхToolStripMenuItem
+            // 
+            this.базаДанныхToolStripMenuItem.Name = "базаДанныхToolStripMenuItem";
+            this.базаДанныхToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.базаДанныхToolStripMenuItem.Text = "База данных";
+            this.базаДанныхToolStripMenuItem.Click += new System.EventHandler(this.базаДанныхToolStripMenuItem_Click);
+            // 
             // HelpForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -140,7 +150,10 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MaximumSize = new System.Drawing.Size(816, 488);
+            this.MinimumSize = new System.Drawing.Size(816, 488);
             this.Name = "HelpForm";
             this.Text = "HelpForm";
             this.menuStrip1.ResumeLayout(false);
@@ -163,5 +176,6 @@
         private System.Windows.Forms.ToolStripMenuItem алгоритмToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem оРазработчикеToolStripMenuItem;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ToolStripMenuItem базаДанныхToolStripMenuItem;
     }
 }
