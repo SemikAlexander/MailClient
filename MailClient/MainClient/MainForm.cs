@@ -50,9 +50,15 @@ namespace MainClient
         {
             DeleteMessageButton.Visible = EditMessageButton.Visible = false;
             if (menuPanel.Width == 180)
+            {
                 menuPanel.Width = 45;
+                UserMessagesTable.Columns[2].Width += 130;
+            }
             else
+            {
                 menuPanel.Width = 180;
+                UserMessagesTable.Columns[2].Width -= 130;
+            }
         }
 
         #region Main button's
@@ -477,19 +483,11 @@ namespace MainClient
         }
         #endregion
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            switch (MessageBox.Show("Вы действительно хотите выйти из программы?", "Выход", MessageBoxButtons.OKCancel, MessageBoxIcon.Information))
-            {
-                case DialogResult.OK:
-                    Hide();
-                    Authorization authorization = new Authorization();
-                    authorization.ShowDialog();
-                    break;
-                case DialogResult.Cancel:
-                    e.Cancel = true;
-                    break;
-            }
+            Hide();
+            Authorization authorization = new Authorization();
+            authorization.ShowDialog();
         }
 
         #region Thread
