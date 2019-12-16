@@ -306,7 +306,11 @@ namespace MainClient
                         client.Disconnect(true);
                         if (!MessageFromDraft)
                         {
-                            workWithDatabase.AddMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SNT", ID);
+                            workWithDatabase.AddMessageInDB(crypto.ReturnEncryptRijndaelString(email_client.Text),
+                            crypto.ReturnEncryptRijndaelString(theme.Text),
+                            crypto.ReturnEncryptRijndaelString(TextLetter.Text),
+                            "SNT", 
+                            ID);
                             using (var client1 = new ImapClient())
                             {
                                 client1.ServerCertificateValidationCallback = (s, c, h, ex) => true;
