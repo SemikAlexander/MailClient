@@ -81,8 +81,8 @@ namespace MainClient
             Settings.Default["IMAPPort"] = 993;
             Settings.Default["POP3Port"] = 995;
             Settings.Default["SMTPPort"] = 465;
-            Settings.Default["POP3Checked"] = pop3.Checked = true;
-            Settings.Default["IMAPChecked"] = imap.Checked = false;
+            Settings.Default["POP3Checked"] = pop3.Checked = false;
+            Settings.Default["IMAPChecked"] = imap.Checked = true;
             Settings.Default.Save();
             imapPort.Text = Settings.Default["IMAPPort"].ToString();
             pop3Port.Text = Settings.Default["POP3Port"].ToString();

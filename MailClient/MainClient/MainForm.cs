@@ -195,39 +195,6 @@ namespace MainClient
                 try
                 {
                     toolStripStatusLabel1.Text = "Идет загрузка...";
-                    //if (Convert.ToBoolean(Settings.Default["POP3Checked"]))
-                    //{
-                    //    using (var client = new Pop3Client())
-                    //    {
-                    //        client.ServerCertificateValidationCallback = (s, c, h, ex) => true;
-                    //        client.Connect(Settings.Default["POP3Adress"].ToString(), Convert.ToInt32(Settings.Default["POP3Port"]), true);
-                    //        client.Authenticate(email, password);
-                    //        if (LastIndex < 0) LastIndex = 0;
-                    //        if (client.Count == 0 | LastIndex + UserMessagesTable.CurrentCell.RowIndex > client.Count)
-                    //        {
-                    //            toolStripStatusLabel1.Text = "Письма нет.";
-                    //            return;
-                    //        }
-                    //        var message = client.GetMessage(LastIndex + UserMessagesTable.CurrentCell.RowIndex);
-                    //        readMessage.email_client.Text = message.From.ToString();
-                    //        readMessage.theme.Text = crypto.ReturnDecryptRijndaelString(message.Subject);
-                            
-                    //        string prKey = workWithDatabase.GetPrivateKeyForUser(ID);
-                    //        var textForOutput = (string.IsNullOrWhiteSpace(message.TextBody)) ? message.HtmlBody : crypto.Decrypt(message.TextBody, prKey);
-
-                    //        WebBrowser wb = new WebBrowser();
-                    //        wb.Navigate("about:blank");
-                    //        wb.Document.Write(textForOutput);
-                    //        wb.Document.ExecCommand("SelectAll", false, null);
-                    //        wb.Document.ExecCommand("Copy", false, null);
-                    //        readMessage.TextLetter.SelectAll();
-                    //        readMessage.TextLetter.Paste();
-
-                    //        readMessage.MimeMessage = message;
-                    //        client.Disconnect(true);
-                    //        readMessage.ShowDialog();
-                    //    }
-                    //}
                     if (Convert.ToBoolean(Settings.Default["IMAPChecked"]))
                     {
                         IMailFolder inbox;
@@ -289,7 +256,7 @@ namespace MainClient
                                     DecryptText += temp[i];
                             textForOutput = crypto.ReturnDecryptRijndaelString(DecryptText);
                             /*Электронноцифровая подпись*/
-                            if(temp.Length>3)   /*Проверка есть ли в сообщении ЭЦП*/
+                            if (temp.Length > 3)   /*Проверка есть ли в сообщении ЭЦП*/
                             {
                                 if (crypto.Hesh(textForOutput) != temp[3])
                                 {
@@ -898,9 +865,12 @@ namespace MainClient
             UserMessagesTable.Rows.Clear();
             if (messages.Count > 0)
                 foreach (var arraySendMessages in messages)
-                    UserMessagesTable.Rows.Add(crypto.ReturnDecryptRijndaelString(arraySendMessages.RecipientAdress), 
-                        crypto.ReturnDecryptRijndaelString(arraySendMessages.Subject), 
-                        crypto.ReturnDecryptRijndaelString(arraySendMessages.Text), arraySendMessages.MessId, arraySendMessages.Seen);
+                {
+                    string sub = (arraySendMessages.Subject == "") ? "" : crypto.ReturnDecryptRijndaelString(arraySendMessages.Subject);
+                    string recAdress = (arraySendMessages.RecipientAdress == "") ? "" : crypto.ReturnDecryptRijndaelString(arraySendMessages.RecipientAdress);
+                    string textMess = (arraySendMessages.Text == "") ? "" : crypto.ReturnDecryptRijndaelString(arraySendMessages.Text);
+                    UserMessagesTable.Rows.Add(recAdress, sub, textMess, arraySendMessages.MessId, arraySendMessages.Seen);
+                }
             else
                 toolStripStatusLabel1.Text = "Эта папка пуста.";
             menuPanel.Enabled = functionalPanel.Enabled = true;
