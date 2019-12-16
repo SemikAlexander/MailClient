@@ -330,7 +330,7 @@ namespace MainClient
                         {
                             workWithDatabase.EditMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SNT", ID);
                         }
-                        MessageBox.Show("Письмо отправленно!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Письмо отправленно!", "Доставка", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         email_client.Text = theme.Text = TextLetter.Text = "";
                     }
                 }
