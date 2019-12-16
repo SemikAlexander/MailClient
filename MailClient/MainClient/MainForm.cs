@@ -289,10 +289,13 @@ namespace MainClient
                                     DecryptText += temp[i];
                             textForOutput = crypto.ReturnDecryptRijndaelString(DecryptText);
                             /*Электронноцифровая подпись*/
-                            if(crypto.Hesh(textForOutput) != temp[3])
+                            if(temp.Length>3)   /*Проверка есть ли в сообщении ЭЦП*/
                             {
-                                MessageBox.Show("Электронно-цифровые подписи не совпадают! Сообщение повреждено!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
+                                if (crypto.Hesh(textForOutput) != temp[3])
+                                {
+                                    MessageBox.Show("Электронно-цифровые подписи не совпадают! Сообщение повреждено!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
                             }
                         }
                         catch (Exception)

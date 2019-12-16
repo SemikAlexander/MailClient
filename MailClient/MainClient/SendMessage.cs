@@ -328,7 +328,11 @@ namespace MainClient
                         }
                         else
                         {
-                            workWithDatabase.EditMessageInDB(email_client.Text, theme.Text, TextLetter.Text, "SNT", ID);
+                            workWithDatabase.EditMessageInDB(crypto.ReturnEncryptRijndaelString(email_client.Text),
+                            crypto.ReturnEncryptRijndaelString(theme.Text),
+                            crypto.ReturnEncryptRijndaelString(TextLetter.Text), 
+                            "SNT", 
+                            ID);
                         }
                         MessageBox.Show("Письмо отправленно!", "Доставка", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         email_client.Text = theme.Text = TextLetter.Text = "";
@@ -357,7 +361,6 @@ namespace MainClient
                         break;
                     case DialogResult.Cancel:
                         return;
-                        break;
                 }
             }
         }
