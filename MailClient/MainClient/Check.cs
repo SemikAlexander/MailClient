@@ -9,6 +9,7 @@ namespace MainClient
 {
     class Check
     {
+
         public bool IsValidEmail(string email)
         {
             try

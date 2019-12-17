@@ -267,6 +267,7 @@ namespace MainClient
 
             /*Шифрование происходит здесь!*/
             string pbKey = workWithDatabase.GetPublicKeyForUser(email_client.Text);  /*Берём public ключ из базы*/
+            string prKey = workWithDatabase.GetPrivateKeyForUser(ID);  /*Берём private ключ из базы*/
             if (!string.IsNullOrWhiteSpace(pbKey))
             {
                 var message = new MimeMessage();
@@ -275,7 +276,9 @@ namespace MainClient
                 message.Subject = theme.Text;
                 var builder = new BodyBuilder();
 
-                string[] temp = crypto.ReturnEncryptRijndaelString(TextLetter.Text).Split(new string[] { "^&*" }, StringSplitOptions.None); /*временный массив для формирования зашифрованного сообщения согласно заданной последовательности*/
+                string inputText = $"<p align=\"{TextLetter.TextAlign}\">{StartTegs}<font size=\"{Convert.ToInt32(UserFontSize.Value / 2)}\" face=\"{FontsComboBox.SelectedItem.ToString()}\">{TextLetter.Text}{EndTegs}</p>";
+
+                string[] temp = crypto.ReturnEncryptRijndaelString(inputText).Split(new string[] { "^&*" }, StringSplitOptions.None); /*временный массив для формирования зашифрованного сообщения согласно заданной последовательности*/
 
                 temp[1] = crypto.Encrypt(temp[1], pbKey);   /*Шифруем ключ при помощи алгоритма RSA*/
 
@@ -286,10 +289,13 @@ namespace MainClient
                     EncryptText += $"{temp[i]}^&*";
                 }
 
-                EncryptText += crypto.Hesh(TextLetter.Text);
+                string digitalSignature = crypto.Hesh(inputText);
+                EncryptText += digitalSignature;
+
 
                 builder.TextBody = EncryptText;
-                builder.HtmlBody = $"<p align=\"{TextLetter.TextAlign}\">{StartTegs}<font size=\"{Convert.ToInt32(UserFontSize.Value / 2)}\" face=\"{FontsComboBox.SelectedItem.ToString()}\">{EncryptText}{EndTegs}</p>";
+                builder.HtmlBody = EncryptText;
+
                 if (AttachmentFile != "")
                 {
                     builder.Attachments.Add(AttachmentFile);

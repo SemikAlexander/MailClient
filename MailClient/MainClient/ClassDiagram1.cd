@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MainClient.Check">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <AssociationLine Name="SendMessage" Type="MainClient.SendMessage">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-7.604" Y="0.558" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Authorization" Type="MainClient.Authorization" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.5" Y="0.5" />
+        <Point X="5.5" Y="0.125" />
+        <Point X="1.625" Y="0.125" />
+        <Point X="1.625" Y="0.5" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.819" Y="0.047" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAICAAAAAAAAAABAAAAABAAAAAAgA=</HashCode>
+      <FileName>Check.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MainForm" />
+      <Property Name="SendMessage" />
+      <Property Name="Authorization" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MainClient.Crypto">
+    <Position X="13.25" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="MainClient.Crypto.RSAKeySize" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Crypto.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="MainClient.Crypto.RSAKeysTypes" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Crypto.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>EQACAAAAAAACAABYAHAIAABAgAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Crypto.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SendMessage" />
+      <Property Name="MainForm" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MainClient.Authorization">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAKAIAFAAADCAAAACCAAIAQAAAEAAAAAAAAA=</HashCode>
+      <FileName>Form1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainClient.HelpForm">
+    <Position X="10.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EQAYEAAAACQIgAAQCICAAABCQgBEAAAAEAEAIQKAAAA=</HashCode>
+      <FileName>HelpForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainClient.MainForm">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="MainClient.MainForm.StructMessage" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>MainForm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>EAACczDECDMIwTEiE8TBMhgGQABAikjBWADALrDGJAI=</HashCode>
+      <FileName>MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainClient.ReadMessage">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAADAgABAAAACAAAhiAAAAAAAAIAgAAAAAAAA=</HashCode>
+      <FileName>ReadMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainClient.SendMessage">
+    <Position X="4.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAECiAoATQIkDUIAkjAAIgiEAAAAAAAIGgAKCMAACA=</HashCode>
+      <FileName>SendMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainClient.SettingsForm">
+    <Position X="11.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAIACDCAAAhAgQBCAAIBCAABoAACAAGIAkBAMARs=</HashCode>
+      <FileName>Settings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainClient.WorkWithDatabase">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="MainClient.WorkWithDatabase.Message" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>WorkWithDatabase.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ACAEAAAACAACAAAAIDAAAAQgAAAAAFAiEkAAABQAACA=</HashCode>
+      <FileName>WorkWithDatabase.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Authorization" />
+      <Property Name="MainForm" />
+      <Property Name="SendMessage" />
+      <Property Name="SettingsForm" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

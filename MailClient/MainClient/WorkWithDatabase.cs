@@ -14,6 +14,7 @@ namespace MainClient
             public string RecipientAdress, Subject, Text, MessId, Seen;
         }
         Message message;
+
         public bool GetUser(string UserEmail, string UserPassword, out int IDUser)
         {
             IDUser = -1;

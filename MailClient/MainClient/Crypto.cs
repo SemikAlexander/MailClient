@@ -201,5 +201,21 @@ namespace MainClient
             }
             return EncryptText;
         }
+
+        public SendMessage SendMessage
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public MainForm MainForm
+        {
+            get => default;
+            set
+            {
+            }
+        }
     }
 }
